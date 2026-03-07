@@ -1,3 +1,3 @@
 <?php
-echo "Server MDGPT Aktif";
+include 'index.html';
 ?>

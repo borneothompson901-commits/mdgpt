@@ -13,7 +13,7 @@ RUN echo "server {\n\
         try_files \$uri \$uri/ =404;\n\
     }\n\
     location ~ \.php$ {\n\
-        fastcgi_pass unix:/run/php/php8.2-fpm.sock;\n\
+        fastcgi_pass 127.0.0.1:9000;\n\
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;\n\
         include fastcgi_params;\n\
     }\n\
@@ -23,4 +23,4 @@ RUN mkdir -p /run/php
 
 EXPOSE 80
 
-CMD service php8.2-fpm start && nginx -g 'daemon off;'
+CMD php-fpm8.2 -D && nginx -g 'daemon off;'

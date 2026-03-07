@@ -238,7 +238,7 @@
               var li = document.createElement('li');
               li.className = 'brands-item';
               li.setAttribute('role', 'listitem');
-              li.innerHTML = '<div class="brands-logo"><img src="/mdgpt' + item.media + '" alt="Brand" loading="lazy" /></div>';
+              li.innerHTML = '<div class="brands-logo"><img src="' + item.media + '" alt="Brand" loading="lazy" /></div>';
               track.appendChild(li);
             });
           }
@@ -410,7 +410,7 @@
                         '<blockquote class="rv-card__quote">"' + (item.ulasan || '') + '"</blockquote>' +
                         '<footer class="rv-card__author">' +
                             '<div class="rv-card__avatar" aria-hidden="true">' +
-                                (item.foto ? '<img src="/mdgpt' + item.foto + '" alt="' + (item.nama || '') + '" />' : '') +
+                                (item.foto ? '<img src="' + item.foto + '" alt="' + (item.nama || '') + '" />' : '') +
                             '</div>' +
                             '<div>' +
                                 '<strong class="rv-card__name">' + (item.nama || '') + '</strong>' +

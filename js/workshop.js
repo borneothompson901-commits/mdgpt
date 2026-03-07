@@ -281,7 +281,7 @@ function initEmptyReset() {
           dateLabel: w.tanggal || '—',
           price:     w.htm     || 'Gratis',
           htmSub:    w.htmSub || '',
-          img:       w.foto    ? '/mdgpt' + w.foto : '',
+         img: w.foto ? w.foto : '',
         };
       });
 

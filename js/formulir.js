@@ -26,7 +26,7 @@ var currentProgram = null;
         id:        program.id,
         tag: program.tag || '—',
         title:     program.judul  || '—',
-        img:       program.foto   ? '/mdgpt' + program.foto : '',
+        img: program.foto ? program.foto : '',
         certLink: program.certLink
   ? (program.certLink.startsWith('http') ? program.certLink : 'https://' + program.certLink)
   : '#',

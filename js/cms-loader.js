@@ -54,7 +54,7 @@
     if (sliderTrack && Array.isArray(dataTim)) {
         sliderTrack.innerHTML = "";
         const teamData = dataTim.map(member => ({
-            photo: member.foto ? '/mdgpt' + member.foto : 'assets/img/default-avatar.png',
+            photo: member.foto ? member.foto : 'assets/img/default-avatar.png',
             name: member.nama || '',
             role: member.jabatan || ''
         }));

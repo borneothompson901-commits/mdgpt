@@ -472,7 +472,7 @@
 
     data.forEach((m) => {
       const fotoSrc = m.foto
-        ? (m.foto.indexOf('/uploads/') === 0 ? '/mdgpt' + m.foto : m.foto)
+        ? (m.foto.indexOf('/uploads/') === 0 ? m.foto : m.foto)
         : 'assets/img/default-avatar.png';
 
       const exps = [m.exp1, m.exp2, m.exp3, m.exp4, m.exp5]

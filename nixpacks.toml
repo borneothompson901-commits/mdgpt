@@ -1,5 +1,0 @@
-[phases.install]
-cmds = []
-
-[start]
-cmd = "sed -i 's|try_files \\$uri \\$uri/|try_files \\$uri \\$uri/ \\$uri.html|' /nginx.conf && php-fpm -D && nginx -g 'daemon off;'"

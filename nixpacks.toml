@@ -1,5 +1,5 @@
-[phases.setup]
-nixPkgs = []
+[phases.install]
+cmds = []
 
 [start]
 cmd = "sed -i 's/http {/http {\\n    client_max_body_size 100M;/' /nginx.conf && php-fpm & nginx"

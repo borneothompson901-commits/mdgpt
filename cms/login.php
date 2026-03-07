@@ -1,10 +1,11 @@
 <?php
 session_start();
-
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $u = $_POST["username"] ?? "";
   $p = $_POST["password"] ?? "";
-  if ($u === "admin" && $p === "admin123") {
+  $valid_user = getenv("CMS_USER") ?: "admin";
+  $valid_pass = getenv("CMS_PASS") ?: "admin123";
+  if ($u === $valid_user && $p === $valid_pass) {
     $_SESSION["admin"] = true;
     header("Location: /cms.php");
     exit;

@@ -1,1 +1,3 @@
-<?php echo "Halo Dunia PHP"; ?>.
+<?php
+echo "Server MDGPT Aktif";
+?>

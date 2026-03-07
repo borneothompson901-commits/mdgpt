@@ -1243,7 +1243,7 @@ function mediaThumb(val, initials, color) {
         return '<div class="thumb"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#CBD5E1" stroke-width="1.3"/><path d="M2 10l3.5-3.5 3 3 2-2 3.5 3.5" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
     }
     if (val.indexOf('/uploads/') === 0) {
-        var fixedPath = '/mdgpt' + val;
+        var fixedPath = val;
         return '<div class="thumb"><img src="' + fixedPath + '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:4px;"/></div>';
     }
 
@@ -1538,7 +1538,7 @@ function openModal(title, rowData) {
                 if (val.indexOf('data:image') === 0) {
                     existingImg = val;
                 } else if (val.indexOf('/uploads/') === 0) {
-                    existingImg = '/mdgpt' + val;
+                    existingImg = val;
                 } else if (val.indexOf('/') === 0) {
                     existingImg = val;
                 }

@@ -1,7 +1,0 @@
-[phases.install]
-cmds = []
-
-[phases.build]
-cmds = [
-  "sed -i 's|location ~ \\.php$|location / {\\n        try_files $uri $uri/ $uri.html =404;\\n    }\\n\\n    location ~ \\.php$|' /nginx.conf"
-]

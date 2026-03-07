@@ -24,7 +24,7 @@
   function imgPath(p) {
     if (!p) return '';
     if (p.indexOf('http') === 0 || p.indexOf('data:') === 0) return p;
-    if (p.indexOf('/uploads/') === 0) return '/mdgpt' + p;
+    if (p.indexOf('/uploads/') === 0) return p;
     return p;
   }
 

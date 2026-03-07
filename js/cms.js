@@ -824,7 +824,7 @@ function loadDataFromDB(pageType) {
     formData.append('type', pageType);
     var seedData = db[pageType] ? db[pageType].slice() : [];
 
-    return fetch('api/save-cms-data.php', {
+    return fetch('/api/save-cms-data.php', {
             method: 'POST',
             body: formData
         })
@@ -1457,7 +1457,7 @@ saveFormData.append('action', 'save');
 saveFormData.append('type', 'webinar');
 saveFormData.append('data', JSON.stringify(allData));
 
-    fetch('api/save-cms-data.php', {
+    fetch('/api/save-cms-data.php', {
             method: 'POST',
             body: saveFormData
         })
@@ -1648,7 +1648,7 @@ async function saveSectionModal() {
     saveFormData.append('type', activeSectionKey);
     saveFormData.append('data', JSON.stringify(allData));
 
-    var response = await fetch('api/save-cms-data.php', { method: 'POST', body: saveFormData });
+    var response = await fetch('/api/save-cms-data.php', { method: 'POST', body: saveFormData });
     var result = await response.json();
 
     if (result.error) {
@@ -1754,7 +1754,7 @@ document.getElementById('modalSave').addEventListener('click', async function() 
         saveFormData.append('type', currentPage);
         saveFormData.append('data', JSON.stringify(allData));
 
-        var response = await fetch('api/save-cms-data.php', {
+        var response = await fetch('/api/save-cms-data.php', {
             method: 'POST',
             body: saveFormData
         });
@@ -1782,7 +1782,7 @@ function uploadFile(file) {
         var formData = new FormData();
         formData.append("file", file);
 
-        fetch("api/upload-file.php", {
+        fetch("/api/upload-file.php", {
                 method: "POST",
                 body: formData
             })
@@ -1829,7 +1829,7 @@ document.getElementById('confirmDelete').addEventListener('click', function() {
             deleteFormData.append('type', currentPage);
             deleteFormData.append('ids', JSON.stringify(deletingIds));
 
-            fetch('api/save-cms-data.php', {
+            fetch('/api/save-cms-data.php', {
                     method: 'POST',
                     body: deleteFormData
                 })
@@ -1854,7 +1854,7 @@ document.getElementById('confirmDelete').addEventListener('click', function() {
             deleteFormData.append('type', currentPage);
             deleteFormData.append('id', deletingId);
 
-            fetch('api/save-cms-data.php', {
+            fetch('/api/save-cms-data.php', {
                     method: 'POST',
                     body: deleteFormData
                 })

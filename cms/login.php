@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $p = $_POST["password"] ?? "";
   if ($u === "admin" && $p === "admin123") {
     $_SESSION["admin"] = true;
-    header("Location: /mdgpt/cms.php");
+    header("Location: /cms.php");
     exit;
   }
   $error = "Username atau password salah.";

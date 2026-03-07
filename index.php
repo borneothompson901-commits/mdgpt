@@ -1,1 +1,1 @@
-<?php include 'index.html'; ?>
+<?php echo "Halo Dunia PHP"; ?>.

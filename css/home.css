@@ -1003,7 +1003,7 @@
 .cta-inner {
    width: 100%;
    border-radius: var(--radius-md);
-   background: url("/mdgpt/assets/img/hero.avif") center center / cover no-repeat;
+   background: url("/assets/img/hero.avif") center center / cover no-repeat;
    display: flex;
    align-items: center;
    justify-content: center;

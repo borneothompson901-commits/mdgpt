@@ -23,4 +23,4 @@ RUN mkdir -p /run/php
 
 EXPOSE 80
 
-CMD php-fpm8.2 -D && nginx -g 'daemon off;'
+CMD php-fpm -D && nginx -g 'daemon off;'

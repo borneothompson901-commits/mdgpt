@@ -1,4 +1,16 @@
-<?php require __DIR__ . "/cms/auth_guard.php"; ?>
+
+<?php 
+// 1. Paksa PHP ngeluarin error di layar
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// 2. Cek apakah file auth_guard beneran ada di sana
+if (!file_exists(__DIR__ . "/cms/auth_guard.php")) {
+    die("Waduh bre, file auth_guard.php GAK KETEMU di: " . __DIR__ . "/cms/auth_guard.php");
+}
+
+require __DIR__ . "/cms/auth_guard.php"; 
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>

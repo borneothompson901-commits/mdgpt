@@ -40,7 +40,7 @@ button{cursor:pointer}
 <div class="topbar">
   <h1>CMS Editor</h1>
   <div>
- <a href="/mdgpt/cms.php">Dashboard</a>
+ <a href="/cms.php">Dashboard</a>
     <a href="logout.php">Logout</a>
   </div>
 </div>
@@ -84,7 +84,7 @@ document.querySelectorAll(".save_btn").forEach(btn=>{
     fd.append("id", id);
     fd.append("body", body);
 
-    const res = await fetch("/mdgpt/api/update_content.php",{method:"POST",body:fd});
+    const res = await fetch("/api/update_content.php",{method:"POST",body:fd});
     const j = await res.json();
 
     const msg = document.getElementById("msg_"+id);

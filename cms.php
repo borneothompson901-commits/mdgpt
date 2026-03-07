@@ -1,14 +1,4 @@
-<?php
-ob_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-if (!file_exists(__DIR__ . "/cms/auth_guard.php")) {
-    die("File auth_guard.php GAK KETEMU di: " . __DIR__ . "/cms/auth_guard.php");
-}
-
-require __DIR__ . "/cms/auth_guard.php";
-?>
+<?php require __DIR__ . "/cms/auth_guard.php"; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>M-DGPT Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" href="assets/icons/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/workshop.css" />
+    <link rel="preload" as="image" href="assets/icons/logo.png">
+  </head>
+  <body>
+    <nav class="navbar" id="navbar">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo" aria-label="Home">
+          <img src="assets/icons/logo.png" alt="Logo" class="logo-img" width="48" height="48" />
+        </a>
+        <ul class="nav-links" id="navLinks">
+          <li>
+            <a href="index.html" class="nav-link" data-page="Overview">Beranda</a>
+          </li>
+          <li>
+            <a href="layanan.html" class="nav-link" data-page="Solutions">Layanan</a>
+          </li>
+          <li>
+            <a href="workshop.html" class="nav-link active" data-page="Platform">Webinar & Workshop</a>
+          </li>
+          <li>
+            <a href="member.html" class="nav-link" data-page="Resources">Member</a>
+          </li>
+        </ul>
+        <div class="nav-cta">
+          <a href="https://wa.me/6287777222572" class="btn-cta" target="_blank" rel="noopener noreferrer">Konsultasi Sekarang</a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div class="mobile-menu" id="mobileMenu">
+        <ul class="mobile-links">
+          <li>
+            <a href="index.html" class="mobile-link">Beranda</a>
+          </li>
+          <li>
+            <a href="layanan.html" class="mobile-link">Layanan</a>
+          </li>
+          <li>
+            <a href="workshop.html" class="mobile-link active">Webinar & Workshop</a>
+          </li>
+          <li>
+            <a href="member.html" class="mobile-link">Member</a>
+          </li>
+        </ul>
+        <div class="mobile-cta">
+          <a href="https://wa.me/6287777222572" class="btn-cta-mobile" target="_blank" rel="noopener noreferrer">Konsultasi Sekarang</a>
+        </div>
+      </div>
+    </nav>
+    <main class="page">
+      <section class="hero" id="hero" aria-label="Hero section">
+        <svg class="hero__bg-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.12)" />
+            </pattern>
+            <pattern id="circuit" x="0" y="0" width="160" height="160" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="40" x2="60" y2="40" stroke="rgba(177,4,255,0.18)" stroke-width="1" />
+              <line x1="100" y1="40" x2="160" y2="40" stroke="rgba(4,123,254,0.18)" stroke-width="1" />
+              <line x1="80" y1="0" x2="80" y2="60" stroke="rgba(57,61,245,0.15)" stroke-width="1" />
+              <line x1="80" y1="100" x2="80" y2="160" stroke="rgba(169,26,182,0.15)" stroke-width="1" />
+              <rect x="58" y="38" width="4" height="4" rx="1" fill="rgba(177,4,255,0.3)" />
+              <rect x="98" y="38" width="4" height="4" rx="1" fill="rgba(4,123,254,0.3)" />
+              <rect x="78" y="58" width="4" height="4" rx="1" fill="rgba(57,61,245,0.3)" />
+              <rect x="78" y="98" width="4" height="4" rx="1" fill="rgba(169,26,182,0.3)" />
+              <polyline points="0,120 30,120 30,160" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1" />
+              <polyline points="160,80 130,80 130,0" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1" />
+            </pattern>
+            <radialGradient id="bgFade" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="white" stop-opacity="1" />
+              <stop offset="100%" stop-color="white" stop-opacity="0" />
+            </radialGradient>
+            <mask id="bgMask">
+              <rect width="100%" height="100%" fill="url(#bgFade)" />
+            </mask>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#dots)" mask="url(#bgMask)" opacity="0.5" />
+          <rect width="100%" height="100%" fill="url(#circuit)" mask="url(#bgMask)" />
+        </svg>
+        <div class="hero__orb hero__orb--1" aria-hidden="true"></div>
+        <div class="hero__orb hero__orb--2" aria-hidden="true"></div>
+        <div class="hero__orb hero__orb--3" aria-hidden="true"></div>
+        <div class="hero__ticker" aria-hidden="true">
+          <div class="hero__ticker-track">
+            <span>Workshop</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Webinar</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Praktisi</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Naek Level</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Teknologi</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Skill Up</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Workshop</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Webinar</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Praktisi</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Naek Level</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Teknologi</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Skill Up</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Workshop</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Webinar</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Praktisi</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Naek Level</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Teknologi</span>
+            <span class="hero__ticker-sep">✦</span>
+            <span>Skill Up</span>
+            <span class="hero__ticker-sep">✦</span>
+          </div>
+        </div>
+        <div class="hero__inner">
+          <h1 class="hero__headline" aria-label="Program Webinar dan Workshop yang Relevan">
+            <span class="hero__line">
+              <span class="hero__word">Program</span>
+              <span class="hero__word hero__word--grad">Webinar</span>
+            </span>
+            <span class="hero__line">
+              <span class="hero__word">dan</span>
+              <span class="hero__word hero__word--grad">Workshop</span>
+            </span>
+            <span class="hero__line">
+              <span class="hero__word">yang Relevan</span>
+            </span>
+          </h1>
+          <p class="hero__sub"> Saatnya Naek Level Bersama <em>Praktisi Berpengalaman</em>
+          </p>
+          <div class="hero__cta-row">
+            <a href="workshop.html#catalog" class="hero__btn">
+              <span>Lihat Program</span>
+              <span class="hero__btn-icon">→</span>
+              <span class="hero__btn-shine" aria-hidden="true"></span>
+            </a>
+          </div>
+        </div>
+        <div class="hero__glimmer" aria-hidden="true"></div>
+      </section>
+      <section class="cat" id="catalog" aria-label="Katalog Webinar dan Workshop">
+        <div class="cat__header">
+          <div class="cat__toolbar" role="search">
+            <div class="cat__search-wrap">
+              <svg class="cat__search-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6" />
+                <path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              </svg>
+              <input class="cat__search-input" id="catSearch" type="search" placeholder="Cari program…" autocomplete="off" aria-label="Cari program" />
+              <button class="cat__search-clear" id="catSearchClear" aria-label="Hapus pencarian" hidden>
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </button>
+            </div>
+            <div class="cat__dropdown" id="catDropdown" role="combobox" aria-haspopup="listbox" aria-expanded="false">
+              <button class="cat__dropdown-btn" id="catDropdownBtn" type="button">
+                <svg class="cat__dropdown-cal" viewBox="0 0 18 18" fill="none">
+                  <rect x="1.5" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="1.4" />
+                  <path d="M1.5 7h15" stroke="currentColor" stroke-width="1.4" />
+                  <path d="M6 1.5v3M12 1.5v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                </svg>
+                <span class="cat__dropdown-label" id="catDropdownLabel">Semua Bulan</span>
+                <svg class="cat__dropdown-chevron" viewBox="0 0 12 8" fill="none">
+                  <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <ul class="cat__dropdown-list" id="catDropdownList" role="listbox"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="cat__empty" id="catEmpty" hidden aria-live="polite">
+          <svg viewBox="0 0 48 48" fill="none">
+            <circle cx="21" cy="21" r="14" stroke="currentColor" stroke-width="2" />
+            <path d="M31 31L43 43" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M16 21h10M21 16v10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <p>Tidak ada program yang cocok.</p>
+          <button class="cat__empty-reset" id="catEmptyReset">Reset Filter</button>
+        </div>
+        <div class="cat__grid" id="catGrid" aria-live="polite"></div>
+      </section>
+      <section class="testi" id="testi" aria-label="Testimoni Peserta">
+        <div class="testi__bg" aria-hidden="true"></div>
+        <div class="testi__inner">
+          <div class="testi__head">
+            <span class="testi__quote-mark" aria-hidden="true">"</span>
+            <div class="testi__head-text">
+              <h2 class="testi__title">Kata Mereka yang <br>Sudah Bergabung </h2>
+            </div>
+          </div>
+          <div class="testi__slider" role="region" aria-label="Carousel testimoni">
+            <div class="testi__track" id="testiTrack">
+              <article class="testi__card">
+                <blockquote class="testi__text">"Kerenn, dapat banyak pengetahuan baru yang bermanfaat."</blockquote>
+                <footer class="testi__footer">
+                  <div class="testi__avatar" aria-hidden="true">WS</div>
+                  <div class="testi__meta">
+                    <p class="testi__name">Windi S.</p>
+                    <p class="testi__role">Peserta Kelas AI DGPT</p>
+                  </div>
+                </footer>
+              </article>
+              <article class="testi__card">
+                <blockquote class="testi__text">"Layanan fast respon dan sangat asik, banyak nambah wawasan, thank you Ce Femi."</blockquote>
+                <footer class="testi__footer">
+                  <div class="testi__avatar" aria-hidden="true">MG</div>
+                  <div class="testi__meta">
+                    <p class="testi__name">Mery Gultom</p>
+                    <p class="testi__role">Peserta Kelas AI DGPT</p>
+                  </div>
+                </footer>
+              </article>
+              <article class="testi__card testi__card--featured">
+                <blockquote class="testi__text">"Sangat puas dengan materi dan layanan DGPT yang diberikan. Menambah ilmu, wawasan dan pengetahuan yang benar dan positif tentang dunia digital yang berkembang pesat. Saya mengapresiasi dengan ucapan terimakasih sebesarnya untuk kesempatan belajar bersama di kelas DGPT."</blockquote>
+                <footer class="testi__footer">
+                  <div class="testi__avatar" aria-hidden="true">RS</div>
+                  <div class="testi__meta">
+                    <p class="testi__name">Ramon Salvator</p>
+                    <p class="testi__role">Peserta Kelas AI DGPT</p>
+                  </div>
+                </footer>
+              </article>
+              <article class="testi__card">
+                <blockquote class="testi__text">"Materi yang diberikan sangat mudah dimengerti karena selalu dilengkapi contoh dan praktik. Tidak pernah takut ketinggalan karena selalu ada file PDF dan video yang bisa dipelajari ulang."</blockquote>
+                <footer class="testi__footer">
+                  <div class="testi__avatar" aria-hidden="true">MT</div>
+                  <div class="testi__meta">
+                    <p class="testi__name">Martina</p>
+                    <p class="testi__role">Peserta Kelas AI DGPT</p>
+                  </div>
+                </footer>
+              </article>
+              <article class="testi__card">
+                <blockquote class="testi__text">"Materi disajikan ringkas dan mudah dipahami. Semua sumber belajar dan informasi diberikan dengan limpah."</blockquote>
+                <footer class="testi__footer">
+                  <div class="testi__avatar" aria-hidden="true">HL</div>
+                  <div class="testi__meta">
+                    <p class="testi__name">Henny Listyowati</p>
+                    <p class="testi__role">Peserta Kelas AI DGPT</p>
+                  </div>
+                </footer>
+              </article>
+              <article class="testi__card">
+                <blockquote class="testi__text">"Materi yang diberikan bagus dan sesuai dengan apa yang ingin dipelajari, dimulai dari yang paling mudah sehingga bisa dimengerti."</blockquote>
+                <footer class="testi__footer">
+                  <div class="testi__avatar" aria-hidden="true">TV</div>
+                  <div class="testi__meta">
+                    <p class="testi__name">Tjio Vonny H.</p>
+                    <p class="testi__role">Peserta Kelas AI DGPT</p>
+                  </div>
+                </footer>
+              </article>
+              <article class="testi__card">
+                <blockquote class="testi__text">"Yang menarik saja sudah sangat lengkap. Sering menyimak, kalau tidak mengerti browsing sendiri. Sejauh ini masih bisa diikuti dengan baik."</blockquote>
+                <footer class="testi__footer">
+                  <div class="testi__avatar" aria-hidden="true">JN</div>
+                  <div class="testi__meta">
+                    <p class="testi__name">Jeanny</p>
+                    <p class="testi__role">Peserta Kelas AI DGPT</p>
+                  </div>
+                </footer>
+              </article>
+              <article class="testi__card">
+                <blockquote class="testi__text">"Seru jadi makin ngerti A buat apa B buat apa. Belajar pelan-pelan yang penting paham & bisa praktek. Harga sangat terjangkau, bonus video rekaman. TOP BGT!"</blockquote>
+                <footer class="testi__footer">
+                  <div class="testi__avatar" aria-hidden="true">AS</div>
+                  <div class="testi__meta">
+                    <p class="testi__name">Anigar S.</p>
+                    <p class="testi__role">Peserta Kelas AI DGPT</p>
+                  </div>
+                </footer>
+              </article>
+            </div>
+          </div>
+          <div class="testi__controls">
+            <div class="testi__progress" id="testiProgress" aria-hidden="true">
+              <div class="testi__progress-fill" id="testiProgressFill"></div>
+            </div>
+            <div class="testi__nav">
+              <button class="testi__btn" id="testiBtnPrev" aria-label="Sebelumnya">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M12 5L7 10L12 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              <button class="testi__btn" id="testiBtnNext" aria-label="Berikutnya">
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M8 5L13 10L8 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="faq-section" id="faq">
+        <div class="faq-inner">
+          <div class="faq-header">
+            <h2 class="faq-headline">Yang Sering Ditanyakan</h2>
+            <p class="faq-subtext">Temukan jawaban atas pertanyaan umum seputar program webinar &amp; workshop kami.</p>
+          </div>
+          <div class="faq-list">
+            <div class="faq-item">
+              <button class="faq-trigger" aria-expanded="false" aria-controls="faq-panel-1">
+                <span class="faq-trigger__q">Siapa saja yang cocok mengikuti webinar / workshop ini?</span>
+                <span class="faq-trigger__icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M3.75 9H14.25M9 3.75L14.25 9L9 14.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              <div class="faq-panel" id="faq-panel-1" role="region">
+                <div class="faq-panel__inner">
+                  <p>Program kami cocok untuk UMKM, perusahaan, institusi pendidikan, komunitas, maupun tim internal yang ingin meningkatkan pemahaman dan keterampilan di bidang digital.</p>
+                </div>
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-trigger" aria-expanded="false" aria-controls="faq-panel-2">
+                <span class="faq-trigger__q">Apakah peserta akan mendapatkan materi atau rekaman?</span>
+                <span class="faq-trigger__icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M3.75 9H14.25M9 3.75L14.25 9L9 14.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              <div class="faq-panel" id="faq-panel-2" role="region">
+                <div class="faq-panel__inner">
+                  <p>Ya. Peserta akan mendapatkan rekaman Zoom sesi online agar dapat dipelajari kembali setelah acara berlangsung.</p>
+                </div>
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-trigger" aria-expanded="false" aria-controls="faq-panel-3">
+                <span class="faq-trigger__q">Apakah peserta mendapatkan sertifikat?</span>
+                <span class="faq-trigger__icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M3.75 9H14.25M9 3.75L14.25 9L9 14.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              <div class="faq-panel" id="faq-panel-3" role="region">
+                <div class="faq-panel__inner">
+                  <p>Peserta akan mendapatkan sertifikat apabila mengikuti workshop berbayar saja.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="faq-footer">
+            <div class="faq-footer__left">
+              <strong class="faq-footer__title">Masih ada pertanyaan lain?</strong>
+              <p class="faq-footer__desc">Jika ada pertanyaan lain atau butuh informasi lebih lanjut, jangan ragu untuk menghubungi kami. Kami siap membantu Anda!</p>
+            </div>
+            <a href="https://wa.me/6287777222572" class="faq-footer__cta">Hubungi Kami</a>
+          </div>
+        </div>
+      </section>
+      <section class="vid-section" id="videos">
+        <div class="vid-inner">
+          <div class="vid-grid">
+            <div class="vid-card">
+              <div class="vid-card__embed-wrap">
+                <iframe class="vid-card__iframe" src="https://www.youtube.com/embed/jeTWW8zipGo" title="Workshop Digital Marketing — Sesi 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+              </div>
+              <div class="vid-card__meta">
+                <span class="vid-card__tag">AI & Automation</span>
+                <h3 class="vid-card__title">Ancaman PHK & Jobs Killer 2026? AI & Automation Adalah Skill Wajib Untuk Selamat!</h3>
+              </div>
+            </div>
+            <div class="vid-card">
+              <div class="vid-card__embed-wrap">
+                <iframe class="vid-card__iframe" src="https://www.youtube.com/embed/c4cXUlsRGGM" title="Webinar Transformasi Digital — Highlight" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+              </div>
+              <div class="vid-card__meta">
+                <span class="vid-card__tag">Automation N8N Workshop</span>
+                <h3 class="vid-card__title">Podcast bersama Kang Hasanudin Abdurakhman : Masa Depan Dunia Usaha dan Kerja di Era AI</h3>
+              </div>
+            </div>
+            <div class="vid-card">
+              <div class="vid-card__embed-wrap">
+                <iframe class="vid-card__iframe" src="https://www.youtube.com/embed/DI1vDVlZzpw" title="Testimonial Peserta Program" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+              </div>
+              <div class="vid-card__meta">
+                <span class="vid-card__tag">Webinar</span>
+                <h3 class="vid-card__title">Semua Kerjaan Pakai AI, Terus Aku Ngapain?</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="cta-section">
+        <div class="cta-inner">
+          <a href="https://wa.me/6287777222572" class="cta-btn" id="ctaBtn" target="_blank" rel="noopener noreferrer">
+            <svg class="cta-wa" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.549 4.107 1.51 5.845L.057 23.428a.75.75 0 0 0 .92.92l5.638-1.453A11.944 11.944 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.7-.498-5.257-1.371l-.376-.217-3.898 1.004 1.022-3.793-.23-.389A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />
+            </svg>
+            <span>Mau Tanya-Tanya</span>
+            <div class="cta-shine"></div>
+          </a>
+        </div>
+      </section>
+    </main>
+    <footer class="footer" role="contentinfo">
+      <div class="footer__inner">
+        <div class="footer__col footer__col--brand">
+          <div class="footer__logos">
+            <img src="assets/icons/logo.png" alt="MDGPT Agency" class="footer__logo-img" loading="lazy" />
+            <img src="assets/icons/logo2.png" alt="Naek Level" class="footer__logo-img" loading="lazy" />
+          </div>
+          <p class="footer__legal">CV Indomarketing Digital Teknologi</p>
+          <address class="footer__address"> Jl. Simo Gn. Bar. Tol I No.7, Simomulyo, <br /> Kec. Sukomanunggal, Surabaya </address>
+        </div>
+        <div class="footer__col">
+          <h3 class="footer__heading">Informasi</h3>
+          <ul class="footer__links">
+            <li>
+              <a href="index.html" class="footer__link">Beranda</a>
+            </li>
+            <li>
+              <a href="layanan.html" class="footer__link">Layanan</a>
+            </li>
+            <li>
+              <a href="workshop.html" class="footer__link">Info Webinar &amp; Workshop</a>
+            </li>
+            <li>
+              <a href="member.html" class="footer__link">Member Tahunan</a>
+            </li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h3 class="footer__heading">Layanan</h3>
+          <ul class="footer__links">
+            <li>
+              <a href="layanan.html#services" class="footer__link">Social Media Service</a>
+            </li>
+            <li>
+              <a href="layanan.html#services" class="footer__link">Digital Ads Service</a>
+            </li>
+            <li>
+              <a href="layanan.html#services" class="footer__link">Digital Workshop Service</a>
+            </li>
+            <li>
+              <a href="layanan.html#services" class="footer__link">Business Process Automation</a>
+            </li>
+            <li>
+              <a href="layanan.html#services" class="footer__link">Event Documentation</a>
+            </li>
+            <li>
+              <a href="layanan.html#services" class="footer__link">Generate Content Publishing</a>
+            </li>
+          </ul>
+        </div>
+        <div class="footer__col footer__col--end">
+          <div class="footer__group">
+            <h3 class="footer__heading">Ikuti Kami</h3>
+            <ul class="footer__links">
+              <li>
+                <a href="https://www.instagram.com/mdgpt_agency/" class="footer__link footer__link--icon" target="_blank" rel="noopener noreferrer">
+                  <span class="footer__icon-sq footer__icon-sq--ig" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" />
+                      <circle cx="12" cy="12" r="4" />
+                      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+                    </svg>
+                  </span> @mdgpt_agency </a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/company/m-dgpt-agency" class="footer__link footer__link--icon" target="_blank" rel="noopener noreferrer">
+                  <span class="footer__icon-sq footer__icon-sq--li" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>
+                  </span> M-DGPT Agency </a>
+              </li>
+            </ul>
+          </div>
+          <div class="footer__group">
+            <h3 class="footer__heading">Hubungi Kami</h3>
+            <ul class="footer__links">
+              <li>
+                <a href="https://wa.me/6287777222572" class="footer__link footer__link--icon" target="_blank" rel="noopener noreferrer">
+                  <span class="footer__icon-sq footer__icon-sq--wa" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                  </span> 0877 7722 2572 </a>
+              </li>
+              <li>
+                <a href="mailto:indomarketingdigitalteknologi@gmail.com" class="footer__link footer__link--icon">
+                  <span class="footer__icon-sq footer__icon-sq--em" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                  </span> indomarketingdigitalteknologi@gmail.com </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <div class="footer__bottom-inner">
+          <p class="footer__copy">&copy; <span id="footer-year"></span> CV Indomarketing Digital Teknologi. Hak cipta dilindungi. </p>
+        </div>
+      </div>
+    </footer>
+    <script src="js/global.js" defer></script>
+    <script src="js/cms-loader.js" defer></script>
+    <script src="js/workshop.js" defer></script>
+  </body>
+</html>

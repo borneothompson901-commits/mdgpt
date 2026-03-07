@@ -53,12 +53,10 @@
         });
     });
 
-    // Wrap span buat animasi — pakai teks HTML asli dulu
     const ctaBtn       = document.querySelector('.btn-cta');
     const ctaBtnMobile = document.querySelector('.btn-cta-mobile');
     if (ctaBtn) ctaBtn.innerHTML = '<span>' + ctaBtn.textContent.trim() + '</span>';
 
-    // Auto-prefix https://
     function fixLink(url) {
         if (!url || !url.trim()) return null;
         url = url.trim();
@@ -66,12 +64,11 @@
         return 'https://' + url;
     }
 
-    // ── CTA Navbar dari CMS ──────────────────────────────────────────
     const HREF_MAP = {
-        'index.html':    'Beranda',
-        'layanan.html':  'Layanan',
-        'workshop.html': 'Webinar',
-        'member.html':   'Member',
+        'index':    'Beranda',
+        'layanan':  'Layanan',
+        'workshop': 'Webinar',
+        'member':   'Member',
     };
 
     const activeLink  = document.querySelector('.nav-link.active');
@@ -89,7 +86,6 @@
                 const teks = (row.textNavbar || '').trim();
                 const link = fixLink(row.linkNavbar);
 
-                // Hanya update kalau CMS ada isinya — kalau kosong biarkan HTML asli
                 if (ctaBtn) {
                     if (teks) ctaBtn.innerHTML = '<span>' + teks + '</span>';
                     if (link) ctaBtn.href = link;
@@ -99,7 +95,7 @@
                     if (link) ctaBtnMobile.href = link;
                 }
             })
-            .catch(function() { /* fallback HTML asli tetap */ });
+            .catch(function() {});
     }
 
 })();
@@ -110,7 +106,6 @@
     var btn = document.getElementById('ctaBtn');
     if (!btn) return;
 
-    // Animasi shine
     var shine = btn.querySelector('.cta-shine');
     var observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
@@ -123,7 +118,6 @@
     }, { threshold: 0.5 });
     observer.observe(btn);
 
-    // Auto-prefix https://
     function fixLink(url) {
         if (!url || !url.trim()) return null;
         url = url.trim();
@@ -131,12 +125,11 @@
         return 'https://' + url;
     }
 
-    // Deteksi halaman dari nav-link.active
     var HREF_MAP = {
-        'index.html':    'Beranda',
-        'layanan.html':  'Layanan',
-        'workshop.html': 'Webinar',
-        'member.html':   'Member',
+        'index':    'Beranda',
+        'layanan':  'Layanan',
+        'workshop': 'Webinar',
+        'member':   'Member',
     };
     var activeLink    = document.querySelector('.nav-link.active');
     var activeHref    = activeLink ? activeLink.getAttribute('href') : null;
@@ -154,13 +147,12 @@
             var teks = (row.textFooter || '').trim();
             var link = fixLink(row.linkFooter);
 
-            // Hanya update kalau CMS ada isinya
             if (teks) {
                 var span = btn.querySelector('span');
                 if (span) span.textContent = teks;
             }
             if (link) btn.href = link;
         })
-        .catch(function() { /* fallback HTML asli */ });
+        .catch(function() {});
 
 })();

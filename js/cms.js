@@ -848,7 +848,7 @@ function loadDataFromDB(pageType) {
 
 function setPage(page) {
     currentPage = page;
-
+    activeSectionKey = null;
     document.getElementById('breadcrumbText').textContent = pages[page].label;
     document.querySelectorAll('.nav-item, .nav-sub').forEach(function(el) {
         el.classList.remove('active');
@@ -1816,6 +1816,7 @@ function closeConfirm() {
     confirmBackdrop.classList.remove('open');
     deletingId = null;
     deletingIds = [];
+    activeSectionKey = null;
     document.getElementById('confirmTitle').textContent = 'Hapus data ini?';
 }
 document.getElementById('confirmClose').addEventListener('click', closeConfirm);
@@ -1825,6 +1826,8 @@ confirmBackdrop.addEventListener('click', function(e) {
 });
 document.getElementById('confirmDelete').addEventListener('click', function() {
     try {
+        var cfg = pages[currentPage];
+        var isMulti = cfg && cfg.multiSection;
         var targetType = activeSectionKey || currentPage; 
         var deleteFormData = new FormData();
 

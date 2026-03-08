@@ -717,14 +717,14 @@ function renderSectionTable(sec, filter) {
         });
     });
     tbody.querySelectorAll('.sec-btn-del').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            activeSectionKey = btn.dataset.seckey;
-            deletingId = btn.dataset.id;
-            deletingIds = [];
-            document.getElementById('confirmTitle').textContent = 'Hapus data ini?';
-            confirmBackdrop.classList.add('open');
-        });
+    btn.addEventListener('click', function() {
+        activeSectionKey = btn.dataset.seckey;
+        deletingId = btn.dataset.id;
+        deletingIds = []; 
+        document.getElementById('confirmTitle').textContent = 'Hapus data ini?';
+        confirmBackdrop.classList.add('open');
     });
+});
     tbody.querySelectorAll('.row-check').forEach(function(cb) {
         cb.addEventListener('change', function() {
             updateSectionBulkBar(sec);
@@ -1664,6 +1664,7 @@ async function saveSectionModal() {
 }
 document.getElementById('modalSave').addEventListener('click', async function() {
     try {
+        var targetType = activeSectionKey || currentPage;
         if (currentPage === 'webinar') {
             saveWebinar();
             return;
@@ -1674,7 +1675,7 @@ document.getElementById('modalSave').addEventListener('click', async function() 
             return;
         }
 
-        var existing = editingId ? (db[currentPage].find(function(r) {
+        var existing = editingId ? (db[targetType].find(function(r) {
             return r.id === editingId;
         }) || {}) : {};
         var row = Object.assign({}, existing, {
@@ -1737,7 +1738,7 @@ document.getElementById('modalSave').addEventListener('click', async function() 
             row.role = row.jabatan || '';
         }
 
-        var allData = Array.isArray(db[currentPage]) ? [...db[currentPage]] : [];
+        var allData = Array.isArray(db[targetType]) ? [...db[targetType]] : [];
 
         if (editingId) {
             var idx = allData.findIndex(function(r) {
@@ -1752,7 +1753,7 @@ document.getElementById('modalSave').addEventListener('click', async function() 
 
         var saveFormData = new FormData();
         saveFormData.append('action', 'save');
-        saveFormData.append('type', currentPage);
+        saveFormData.append('type', targetType);
         saveFormData.append('data', JSON.stringify(allData));
 
         var response = await fetch('/api/save-cms-data.php', {
@@ -1767,7 +1768,7 @@ document.getElementById('modalSave').addEventListener('click', async function() 
             return;
         }
 
-        db[currentPage] = allData;
+        db[targetType] = allData;
 
         closeModal();
         renderTable(document.getElementById('searchInput').value);
@@ -1824,59 +1825,53 @@ confirmBackdrop.addEventListener('click', function(e) {
 });
 document.getElementById('confirmDelete').addEventListener('click', function() {
     try {
+        var targetType = activeSectionKey || currentPage; 
+        var deleteFormData = new FormData();
+
         if (deletingIds.length > 0) {
-            var deleteFormData = new FormData();
             deleteFormData.append('action', 'delete_bulk');
-            deleteFormData.append('type', currentPage);
+            deleteFormData.append('type', targetType);
             deleteFormData.append('ids', JSON.stringify(deletingIds));
-
-            fetch('/api/save-cms-data.php', {
-                    method: 'POST',
-                    body: deleteFormData
-                })
-                .then(function(r) {
-                    return r.json();
-                })
-                .then(function(result) {
-                    if (!result.error) {
-                        db[currentPage] = db[currentPage].filter(function(r) {
-                            return deletingIds.indexOf(r.id) === -1;
-                        });
-                        showLimitToast('Data dihapus!');
-                    } else {
-                        showLimitToast('Error: ' + result.error);
-                    }
-                    closeConfirm();
-                    renderTable(document.getElementById('searchInput').value);
-                });
         } else if (deletingId) {
-            var deleteFormData = new FormData();
             deleteFormData.append('action', 'delete');
-            deleteFormData.append('type', currentPage);
+            deleteFormData.append('type', targetType);
             deleteFormData.append('id', deletingId);
-
-            fetch('/api/save-cms-data.php', {
-                    method: 'POST',
-                    body: deleteFormData
-                })
-                .then(function(r) {
-                    return r.json();
-                })
-                .then(function(result) {
-                    if (!result.error) {
-                        db[currentPage] = db[currentPage].filter(function(r) {
-                            return r.id !== deletingId;
-                        });
-                        showLimitToast('Data dihapus!');
-                    } else {
-                        showLimitToast('Error: ' + result.error);
-                    }
-                    closeConfirm();
-                    renderTable(document.getElementById('searchInput').value);
-                });
+        } else {
+            return;
         }
+
+        fetch('/api/save-cms-data.php', { method: 'POST', body: deleteFormData })
+            .then(r => r.json())
+            .then(result => {
+                if (!result.error) {
+                    // Update data di memori sesuai targetType
+                    if (deletingIds.length > 0) {
+                        db[targetType] = db[targetType].filter(r => !deletingIds.includes(r.id));
+                    } else {
+                        db[targetType] = db[targetType].filter(r => r.id !== deletingId);
+                    }
+                    
+                    showLimitToast('Data dihapus!');
+                    
+                    // Refresh Tampilan (Anti-Crash)
+                    if (activeSectionKey) {
+                        // Khusus Portofolio (Multi)
+                        var cfg = pages[currentPage];
+                        var sec = cfg.sections.find(s => s.key === activeSectionKey);
+                        if (sec) renderSectionTable(sec, '');
+                    } else {
+                        // Khusus Solo Page (Tim, FAQ, dll)
+                        var sInp = document.getElementById('searchInput');
+                        renderTable(sInp ? sInp.value : '');
+                    }
+                } else {
+                    showLimitToast('Error: ' + result.error);
+                }
+                closeConfirm();
+            });
     } catch (err) {
-        showLimitToast('Error: ' + err.message);
+        console.error("Error Hapus:", err);
+        closeConfirm();
     }
 });
 

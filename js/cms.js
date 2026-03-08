@@ -871,9 +871,10 @@ function setPage(page) {
     var cfg2 = pages[page];
     if (cfg2 && cfg2.multiSection) {
         document.getElementById('content').innerHTML = '<div id="multiSectionWrap"></div>';
-        loadDataFromDB(page).then(function() {
-            renderMultiSection();
-        });
+        var promises = cfg2.sections.map(sec => loadDataFromDB(sec.key));
+            Promise.all(promises).then(function() {
+        renderMultiSection();
+    });
     } else {
         var content = document.getElementById('content');
         content.innerHTML = '<div class="content-inner">' +

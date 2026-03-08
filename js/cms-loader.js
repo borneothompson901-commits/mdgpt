@@ -1,8 +1,5 @@
 (async function () {
   try {
-
-    // Kosongkan teks dummy timeline sebelum fetch — biar ga ada fog
-    // Pattern sama kayak testimoni: clear dulu, isi dari CMS
     document.querySelectorAll('.tl-item').forEach(item => {
         const t = item.querySelector('.tl-item__title');
         const d = item.querySelector('.tl-item__detail');
@@ -21,15 +18,12 @@
     const dataTim    = await resTim.json();
     const dataDesk   = await resDesk.json();
     const dataMateri = await resMateri.json();
-
-    // --- RENDER MENGENAL M-DGPT ---
     if (dataDesk && dataDesk.length > 0) {
         const desk = dataDesk.find(d => d.kategori === 'Mengenal M-DGPT') || dataDesk[0];
         const wwaTexts = document.querySelectorAll('.wwa__text');
         if (wwaTexts[0] && desk.subtext1) wwaTexts[0].innerHTML = desk.subtext1;
         if (wwaTexts[1] && desk.subtext2) wwaTexts[1].innerHTML = desk.subtext2;
 
-        // --- RENDER YOUTUBE ---
         const ytVideos = dataDesk.filter(d => d.kategori && d.kategori.indexOf('Youtube') === 0);
         const vidCards = document.querySelectorAll('.vid-card');
         ytVideos.forEach(function(yt, i) {
@@ -49,7 +43,6 @@
         });
     }
 
-    // --- RENDER SLIDER TIM ---
     const sliderTrack = document.getElementById("sliderTrack");
     if (sliderTrack && Array.isArray(dataTim)) {
         sliderTrack.innerHTML = "";

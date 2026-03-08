@@ -358,7 +358,7 @@ const pages = {
                 key: 'subtext',
                 label: 'Subtext',
                 type: 'text',
-                placeholder: 'Contoh: per bulan'
+                placeholder: 'Contoh: Harga early bird untuk member baru yang daftar lebih awal.'
             }, {
                 key: 'keterangan1',
                 label: 'Keterangan 1',
@@ -424,14 +424,14 @@ Object.keys(pages).forEach(function(k) {
     }
 });
 var biayaSeed = [{
+    kategori: 'Member Baru',
+    tag: 'Regular'
+}, {
     kategori: 'Member Lama',
     tag: 'Early Bird'
 }, {
     kategori: 'Member Baru',
-    tag: 'Early Bird'
-}, {
-    kategori: 'Member Baru',
-    tag: 'Regular'
+    tag: 'Early'
 }, ];
 biayaSeed.forEach(function(b, i) {
     db['biaya'].push({

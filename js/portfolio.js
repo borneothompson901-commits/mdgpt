@@ -191,25 +191,25 @@
     workshop: function(cb) {
       fetch('api/public_contents.php?type=portofolioE_foto', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
-        .then(function(data) { renderGeneric('branding', 'branding', data); cb && cb(); })
+        .then(function(data) { renderGeneric('workshop', 'workshop', data); cb && cb(); })
         .catch(function() { cb && cb(); });
     },
     automation: function(cb) {
       fetch('api/public_contents.php?type=portofolioF_foto', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
-        .then(function(data) { renderGeneric('desain', 'desain', data); cb && cb(); })
+        .then(function(data) { renderGeneric('automation', 'automation', data); cb && cb(); })
         .catch(function() { cb && cb(); });
     },
     ai: function(cb) {
       fetch('api/public_contents.php?type=portofolioG_foto', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
-        .then(function(data) { renderGeneric('website', 'website', data); cb && cb(); })
+        .then(function(data) { renderGeneric('ai', 'ai', data); cb && cb(); })
         .catch(function() { cb && cb(); });
     },
     webapp: function(cb) {
       fetch('api/public_contents.php?type=portofolioH_foto', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
-        .then(function(data) { renderGeneric('video', 'video', data); cb && cb(); })
+        .then(function(data) { renderGeneric('webapp', 'webapp', data); cb && cb(); })
         .catch(function() { cb && cb(); });
     }
   };

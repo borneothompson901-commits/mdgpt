@@ -206,7 +206,75 @@ const pages = {
         sections: [{
             key: 'portofolioD_foto',
             title: 'Foto',
-            sub: 'Ads Marketplace',
+            sub: 'Ads Service',
+            maxRows: 20,
+            columns: ['Media', 'Aksi'],
+            fields: [{
+                key: 'media',
+                label: 'Media (Foto)',
+                type: 'file'
+            }],
+        }, ],
+    },
+    portofolioE: {
+        label: 'Portofolio E',
+        sub: 'Kelola karya dan portofolio - Grup E',
+        multiSection: true,
+        sections: [{
+            key: 'portofolioE_foto',
+            title: 'Foto',
+            sub: 'Workshop Service',
+            maxRows: 20,
+            columns: ['Media', 'Aksi'],
+            fields: [{
+                key: 'media',
+                label: 'Media (Foto)',
+                type: 'file'
+            }],
+        }, ],
+    },
+    portofolioF: {
+        label: 'Portofolio F',
+        sub: 'Kelola karya dan portofolio - Grup F',
+        multiSection: true,
+        sections: [{
+            key: 'portofolioF_foto',
+            title: 'Foto',
+            sub: 'Ads Automation',
+            maxRows: 20,
+            columns: ['Media', 'Aksi'],
+            fields: [{
+                key: 'media',
+                label: 'Media (Foto)',
+                type: 'file'
+            }],
+        }, ],
+    },
+    portofolioG: {
+        label: 'Portofolio G',
+        sub: 'Kelola karya dan portofolio - Grup G',
+        multiSection: true,
+        sections: [{
+            key: 'portofolioG_foto',
+            title: 'Foto',
+            sub: 'AI Service',
+            maxRows: 20,
+            columns: ['Media', 'Aksi'],
+            fields: [{
+                key: 'media',
+                label: 'Media (Foto)',
+                type: 'file'
+            }],
+        }, ],
+    },
+    portofolioH: {
+        label: 'Portofolio H',
+        sub: 'Kelola karya dan portofolio - Grup H',
+        multiSection: true,
+        sections: [{
+            key: 'portofolioH_foto',
+            title: 'Foto',
+            sub: 'Web & APP',
             maxRows: 20,
             columns: ['Media', 'Aksi'],
             fields: [{

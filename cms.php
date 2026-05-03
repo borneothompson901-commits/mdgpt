@@ -94,7 +94,11 @@
       <li><a href="#" class="nav-sub" data-page="portofolioA">Sosial Media Client</a></li>
       <li><a href="#" class="nav-sub" data-page="portofolioB">Dokumentasi Event</a></li>
       <li><a href="#" class="nav-sub" data-page="portofolioC">Foto Produk</a></li>
-      <li><a href="#" class="nav-sub" data-page="portofolioD">Ads Marketplace</a></li>
+      <li><a href="#" class="nav-sub" data-page="portofolioD">Ads Services</a></li>
+      <li><a href="#" class="nav-sub" data-page="portofolioE">Workshop Service</a></li>
+      <li><a href="#" class="nav-sub" data-page="portofolioF">Automation</a></li>
+      <li><a href="#" class="nav-sub" data-page="portofolioG">AI Service</a></li>
+      <li><a href="#" class="nav-sub" data-page="portofolioH">Web & APP</a></li>
     </ul>
   </li>
 </ul>

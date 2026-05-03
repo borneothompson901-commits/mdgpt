@@ -16,9 +16,10 @@
     ink.style.width     = tab.offsetWidth + 'px';
     ink.style.transform = 'translateX(' + tab.offsetLeft + 'px)';
   }
-  var eyeSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+  var eyeSvg    = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
   var expandSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>';
-  var playSvg = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+  var playSvg   = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
   var playSmSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
 
   function imgPath(p) {
@@ -85,15 +86,16 @@
       });
     }
     if (videoEl && Array.isArray(dataVideo) && dataVideo.length) {
-    var vidSrc = imgPath(dataVideo[0].media);
-    videoEl.outerHTML = '<button class="porto-event-item porto-event-item--video porto-event-item--full" ' +
+      var vidSrc = imgPath(dataVideo[0].media);
+      videoEl.outerHTML =
+        '<button class="porto-event-item porto-event-item--video porto-event-item--full" ' +
         'aria-label="Lihat video event" data-index="' + (Array.isArray(dataFoto) ? dataFoto.length : 0) + '" ' +
         'data-type="video" data-src="' + vidSrc + '">' +
         '<video class="porto-video" src="' + vidSrc + '" muted playsinline preload="metadata"></video>' +
         '<div class="porto-reel-item__play">' + playSvg + '</div>' +
         '<div class="porto-video__badge">' + playSmSvg + ' Video</div>' +
         '</button>';
-}
+    }
   }
 
   function renderProduk(data) {
@@ -134,6 +136,26 @@
     });
   }
 
+  function renderGeneric(panelId, type, data) {
+    var panel = section.querySelector('#tab-' + panelId);
+    if (!panel) return;
+    var grid = panel.querySelector('.porto-product-grid');
+    if (!grid || !Array.isArray(data) || !data.length) return;
+    grid.innerHTML = '';
+    data.forEach(function(item, i) {
+      var src = imgPath(item.media);
+      var btn = document.createElement('button');
+      btn.className = 'porto-product-item';
+      btn.setAttribute('aria-label', 'Lihat foto ' + type + ' ' + (i + 1));
+      btn.setAttribute('data-index', i);
+      btn.innerHTML =
+        '<div class="porto-product-item__img-wrap">' +
+          '<img src="' + src + '" alt="' + type + ' ' + (i + 1) + '" loading="lazy" />' +
+        '</div>' +
+        '<div class="porto-product-item__overlay">' + expandSvg + '</div>';
+      grid.appendChild(btn);
+    });
+  }
 
   var TAB_FETCH = {
     sosmed: function(cb) {
@@ -164,6 +186,30 @@
       fetch('api/public_contents.php?type=portofolioD_foto', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
         .then(function(data) { renderAds(data); cb && cb(); })
+        .catch(function() { cb && cb(); });
+    },
+    branding: function(cb) {
+      fetch('api/public_contents.php?type=portofolioE_foto', { cache: 'no-store' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) { renderGeneric('branding', 'branding', data); cb && cb(); })
+        .catch(function() { cb && cb(); });
+    },
+    desain: function(cb) {
+      fetch('api/public_contents.php?type=portofolioF_foto', { cache: 'no-store' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) { renderGeneric('desain', 'desain', data); cb && cb(); })
+        .catch(function() { cb && cb(); });
+    },
+    website: function(cb) {
+      fetch('api/public_contents.php?type=portofolioG_foto', { cache: 'no-store' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) { renderGeneric('website', 'website', data); cb && cb(); })
+        .catch(function() { cb && cb(); });
+    },
+    video: function(cb) {
+      fetch('api/public_contents.php?type=portofolioH_foto', { cache: 'no-store' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) { renderGeneric('video', 'video', data); cb && cb(); })
         .catch(function() { cb && cb(); });
     }
   };
@@ -200,6 +246,7 @@
         history.replaceState(null, '', url.toString());
       } catch(e) {}
     }
+
     if (!fetched[key] && TAB_FETCH[key]) {
       fetched[key] = true;
       TAB_FETCH[key](null);
@@ -218,7 +265,7 @@
   function initFromURL() {
     var params   = new URLSearchParams(window.location.search);
     var tabParam = params.get('tab') || 'sosmed';
-    var validTabs = ['sosmed', 'event', 'produk', 'ads'];
+    var validTabs = ['sosmed', 'event', 'produk', 'ads', 'branding', 'desain', 'website', 'video'];
     if (validTabs.indexOf(tabParam) === -1) tabParam = 'sosmed';
     var targetTab = section.querySelector('[data-tab="' + tabParam + '"]');
     if (targetTab) activateTab(targetTab, false);
@@ -234,6 +281,7 @@
     var activeTab = section.querySelector('.porto-tab.is-active');
     if (activeTab) moveInk(activeTab);
   });
+
   window.addEventListener('resize', function() {
     var activeTab = section.querySelector('.porto-tab.is-active');
     if (activeTab) moveInk(activeTab);
@@ -283,10 +331,10 @@
 
     if (item.type === 'video') {
       var v = document.createElement('video');
-      v.className  = 'lb-video';
-      v.src        = item.src;
-      v.controls   = true;
-      v.autoplay   = true;
+      v.className   = 'lb-video';
+      v.src         = item.src;
+      v.controls    = true;
+      v.autoplay    = true;
       v.playsInline = true;
       lbContent.appendChild(v);
     } else {
@@ -297,7 +345,7 @@
       img.style.cssText = 'opacity:0;transform:scale(0.96);transition:opacity 0.18s ease,transform 0.22s cubic-bezier(0.34,1.2,0.64,1)';
       lbContent.appendChild(img);
       var loader = new Image();
-      loader.onload = function() { img.src = item.src; img.style.opacity = '1'; img.style.transform = 'scale(1)'; };
+      loader.onload  = function() { img.src = item.src; img.style.opacity = '1'; img.style.transform = 'scale(1)'; };
       loader.onerror = function() { img.style.opacity = '1'; img.style.transform = 'scale(1)'; };
       loader.src = item.src;
     }
@@ -347,8 +395,8 @@
 
   document.addEventListener('keydown', function(e) {
     if (!lb || lb.hidden) return;
-    if (e.key === 'Escape')    closeLightbox();
-    if (e.key === 'ArrowLeft') prev();
+    if (e.key === 'Escape')     closeLightbox();
+    if (e.key === 'ArrowLeft')  prev();
     if (e.key === 'ArrowRight') next();
   });
 

@@ -55,6 +55,7 @@
   font-weight: 800;
   background: var(--gradient-diag);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.03em;
   line-height: 1.15;
@@ -67,6 +68,7 @@
   line-height: 1.65;
 }
 
+/* ── DESKTOP TABS ── */
 .porto-tabs {
   position: relative;
   display: flex;
@@ -76,12 +78,15 @@
   border-radius: var(--radius-pill, 999px);
   padding: 4px;
   margin-bottom: 40px;
-  justify-content: center;
-  width: 100%;
-  max-width: 620px;
   margin-left: auto;
   margin-right: auto;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+
+.porto-tabs::-webkit-scrollbar { display: none; }
 
 .porto-tab {
   position: relative;
@@ -96,12 +101,11 @@
   background: none;
   border: none;
   border-radius: var(--radius-pill, 999px);
-  padding: 9px 18px;
+  padding: 9px 16px;
   cursor: pointer;
   white-space: nowrap;
   transition: color 0.2s ease;
-  flex: 1;
-  justify-content: center;
+  flex-shrink: 0;
 }
 
 .porto-tab:hover { color: var(--brand, #a91ab6); }
@@ -115,11 +119,59 @@
   background: var(--white, #fff);
   border-radius: var(--radius-pill, 999px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  transition: transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1), width 0.28s ease;
+  transition: transform 0.28s cubic-bezier(0.34,1.2,0.64,1), width 0.28s ease;
   pointer-events: none;
   z-index: 0;
 }
 
+/* ── MOBILE DROPDOWN ── */
+.porto-tab-dropdown {
+  display: none;
+  position: relative;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.porto-tab-dropdown__select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-headline, #0f0f0f);
+  background: var(--white, #fff);
+  border: 1.5px solid var(--border, #e5e7eb);
+  border-radius: var(--radius-md, 16px);
+  padding: 13px 44px 13px 18px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.porto-tab-dropdown__select:focus {
+  border-color: var(--brand, #a91ab6);
+  box-shadow: 0 0 0 3px rgba(169,26,182,0.12);
+}
+
+.porto-tab-dropdown__arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  translate: 0 -50%;
+  pointer-events: none;
+  color: var(--brand, #a91ab6);
+  display: flex;
+  align-items: center;
+  transition: rotate 0.2s ease;
+}
+
+.porto-tab-dropdown:has(select:focus) .porto-tab-dropdown__arrow {
+  rotate: 180deg;
+}
+
+/* ── PANELS ── */
 .porto-panel {
   animation: panelFadeIn 0.3s ease both;
 }
@@ -137,6 +189,7 @@
   text-align: center;
 }
 
+/* ── FEED GRID (SOSMED) ── */
 .porto-feed-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -177,6 +230,7 @@
 .porto-feed-item:hover img { transform: scale(1.06); }
 .porto-feed-item:hover .porto-feed-item__overlay { opacity: 1; }
 
+/* ── REELS ── */
 .porto-reels-label {
   display: inline-flex;
   align-items: center;
@@ -235,6 +289,7 @@
 .porto-reel-item:hover .porto-reel-thumb { transform: scale(1.05); }
 .porto-reel-item:hover .porto-reel-item__play { opacity: 1; transform: scale(1.1); }
 
+/* ── EVENT ── */
 .porto-event-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -308,6 +363,7 @@
   pointer-events: none;
 }
 
+/* ── PRODUK ── */
 .porto-product-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -359,6 +415,7 @@
 
 .porto-product-item:hover .porto-product-item__overlay { opacity: 1; }
 
+/* ── ADS ── */
 .porto-ads-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -410,6 +467,7 @@
 
 .porto-ads-item:hover .porto-ads-item__overlay { opacity: 1; }
 
+/* ── LIGHTBOX ── */
 .lb-overlay {
   position: fixed;
   inset: 0;
@@ -511,35 +569,52 @@
   letter-spacing: 0.06em;
 }
 
-#lightbox {
-    z-index: 10001;
-}
+#lightbox { z-index: 10001; }
 
 @media (max-width: 1024px) {
   .porto-feed-grid { grid-template-columns: repeat(4, 1fr); }
   .porto-reels-grid { grid-template-columns: repeat(3, 1fr); }
+  .porto-product-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 768px) {
   .porto-section { padding: 48px var(--page-pad, 20px) 56px; }
 
   .porto-tabs {
-    max-width: 100%;
+    display: flex;      
+    gap: 6px;
+    background: none;   
+    padding: 0;
+    border-radius: 0;
+    width: 100%;
     overflow-x: auto;
-    justify-content: center;
-    border-radius: var(--radius-md, 16px);
-    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 28px;
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
   }
-  .porto-tabs::-webkit-scrollbar { display: none; }
 
   .porto-tab {
-    flex-shrink: 0;
-    flex: unset;
+    scroll-snap-align: start;
+    padding: 7px 14px;
     font-size: 12px;
-    padding: 8px 14px;
+    background: var(--white, #fff);
+    border: 1.5px solid var(--border, #e5e7eb);
+    border-radius: var(--radius-pill, 999px);
+    flex-shrink: 0;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
   }
-  .porto-tab svg { display: none; }
 
+  .porto-tab.is-active {
+    background: var(--brand, #a91ab6);
+    border-color: var(--brand, #a91ab6);
+    color: #fff;
+  }
+
+  .porto-tab:last-of-type { margin-right: 24px; }
+  .porto-tab-ink { display: none; }
+  .porto-tab-dropdown { display: none; }
   .porto-feed-grid { grid-template-columns: repeat(3, 1fr); }
   .porto-reels-grid { grid-template-columns: repeat(2, 1fr); }
   .porto-event-grid { grid-template-columns: repeat(2, 1fr); }
@@ -557,6 +632,7 @@
   .porto-event-grid { grid-template-columns: 1fr; }
   .porto-event-item--full { grid-column: span 1; }
   .porto-product-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .porto-ads-grid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

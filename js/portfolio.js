@@ -188,25 +188,25 @@
         .then(function(data) { renderAds(data); cb && cb(); })
         .catch(function() { cb && cb(); });
     },
-    branding: function(cb) {
+    workshop: function(cb) {
       fetch('api/public_contents.php?type=portofolioE_foto', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
         .then(function(data) { renderGeneric('branding', 'branding', data); cb && cb(); })
         .catch(function() { cb && cb(); });
     },
-    desain: function(cb) {
+    automation: function(cb) {
       fetch('api/public_contents.php?type=portofolioF_foto', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
         .then(function(data) { renderGeneric('desain', 'desain', data); cb && cb(); })
         .catch(function() { cb && cb(); });
     },
-    website: function(cb) {
+    ai: function(cb) {
       fetch('api/public_contents.php?type=portofolioG_foto', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
         .then(function(data) { renderGeneric('website', 'website', data); cb && cb(); })
         .catch(function() { cb && cb(); });
     },
-    video: function(cb) {
+    webapp: function(cb) {
       fetch('api/public_contents.php?type=portofolioH_foto', { cache: 'no-store' })
         .then(function(r) { return r.json(); })
         .then(function(data) { renderGeneric('video', 'video', data); cb && cb(); })
@@ -265,7 +265,7 @@
   function initFromURL() {
     var params   = new URLSearchParams(window.location.search);
     var tabParam = params.get('tab') || 'sosmed';
-    var validTabs = ['sosmed', 'event', 'produk', 'ads', 'branding', 'desain', 'website', 'video'];
+    var validTabs = ['sosmed', 'event', 'produk', 'ads', 'workshop', 'automation', 'ai', 'webapp'];
     if (validTabs.indexOf(tabParam) === -1) tabParam = 'sosmed';
     var targetTab = section.querySelector('[data-tab="' + tabParam + '"]');
     if (targetTab) activateTab(targetTab, false);

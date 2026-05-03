@@ -1,0 +1,12 @@
+[phases.setup]
+nixPkgs = ['...', 'nginx']
+
+[phases.build]
+cmds = ['...']
+
+[phases.start]
+# Perintah ini otomatis memasukkan logika try_files ke config Nginx Nixpacks
+cmds = [
+  "sed -i 's|location / {|location / { try_files $uri $uri/ $uri.html =404; |' /etc/nginx/nginx.conf",
+  "node ./.nixpacks/nginx.js"
+]

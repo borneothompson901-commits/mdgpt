@@ -33,11 +33,97 @@
         align-items: stretch;
       }
       .det-form__phone-code {
+        position: relative;
         flex: 0 0 auto;
-        width: 92px;
-        padding-left: 8px;
-        padding-right: 4px;
+      }
+      .det-form__phone-code-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 100%;
+        min-width: 92px;
+        padding: 0 10px;
+        border: 1px solid var(--gray-200, #e2e2e2);
+        border-radius: 10px;
+        background: #fff;
+        font: inherit;
+        font-size: 14px;
+        color: #0d0d0d;
         cursor: pointer;
+        transition: border-color 0.15s ease;
+      }
+      .det-form__phone-code-btn:hover {
+        border-color: var(--grad-3, #393df5);
+      }
+      .det-form__phone-code[aria-expanded="true"] .det-form__phone-code-btn,
+      .det-form__phone-code-btn:focus-visible {
+        border-color: var(--grad-3, #393df5);
+        outline: none;
+      }
+      .det-form__phone-code-flag {
+        font-size: 16px;
+        line-height: 1;
+      }
+      .det-form__phone-code-val {
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .det-form__phone-code-chevron {
+        width: 9px;
+        height: 9px;
+        margin-left: auto;
+        color: var(--gray-400, #999);
+        flex-shrink: 0;
+        transition: transform 0.15s ease;
+      }
+      .det-form__phone-code.is-open .det-form__phone-code-chevron {
+        transform: rotate(180deg);
+      }
+      .det-form__phone-code-list {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        z-index: 30;
+        min-width: 190px;
+        max-height: 260px;
+        overflow-y: auto;
+        margin: 0;
+        padding: 6px;
+        list-style: none;
+        background: #fff;
+        border: 1px solid var(--gray-100, #eee);
+        border-radius: 12px;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
+      }
+      .det-form__phone-code-opt {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #0d0d0d;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .det-form__phone-code-opt:hover,
+      .det-form__phone-code-opt.is-active {
+        background: var(--gray-50, #f5f5f7);
+      }
+      .det-form__phone-code-opt.is-selected {
+        color: var(--grad-3, #393df5);
+        font-weight: 700;
+      }
+      .det-form__phone-code-opt-flag {
+        font-size: 15px;
+      }
+      .det-form__phone-code-opt-num {
+        margin-left: auto;
+        font-variant-numeric: tabular-nums;
+        color: var(--gray-500, #888);
+      }
+      .det-form__phone-code-opt.is-selected .det-form__phone-code-opt-num {
+        color: var(--grad-3, #393df5);
       }
       .det-form__phone-input {
         flex: 1 1 auto;
@@ -260,16 +346,41 @@
                   <label class="det-form__label" for="fWa">Nomor WhatsApp <span aria-hidden="true">*</span>
                   </label>
                   <div class="det-form__phone-group" id="detPhoneGroup">
-                    <select class="det-form__input det-form__phone-code" id="fWaCode" name="whatsapp_code" aria-label="Kode negara">
-                      <option value="62" selected>🇮🇩 +62</option>
-                      <option value="60">🇲🇾 +60</option>
-                      <option value="65">🇸🇬 +65</option>
-                      <option value="673">🇧🇳 +673</option>
-                      <option value="66">🇹🇭 +66</option>
-                      <option value="63">🇵🇭 +63</option>
-                      <option value="84">🇻🇳 +84</option>
-                      <option value="1">🇺🇸 +1</option>
-                    </select>
+                    <div class="det-form__phone-code" id="detPhoneCode">
+                      <button type="button" class="det-form__phone-code-btn" id="detPhoneCodeBtn" aria-haspopup="listbox" aria-expanded="false">
+                        <span class="det-form__phone-code-flag" id="detPhoneCodeFlag">🇮🇩</span>
+                        <span class="det-form__phone-code-val" id="detPhoneCodeVal">+62</span>
+                        <svg class="det-form__phone-code-chevron" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                          <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </button>
+                      <ul class="det-form__phone-code-list" id="detPhoneCodeList" role="listbox" tabindex="-1" hidden>
+                        <li class="det-form__phone-code-opt is-selected" role="option" aria-selected="true" data-code="62" data-flag="🇮🇩">
+                          <span class="det-form__phone-code-opt-flag">🇮🇩</span><span>Indonesia</span><span class="det-form__phone-code-opt-num">+62</span>
+                        </li>
+                        <li class="det-form__phone-code-opt" role="option" aria-selected="false" data-code="60" data-flag="🇲🇾">
+                          <span class="det-form__phone-code-opt-flag">🇲🇾</span><span>Malaysia</span><span class="det-form__phone-code-opt-num">+60</span>
+                        </li>
+                        <li class="det-form__phone-code-opt" role="option" aria-selected="false" data-code="65" data-flag="🇸🇬">
+                          <span class="det-form__phone-code-opt-flag">🇸🇬</span><span>Singapura</span><span class="det-form__phone-code-opt-num">+65</span>
+                        </li>
+                        <li class="det-form__phone-code-opt" role="option" aria-selected="false" data-code="673" data-flag="🇧🇳">
+                          <span class="det-form__phone-code-opt-flag">🇧🇳</span><span>Brunei</span><span class="det-form__phone-code-opt-num">+673</span>
+                        </li>
+                        <li class="det-form__phone-code-opt" role="option" aria-selected="false" data-code="66" data-flag="🇹🇭">
+                          <span class="det-form__phone-code-opt-flag">🇹🇭</span><span>Thailand</span><span class="det-form__phone-code-opt-num">+66</span>
+                        </li>
+                        <li class="det-form__phone-code-opt" role="option" aria-selected="false" data-code="63" data-flag="🇵🇭">
+                          <span class="det-form__phone-code-opt-flag">🇵🇭</span><span>Filipina</span><span class="det-form__phone-code-opt-num">+63</span>
+                        </li>
+                        <li class="det-form__phone-code-opt" role="option" aria-selected="false" data-code="84" data-flag="🇻🇳">
+                          <span class="det-form__phone-code-opt-flag">🇻🇳</span><span>Vietnam</span><span class="det-form__phone-code-opt-num">+84</span>
+                        </li>
+                        <li class="det-form__phone-code-opt" role="option" aria-selected="false" data-code="1" data-flag="🇺🇸">
+                          <span class="det-form__phone-code-opt-flag">🇺🇸</span><span>Amerika</span><span class="det-form__phone-code-opt-num">+1</span>
+                        </li>
+                      </ul>
+                    </div>
                     <input class="det-form__input det-form__phone-input" id="fWa" name="whatsapp" type="tel" placeholder="8xxxxxxxxxx" required autocomplete="tel" inputmode="numeric" />
                   </div>
                   <span class="det-form__phone-hint">Tanpa angka 0 di depan, contoh: 81234567890</span>

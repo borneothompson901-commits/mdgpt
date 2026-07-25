@@ -232,7 +232,21 @@ function initPhoneCodeDropdown() {
 
   wrap.dataset.code = "62";
 
+  // Pindahkan list ke <body> supaya tidak ke-crop oleh overflow:hidden
+  // pada elemen leluhurnya (mis. .det-form-sheet).
+  document.body.appendChild(list);
+  list.style.position = "fixed";
+  list.style.zIndex = "9999";
+
+  function positionList() {
+    var rect = btn.getBoundingClientRect();
+    list.style.top = (rect.bottom + 6) + "px";
+    list.style.left = rect.left + "px";
+    list.style.minWidth = Math.max(rect.width, 190) + "px";
+  }
+
   function openList() {
+    positionList();
     list.hidden = false;
     wrap.classList.add("is-open");
     btn.setAttribute("aria-expanded", "true");
@@ -272,11 +286,19 @@ function initPhoneCodeDropdown() {
   });
 
   document.addEventListener("click", function (e) {
-    if (!wrap.contains(e.target)) closeList();
+    if (!wrap.contains(e.target) && !list.contains(e.target)) closeList();
   });
 
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") closeList();
+  });
+
+  window.addEventListener("scroll", function () {
+    if (!list.hidden) closeList();
+  }, true);
+
+  window.addEventListener("resize", function () {
+    if (!list.hidden) closeList();
   });
 }
 

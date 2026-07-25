@@ -742,7 +742,6 @@
   padding: 4px 10px;
   cursor: pointer;
   transition: all var(--transition);
-  margin-left: auto;
 }
 
 .det-form-sheet__bank-copy svg { width: 11px; height: 11px; flex-shrink: 0; }

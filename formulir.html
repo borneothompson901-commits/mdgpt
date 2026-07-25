@@ -26,6 +26,30 @@
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/formulir.css" />
     <link rel="preload" as="image" href="assets/icons/logo.png">
+    <style>
+      .det-form__phone-group {
+        display: flex;
+        gap: 8px;
+        align-items: stretch;
+      }
+      .det-form__phone-code {
+        flex: 0 0 auto;
+        width: 92px;
+        padding-left: 8px;
+        padding-right: 4px;
+        cursor: pointer;
+      }
+      .det-form__phone-input {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .det-form__phone-hint {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: #888;
+      }
+    </style>
   </head>
   <body>
     <nav class="navbar" id="navbar">
@@ -235,7 +259,20 @@
                 <div class="det-form__field">
                   <label class="det-form__label" for="fWa">Nomor WhatsApp <span aria-hidden="true">*</span>
                   </label>
-                  <input class="det-form__input" id="fWa" name="whatsapp" type="tel" placeholder="08xxxxxxxxxx" required autocomplete="tel" />
+                  <div class="det-form__phone-group" id="detPhoneGroup">
+                    <select class="det-form__input det-form__phone-code" id="fWaCode" name="whatsapp_code" aria-label="Kode negara">
+                      <option value="62" selected>🇮🇩 +62</option>
+                      <option value="60">🇲🇾 +60</option>
+                      <option value="65">🇸🇬 +65</option>
+                      <option value="673">🇧🇳 +673</option>
+                      <option value="66">🇹🇭 +66</option>
+                      <option value="63">🇵🇭 +63</option>
+                      <option value="84">🇻🇳 +84</option>
+                      <option value="1">🇺🇸 +1</option>
+                    </select>
+                    <input class="det-form__input det-form__phone-input" id="fWa" name="whatsapp" type="tel" placeholder="8xxxxxxxxxx" required autocomplete="tel" inputmode="numeric" />
+                  </div>
+                  <span class="det-form__phone-hint">Tanpa angka 0 di depan, contoh: 81234567890</span>
                 </div>
               </div>
               <div class="det-form__footer">

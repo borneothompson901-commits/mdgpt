@@ -45,6 +45,7 @@ var currentProgram = null;
       populatePage(p);
       injectSuccessBlock(p);
       initCopyBtn();
+      initPhoneCodeDropdown();
       initForm();
     })
     .catch(function(err) { 
@@ -221,6 +222,64 @@ function escHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
+function initPhoneCodeDropdown() {
+  var wrap  = document.getElementById("detPhoneCode");
+  var btn   = document.getElementById("detPhoneCodeBtn");
+  var list  = document.getElementById("detPhoneCodeList");
+  var flag  = document.getElementById("detPhoneCodeFlag");
+  var val   = document.getElementById("detPhoneCodeVal");
+  if (!wrap || !btn || !list || !flag || !val) return;
+
+  wrap.dataset.code = "62";
+
+  function openList() {
+    list.hidden = false;
+    wrap.classList.add("is-open");
+    btn.setAttribute("aria-expanded", "true");
+  }
+  function closeList() {
+    list.hidden = true;
+    wrap.classList.remove("is-open");
+    btn.setAttribute("aria-expanded", "false");
+  }
+  function toggleList() {
+    if (list.hidden) openList(); else closeList();
+  }
+
+  btn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    toggleList();
+  });
+
+  var opts = list.querySelectorAll(".det-form__phone-code-opt");
+  opts.forEach(function (opt) {
+    opt.addEventListener("click", function () {
+      opts.forEach(function (o) {
+        o.classList.remove("is-selected");
+        o.setAttribute("aria-selected", "false");
+      });
+      opt.classList.add("is-selected");
+      opt.setAttribute("aria-selected", "true");
+
+      var code = opt.getAttribute("data-code");
+      var flagEmoji = opt.getAttribute("data-flag");
+      wrap.dataset.code = code;
+      flag.textContent = flagEmoji;
+      val.textContent = "+" + code;
+
+      closeList();
+    });
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!wrap.contains(e.target)) closeList();
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeList();
+  });
+}
+
 function initCopyBtn() {
   var btn = document.getElementById("detCopyBtn");
   if (!btn) return;
@@ -276,7 +335,8 @@ function initForm() {
 
     var nama     = form.nama     ? form.nama.value.trim()     : "";
     var email    = form.email    ? form.email.value.trim()    : "";
-    var waCode   = form.whatsapp_code ? form.whatsapp_code.value : "62";
+    var phoneCodeEl = document.getElementById("detPhoneCode");
+    var waCode   = phoneCodeEl ? (phoneCodeEl.dataset.code || "62") : "62";
     var whatsapp = formatPhoneNumber(waCode, form.whatsapp ? form.whatsapp.value : "");
     var judul    = (currentProgram && currentProgram.title) ? currentProgram.title : "Webinar/Workshop";
 

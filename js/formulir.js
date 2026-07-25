@@ -293,8 +293,10 @@ function initPhoneCodeDropdown() {
     if (e.key === "Escape") closeList();
   });
 
-  window.addEventListener("scroll", function () {
-    if (!list.hidden) closeList();
+  window.addEventListener("scroll", function (e) {
+    if (list.hidden) return;
+    if (list.contains(e.target)) return;
+    closeList();
   }, true);
 
   window.addEventListener("resize", function () {

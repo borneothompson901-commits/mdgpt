@@ -276,7 +276,8 @@ function initForm() {
 
     var nama     = form.nama     ? form.nama.value.trim()     : "";
     var email    = form.email    ? form.email.value.trim()    : "";
-    var whatsapp = form.whatsapp ? form.whatsapp.value.trim() : "";
+    var waCode   = form.whatsapp_code ? form.whatsapp_code.value : "62";
+    var whatsapp = formatPhoneNumber(waCode, form.whatsapp ? form.whatsapp.value : "");
     var judul    = (currentProgram && currentProgram.title) ? currentProgram.title : "Webinar/Workshop";
 
     var pesan = "*" + judul + "*\n\n"
@@ -293,6 +294,12 @@ function initForm() {
 
     window.location.href = waUrl;
   });
+}
+
+function formatPhoneNumber(code, raw) {
+  var digits = (raw || "").replace(/[^\d]/g, "");
+  digits = digits.replace(/^0+/, "");
+  return "+" + code + digits;
 }
 
 function validateForm(form) {

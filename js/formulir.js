@@ -1,5 +1,3 @@
-
-
 var SPEAKER_COLS = { 1: 1, 2: 2, 3: 3, 4: 2, 5: 3 };
 
 var currentProgram = null;
@@ -46,7 +44,6 @@ var currentProgram = null;
       currentProgram = p;
       populatePage(p);
       injectSuccessBlock(p);
-      initUpload();
       initCopyBtn();
       initForm();
     })
@@ -129,14 +126,8 @@ if (sheetPriceEl) {
   }
 
 if (!p.price || p.price.toLowerCase() === 'gratis') {
-  var uploadField = document.getElementById("detUploadWrap");
-  if (uploadField) uploadField.closest('.det-form__field') && (uploadField.closest('.det-form__field').style.display = 'none');
-  
   var bankBar = document.querySelector(".det-form-sheet__bank");
   if (bankBar) bankBar.style.display = 'none';
-  
-  var buktiInput = document.getElementById("fBukti");
-  if (buktiInput) buktiInput.removeAttribute("required");
 }
 }
 
@@ -230,36 +221,6 @@ function escHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
-function initUpload() {
-  var wrap  = document.getElementById("detUploadWrap");
-  var input = document.getElementById("fBukti");
-  var idle  = document.getElementById("detUploadIdle");
-  var done  = document.getElementById("detUploadDone");
-  var fname = document.getElementById("detUploadFname");
-  var rmBtn = document.getElementById("detUploadRm");
-
-  if (!input || !idle || !done || !fname || !rmBtn) return;
-
-  input.addEventListener("change", function () {
-    var file = input.files && input.files[0];
-    if (!file) return;
-    fname.textContent = file.name;
-    idle.hidden = true;
-    done.hidden = false;
-    if (wrap) wrap.classList.remove("is-error");
-    clearError(input);
-  });
-
-  rmBtn.addEventListener("click", function (e) {
-    e.stopPropagation();
-    e.preventDefault();
-    input.value = "";
-    idle.hidden = false;
-    done.hidden = true;
-    fname.textContent = "";
-  });
-}
-
 function initCopyBtn() {
   var btn = document.getElementById("detCopyBtn");
   if (!btn) return;
@@ -298,8 +259,8 @@ function initCopyBtn() {
   });
 }
 
-// google
-var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx13w5fuGHozshr9xJrBj2z5SnW9ZPqn_SIr_O6shg3qqnhEgmmGGMWNybpdBZFuciMjg/exec";
+// whatsapp
+var ADMIN_WA_NUMBER = "6287777222572";
 
 function initForm() {
   var form = document.getElementById("detForm");
@@ -313,74 +274,29 @@ function initForm() {
     var btn      = form.querySelector(".det-form__submit");
     var btnLabel = btn ? btn.querySelector("span") : null;
 
+    var nama     = form.nama     ? form.nama.value.trim()     : "";
+    var email    = form.email    ? form.email.value.trim()    : "";
+    var whatsapp = form.whatsapp ? form.whatsapp.value.trim() : "";
+    var judul    = (currentProgram && currentProgram.title) ? currentProgram.title : "Webinar/Workshop";
+
+    var pesan = "*" + judul + "*\n\n"
+      + "Halo admin, Saya tertarik untuk mengikuti Webinar/Workshop ini, berikut data diri saya :\n\n"
+      + "Nama : " + nama + "\n"
+      + "Email : " + email + "\n"
+      + "Nomor whatsapp : " + whatsapp + "\n\n"
+      + "Dibawah ini, saya kirimkan juga bukti transfer ke rekening yang tertera pada website. Terimakasih!";
+
+    var waUrl = "https://wa.me/" + ADMIN_WA_NUMBER + "?text=" + encodeURIComponent(pesan);
+
     if (btn) btn.disabled = true;
-    if (btnLabel) btnLabel.textContent = "Mengirim\u2026";
-    var checked = [];
-    var checkboxes = form.querySelectorAll('input[name="source"]:checked');
-    for (var i = 0; i < checkboxes.length; i++) {
-      checked.push(checkboxes[i].value);
-    }
+    if (btnLabel) btnLabel.textContent = "Mengalihkan\u2026";
 
-    var baseData = {
-      sheetName: "Pendaftaran",
-      nama:      form.nama      ? form.nama.value.trim()      : "",
-      email:     form.email     ? form.email.value.trim()     : "",
-      whatsapp:  form.whatsapp  ? form.whatsapp.value.trim()  : "",
-      pekerjaan: form.pekerjaan ? form.pekerjaan.value.trim() : "",
-      instansi:  form.instansi  ? form.instansi.value.trim()  : "",
-      domisili:  form.domisili  ? form.domisili.value.trim()  : "",
-      source:    checked,
-      program:   (currentProgram && currentProgram.title) ? currentProgram.title : (new URLSearchParams(window.location.search).get("id") || "")
-    };
+    window.open(waUrl, "_blank", "noopener,noreferrer");
 
-    var uploadInput = form.querySelector("#fBukti");
-    var file = uploadInput && uploadInput.files && uploadInput.files[0];
+    showSuccessState();
 
-    if (file) {
-      var reader = new FileReader();
-      reader.onload = function (ev) {
-        var raw      = ev.target.result;
-        var base64   = raw.split(",")[1];
-        var mimeType = raw.split(";")[0].split(":")[1];
-
-        var payload = Object.assign({}, baseData, {
-          foto:     base64,
-          fotoName: file.name,
-          fotoMime: mimeType
-        });
-
-        kirimKeAppsScript(payload, btn, btnLabel);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      kirimKeAppsScript(baseData, btn, btnLabel);
-    }
-  });
-}
-
-function kirimKeAppsScript(payload, btn, btnLabel) {
-  fetch(APPS_SCRIPT_URL, {
-    method:  "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body:    JSON.stringify(payload)
-  })
-  .then(function (r) { return r.json(); })
-  .then(function (res) {
     if (btn) btn.disabled = false;
-    if (btnLabel) btnLabel.textContent = "Kirim Pendaftaran";
-
-    if (res.success) {
-      showSuccessState();
-    } else {
-      alert("Gagal mengirim pendaftaran: " + (res.error || "Unknown error"));
-      console.error("Apps Script error:", res.error);
-    }
-  })
-  .catch(function (err) {
-    if (btn) btn.disabled = false;
-    if (btnLabel) btnLabel.textContent = "Kirim Pendaftaran";
-    alert("Koneksi gagal, coba lagi.");
-    console.error("Fetch error:", err);
+    if (btnLabel) btnLabel.textContent = "Kirim Bukti Transfer";
   });
 }
 
@@ -389,11 +305,9 @@ function validateForm(form) {
   var firstErrorEl = null;
 
   var requiredFields = [
-    { el: form.querySelector("#fNama"),      label: "Nama lengkap wajib diisi" },
-    { el: form.querySelector("#fEmail"),     label: "Email wajib diisi" },
-    { el: form.querySelector("#fWa"),        label: "Nomor WhatsApp wajib diisi" },
-    { el: form.querySelector("#fPekerjaan"), label: "Pekerjaan wajib diisi" },
-    { el: form.querySelector("#fDomisili"),  label: "Domisili wajib diisi" }
+    { el: form.querySelector("#fNama"),  label: "Nama lengkap wajib diisi" },
+    { el: form.querySelector("#fEmail"), label: "Email wajib diisi" },
+    { el: form.querySelector("#fWa"),    label: "Nomor WhatsApp wajib diisi" }
   ];
 
   requiredFields.forEach(function (field) {
@@ -413,22 +327,6 @@ function validateForm(form) {
     showError(emailEl, "Format email tidak valid");
     valid = false;
     if (!firstErrorEl) firstErrorEl = emailEl;
-  }
-
-  var uploadInput = form.querySelector("#fBukti");
-var uploadWrap  = document.getElementById("detUploadWrap");
-var isGratis = !currentProgram || !currentProgram.price || currentProgram.price.toLowerCase() === 'gratis';
-if (!isGratis && uploadInput && (!uploadInput.files || uploadInput.files.length === 0)) {
-    if (uploadWrap) uploadWrap.classList.add("is-error");
-    var existingErr = uploadWrap ? uploadWrap.parentElement.querySelector(".det-form__error-msg") : null;
-    if (!existingErr) {
-      var errEl = makeErrorEl("Bukti transfer wajib diunggah");
-      if (uploadWrap && uploadWrap.parentElement) {
-        uploadWrap.parentElement.appendChild(errEl);
-      }
-    }
-    valid = false;
-    if (!firstErrorEl) firstErrorEl = uploadWrap || uploadInput;
   }
 
   if (!valid && firstErrorEl) {
@@ -500,4 +398,3 @@ function setText(id, val) {
   var el = document.getElementById(id);
   if (el) el.textContent = (val !== null && val !== undefined && val !== "") ? val : "\u2014";
 }
-

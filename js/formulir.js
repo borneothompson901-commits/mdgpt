@@ -291,12 +291,7 @@ function initForm() {
     if (btn) btn.disabled = true;
     if (btnLabel) btnLabel.textContent = "Mengalihkan\u2026";
 
-    window.open(waUrl, "_blank", "noopener,noreferrer");
-
-    showSuccessState();
-
-    if (btn) btn.disabled = false;
-    if (btnLabel) btnLabel.textContent = "Kirim Bukti Transfer";
+    window.location.href = waUrl;
   });
 }
 

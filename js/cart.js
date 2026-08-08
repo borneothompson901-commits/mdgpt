@@ -718,24 +718,31 @@
       cekOngkirBtn.disabled = true;
       cekOngkirBtn.textContent = "Mengecek ongkir...";
 
-      var requests = couriers.map(function (courier) {
-        var payload = {
-          destination_id: destinationIdEl.value,
-          weight: weight,
-          courier: courier
-        };
+      var payload = {
+        destination_id: destinationIdEl.value,
+        weight: weight,
+        couriers: couriers // single request covers all couriers at once (RajaOngkir supports courier=a:b:c)
+      };
 
-        return fetch(ONGKIR_ENDPOINT, {
-          method: "POST",
-          headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
-          body: JSON.stringify(payload)
+      var ongkirRequest = fetch(ONGKIR_ENDPOINT, {
+        method: "POST",
+        headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          var byCourier = (data && data.results) || {};
+          return couriers.map(function (courier) {
+            return { courier: courier, data: byCourier[courier] || null };
+          });
         })
-          .then(function (res) { return res.json(); })
-          .then(function (data) { return { courier: courier, data: data }; })
-          .catch(function () { return { courier: courier, data: null }; });
-      });
+        .catch(function () {
+          return couriers.map(function (courier) {
+            return { courier: courier, data: null };
+          });
+        });
 
-      Promise.all(requests).then(function (results) {
+      ongkirRequest.then(function (results) {
         var cheapest = null;
 
         results.forEach(function (result) {

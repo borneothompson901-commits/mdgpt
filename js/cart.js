@@ -4,9 +4,7 @@
   if (!window.CartStore) return;
   var ADMIN_WHATSAPP = "6287777222572";
   var ONGKIR_ENDPOINT = "/api/ongkir.php";
-  var DESTINATION_ENDPOINT = "/api/destination-search.php";
-  var DESTINATION_DEBOUNCE_MS = 300;
-  var DESTINATION_MIN_CHARS = 3;
+  var HIERARCHY_ENDPOINT = "/api/destination-hierarchy.php";
 
   var SERVICE_FEE = 0;
   var TAX_RATE = 0;
@@ -15,9 +13,7 @@
     ongkirChecked: false,
     ongkirService: "",
     ongkirEtd: "",
-    destinationLabel: "",
-    destinationTimer: null,
-    destinationRequestId: 0
+    destinationLabel: ""
   };
 
   var cartListEl = document.getElementById("cartList");
@@ -27,8 +23,10 @@
   var digitalOnlyNoteEl = document.getElementById("digitalOnlyNote");
   var shippingSectionEl = document.getElementById("shippingSection");
 
-  var destinationInputEl = document.getElementById("cartDestinationInput");
-  var destinationMenuEl = document.getElementById("destinationMenu");
+  var provinceEl = document.getElementById("cartProvince");
+  var cityEl = document.getElementById("cartCity");
+  var districtEl = document.getElementById("cartDistrict");
+  var subdistrictEl = document.getElementById("cartSubdistrict");
   var destinationIdEl = document.getElementById("cartDestinationId");
   var addressDetailEl = document.getElementById("cartAddressDetail");
   var waEl = document.getElementById("cartWhatsapp");
@@ -336,47 +334,117 @@
     if (e.key === "Escape") closeKurirMenu();
   });
 
-  function renderDestinationSuggestions(items) {
-    destinationMenuEl.innerHTML = "";
+  function resetSelect(el, placeholder) {
+    el.innerHTML = "";
+    var opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = placeholder;
+    el.appendChild(opt);
+  }
 
-    if (!items || items.length === 0) {
-      destinationMenuEl.hidden = true;
-      return;
-    }
-
+  function populateSelect(el, items, placeholder) {
+    resetSelect(el, placeholder);
     items.forEach(function (item) {
-      var li = document.createElement("li");
-      li.className = "destination-picker__option";
-      li.setAttribute("data-id", item.id);
-      li.setAttribute("data-label", item.label);
-      li.textContent = item.label;
-      destinationMenuEl.appendChild(li);
+      var opt = document.createElement("option");
+      opt.value = item.id;
+      opt.textContent = item.name;
+      el.appendChild(opt);
+    });
+    el.disabled = items.length === 0;
+  }
+
+  function fetchHierarchy(level, parentId) {
+    var url = HIERARCHY_ENDPOINT + "?level=" + encodeURIComponent(level);
+    if (parentId) url += "&parent_id=" + encodeURIComponent(parentId);
+
+    return fetch(url)
+      .then(function (res) { return res.json(); })
+      .then(function (data) { return data.results || []; })
+      .catch(function () { return []; });
+  }
+
+  function clearDestinationSelection() {
+    destinationIdEl.value = "";
+    state.destinationLabel = "";
+
+    if (state.ongkirChecked) {
+      state.ongkirChecked = false;
+      ongkirNoteEl.hidden = true;
+      updateTotals();
+    }
+    updateCheckoutState();
+  }
+
+  function selectedLabel(selectEl) {
+    var opt = selectEl.options[selectEl.selectedIndex];
+    return opt && opt.value ? opt.textContent : "";
+  }
+
+  function buildDestinationLabel() {
+    return [
+      selectedLabel(subdistrictEl),
+      selectedLabel(districtEl),
+      selectedLabel(cityEl),
+      selectedLabel(provinceEl)
+    ].filter(Boolean).join(", ");
+  }
+
+  if (provinceEl) {
+    fetchHierarchy("province").then(function (items) {
+      populateSelect(provinceEl, items, "Pilih provinsi...");
     });
 
-    destinationMenuEl.hidden = false;
-  }
+    provinceEl.addEventListener("change", function () {
+      resetSelect(cityEl, "Pilih kota/kabupaten...");
+      resetSelect(districtEl, "Pilih kecamatan...");
+      resetSelect(subdistrictEl, "Pilih kelurahan/desa...");
+      cityEl.disabled = true;
+      districtEl.disabled = true;
+      subdistrictEl.disabled = true;
+      clearDestinationSelection();
 
-  function fetchDestinations(query) {
-    var requestId = ++state.destinationRequestId;
+      var provinceId = provinceEl.value;
+      if (!provinceId) return;
 
-    fetch(DESTINATION_ENDPOINT + "?search=" + encodeURIComponent(query))
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        if (requestId !== state.destinationRequestId) return;
-        renderDestinationSuggestions(data.results || []);
-      })
-      .catch(function () {
-        if (requestId !== state.destinationRequestId) return;
-        renderDestinationSuggestions([]);
+      cityEl.innerHTML = "<option value=\"\">Memuat...</option>";
+      fetchHierarchy("city", provinceId).then(function (items) {
+        populateSelect(cityEl, items, "Pilih kota/kabupaten...");
       });
-  }
+    });
 
-  if (destinationInputEl) {
-    destinationInputEl.addEventListener("input", function () {
-      var query = destinationInputEl.value.trim();
+    cityEl.addEventListener("change", function () {
+      resetSelect(districtEl, "Pilih kecamatan...");
+      resetSelect(subdistrictEl, "Pilih kelurahan/desa...");
+      districtEl.disabled = true;
+      subdistrictEl.disabled = true;
+      clearDestinationSelection();
 
-      destinationIdEl.value = "";
-      state.destinationLabel = "";
+      var cityId = cityEl.value;
+      if (!cityId) return;
+
+      districtEl.innerHTML = "<option value=\"\">Memuat...</option>";
+      fetchHierarchy("district", cityId).then(function (items) {
+        populateSelect(districtEl, items, "Pilih kecamatan...");
+      });
+    });
+
+    districtEl.addEventListener("change", function () {
+      resetSelect(subdistrictEl, "Pilih kelurahan/desa...");
+      subdistrictEl.disabled = true;
+      clearDestinationSelection();
+
+      var districtId = districtEl.value;
+      if (!districtId) return;
+
+      subdistrictEl.innerHTML = "<option value=\"\">Memuat...</option>";
+      fetchHierarchy("subdistrict", districtId).then(function (items) {
+        populateSelect(subdistrictEl, items, "Pilih kelurahan/desa...");
+      });
+    });
+
+    subdistrictEl.addEventListener("change", function () {
+      destinationIdEl.value = subdistrictEl.value;
+      state.destinationLabel = subdistrictEl.value ? buildDestinationLabel() : "";
 
       if (state.ongkirChecked) {
         state.ongkirChecked = false;
@@ -384,43 +452,8 @@
         updateTotals();
       }
       updateCheckoutState();
-
-      clearTimeout(state.destinationTimer);
-
-      if (query.length < DESTINATION_MIN_CHARS) {
-        renderDestinationSuggestions([]);
-        return;
-      }
-
-      state.destinationTimer = setTimeout(function () {
-        fetchDestinations(query);
-      }, DESTINATION_DEBOUNCE_MS);
-    });
-
-    destinationInputEl.addEventListener("focus", function () {
-      if (destinationMenuEl.children.length > 0) destinationMenuEl.hidden = false;
     });
   }
-
-  if (destinationMenuEl) {
-    destinationMenuEl.addEventListener("click", function (e) {
-      var option = e.target.closest(".destination-picker__option");
-      if (!option) return;
-
-      destinationInputEl.value = option.getAttribute("data-label");
-      destinationIdEl.value = option.getAttribute("data-id");
-      state.destinationLabel = option.getAttribute("data-label");
-      destinationMenuEl.hidden = true;
-
-      updateCheckoutState();
-    });
-  }
-
-  document.addEventListener("click", function (e) {
-    if (destinationInputEl && destinationMenuEl && !destinationInputEl.contains(e.target) && !destinationMenuEl.contains(e.target)) {
-      destinationMenuEl.hidden = true;
-    }
-  });
 
   function showOngkirNote(text, kind) {
     ongkirNoteEl.hidden = false;
@@ -431,8 +464,8 @@
   if (cekOngkirBtn) {
     cekOngkirBtn.addEventListener("click", function () {
       if (!hasValidDestination()) {
-        showOngkirNote("Pilih tujuan dari daftar saran dulu ya.", "error");
-        destinationInputEl.focus();
+        showOngkirNote("Lengkapi provinsi sampai kelurahan/desa tujuan dulu ya.", "error");
+        provinceEl.focus();
         return;
       }
 

@@ -89,7 +89,6 @@ button, input, textarea, select {
    padding: var(--nav-height) 0 0;
 }
 
-/*NAVBAR*/
 .navbar {
    position: fixed;
    top: 0;
@@ -589,7 +588,6 @@ button, input, textarea, select {
    }
 }
 
-/*Scrollbar*/
 * {
   scrollbar-width: thin;
   scrollbar-color: #A91AB6 transparent;

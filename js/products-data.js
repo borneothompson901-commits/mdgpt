@@ -31,7 +31,7 @@
 
   var PRODUCTS = [
     {
-      id: 1, category: "template-konten", price: 149000, oldPrice: 199000,
+      id: 1, type: "digital", weight: 0, category: "template-konten", price: 149000, oldPrice: 199000,
       title: "Template Konten Elite Multi Platform Sosial Media",
       seed: "prod-1", sold: 1240, rating: 4.8,
       shortDesc: "Set template siap edit untuk Instagram, TikTok, dan Facebook — tinggal ganti teks dan foto.",
@@ -71,7 +71,7 @@
       }
     },
     {
-      id: 2, category: "template-konten", price: 119000, oldPrice: null,
+      id: 2, type: "fisik", weight: 350, category: "template-konten", price: 119000, oldPrice: null,
       title: "Template Feed Instagram Minimal Estetik Siap Pakai",
       seed: "prod-2", sold: 860, rating: 4.6,
       shortDesc: "Feed Instagram bergaya minimalis yang bikin profil bisnismu keliatan lebih premium.",
@@ -85,7 +85,7 @@
       specs: { "Format File": "Canva", "Jumlah Slide": "40 slide", "Ukuran": "1080x1350 px", "Lisensi": "1 brand / bisnis", "Update": "Tidak ada update berkala" }
     },
     {
-      id: 3, category: "ebook-strategi", price: 99000, oldPrice: 149000,
+      id: 3, type: "digital", weight: 0, category: "ebook-strategi", price: 99000, oldPrice: 149000,
       title: "Ebook Growth Playbook Strategi Digital Marketing",
       seed: "prod-3", sold: 980, rating: 4.7,
       shortDesc: "Panduan lengkap strategi growth marketing dari riset pasar sampai eksekusi campaign.",
@@ -99,7 +99,7 @@
       specs: { "Format File": "PDF", "Jumlah Halaman": "120 halaman", "Bahasa": "Indonesia", "Lisensi": "Penggunaan pribadi/bisnis", "Bonus": "Template worksheet strategi" }
     },
     {
-      id: 4, category: "ebook-strategi", price: 89000, oldPrice: null,
+      id: 4, type: "fisik", weight: 200, category: "ebook-strategi", price: 89000, oldPrice: null,
       title: "Ebook Copywriting Konversi Tinggi untuk Penjualan",
       seed: "prod-4", sold: 705, rating: 4.5,
       shortDesc: "Teknik menulis copy yang bikin calon pembeli klik tombol beli lebih cepat.",
@@ -113,7 +113,7 @@
       specs: { "Format File": "PDF", "Jumlah Halaman": "76 halaman", "Bahasa": "Indonesia", "Lisensi": "Penggunaan pribadi/bisnis" }
     },
     {
-      id: 5, category: "tools-otomasi", price: 199000, oldPrice: 259000,
+      id: 5, type: "digital", weight: 0, category: "tools-otomasi", price: 199000, oldPrice: 259000,
       title: "Toolkit Automasi Bisnis Digital Serba Otomatis",
       seed: "prod-5", sold: 875, rating: 4.9,
       shortDesc: "Kumpulan tools & script siap pakai buat otomatisasi tugas operasional harian.",
@@ -144,7 +144,7 @@
       }
     },
     {
-      id: 6, category: "tools-otomasi", price: 229000, oldPrice: null,
+      id: 6, type: "fisik", weight: 400, category: "tools-otomasi", price: 229000, oldPrice: null,
       title: "Script Auto-Reply WhatsApp Bisnis Respon Cepat",
       seed: "prod-6", sold: 512, rating: 4.6,
       shortDesc: "Auto-reply WhatsApp Business biar chat calon pembeli nggak ada yang kelewat.",
@@ -158,7 +158,7 @@
       specs: { "Format File": "Script + Panduan PDF", "Kompatibilitas": "WhatsApp Business", "Lisensi": "1 nomor bisnis", "Support": "Email support" }
     },
     {
-      id: 7, category: "workshop-kit", price: 249000, oldPrice: 329000,
+      id: 7, type: "fisik", weight: 800, category: "workshop-kit", price: 249000, oldPrice: 329000,
       title: "Workshop Kit Digital Marketing Lengkap dan Praktis",
       seed: "prod-7", sold: 690, rating: 4.5,
       shortDesc: "Materi lengkap buat kamu yang mau ngadain workshop digital marketing sendiri.",
@@ -201,7 +201,7 @@
       }
     },
     {
-      id: 8, category: "workshop-kit", price: 179000, oldPrice: null,
+      id: 8, type: "fisik", weight: 600, category: "workshop-kit", price: 179000, oldPrice: null,
       title: "Slide Kit Materi Workshop Desain Profesional",
       seed: "prod-8", sold: 430, rating: 4.4,
       shortDesc: "Slide kit siap pakai untuk workshop atau kelas seputar desain grafis.",
@@ -215,7 +215,7 @@
       specs: { "Format File": "Canva, PPTX", "Jumlah Modul": "6 modul", "Lisensi": "Internal tim / kelas berbayar" }
     },
     {
-      id: 9, category: "social-media-kit", price: 129000, oldPrice: 159000,
+      id: 9, type: "fisik", weight: 450, category: "social-media-kit", price: 129000, oldPrice: 159000,
       title: "Social Media Kit Growth untuk Bisnis dan Brand",
       seed: "prod-9", sold: 640, rating: 4.6,
       shortDesc: "Paket konten siap posting buat naikin engagement sosial media bisnis kamu.",
@@ -229,7 +229,7 @@
       specs: { "Format File": "Canva", "Jumlah Slide": "100+ slide", "Lisensi": "1 brand / bisnis", "Update": "Setiap kuartal" }
     },
     {
-      id: 10, category: "social-media-kit", price: 139000, oldPrice: null,
+      id: 10, type: "fisik", weight: 300, category: "social-media-kit", price: 139000, oldPrice: null,
       title: "Story Highlight Cover Pack Estetik Instagram",
       seed: "prod-10", sold: 390, rating: 4.3,
       shortDesc: "Cover highlight Instagram yang estetik dan konsisten sama tema brand kamu.",
@@ -243,7 +243,7 @@
       specs: { "Format File": "PNG", "Jumlah Item": "50+ cover", "Ukuran": "500x500 px", "Lisensi": "1 brand / bisnis" }
     },
     {
-      id: 11, category: "branding-bundle", price: 179000, oldPrice: 259000,
+      id: 11, type: "fisik", weight: 1200, category: "branding-bundle", price: 179000, oldPrice: 259000,
       title: "Branding Bundle Pro Lengkap untuk Identitas Brand",
       seed: "prod-11", sold: 760, rating: 4.7,
       shortDesc: "Paket identitas brand lengkap, dari logo sampai panduan penggunaannya.",
@@ -257,7 +257,7 @@
       specs: { "Format File": "AI, EPS, PNG, PDF", "Isi Paket": "Logo, guideline, mockup", "Lisensi": "1 brand", "Cocok Untuk": "Cetak & digital" }
     },
     {
-      id: 12, category: "branding-bundle", price: 159000, oldPrice: null,
+      id: 12, type: "fisik", weight: 900, category: "branding-bundle", price: 159000, oldPrice: null,
       title: "Logo dan Brand Guideline Kit Profesional Lengkap",
       seed: "prod-12", sold: 320, rating: 4.4,
       shortDesc: "Kit logo dan aturan penggunaan brand yang rapi dan mudah diikuti tim.",
@@ -271,7 +271,7 @@
       specs: { "Format File": "Canva, PDF", "Jumlah Halaman": "24 halaman", "Lisensi": "1 brand" }
     },
     {
-      id: 13, category: "content-planner", price: 79000, oldPrice: 99000,
+      id: 13, type: "digital", weight: 0, category: "content-planner", price: 79000, oldPrice: 99000,
       title: "Content Planner Notion Template Rapi dan Fleksibel",
       seed: "prod-13", sold: 540, rating: 4.6,
       shortDesc: "Template Notion buat rencanain konten mingguan dan bulanan dengan rapi.",
@@ -285,7 +285,7 @@
       specs: { "Format File": "Notion Template (link)", "Kompatibilitas": "Notion (gratis/berbayar)", "Lisensi": "1 pengguna" }
     },
     {
-      id: 14, category: "content-planner", price: 69000, oldPrice: null,
+      id: 14, type: "digital", weight: 0, category: "content-planner", price: 69000, oldPrice: null,
       title: "Kalender Konten 90 Hari Siap Pakai untuk Bisnis",
       seed: "prod-14", sold: 275, rating: 4.2,
       shortDesc: "Kalender ide konten 90 hari, tinggal sesuaikan dengan bisnis kamu.",
@@ -299,7 +299,7 @@
       specs: { "Format File": "XLSX, Google Sheets", "Durasi": "90 hari", "Lisensi": "1 bisnis" }
     },
     {
-      id: 15, category: "automation-script", price: 299000, oldPrice: 349000,
+      id: 15, type: "fisik", weight: 500, category: "automation-script", price: 299000, oldPrice: 349000,
       title: "Automation Script Order Otomatis untuk Toko Online",
       seed: "prod-15", sold: 480, rating: 4.7,
       shortDesc: "Script otomatisasi order biar proses jualan online kamu lebih efisien.",
@@ -313,7 +313,7 @@
       specs: { "Format File": "Script + Panduan PDF/Video", "Kompatibilitas": "Google Sheets, Zapier/Make", "Lisensi": "1 toko online", "Support": "Grup diskusi khusus pembeli" }
     },
     {
-      id: 16, category: "automation-script", price: 219000, oldPrice: null,
+      id: 16, type: "fisik", weight: 350, category: "automation-script", price: 219000, oldPrice: null,
       title: "Bot Rekap Laporan Harian Otomatis untuk Tim",
       seed: "prod-16", sold: 210, rating: 4.3,
       shortDesc: "Bot yang otomatis kirim rekap kerja tim ke grup setiap hari.",

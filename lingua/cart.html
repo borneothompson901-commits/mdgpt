@@ -93,31 +93,51 @@
                   <h2 class="cart-summary__title">Detail Pengiriman</h2>
 
                   <div class="cart-field">
-                    <label for="cartProvince">Provinsi</label>
-                    <select id="cartProvince">
-                      <option value="">Pilih provinsi...</option>
-                    </select>
+                    <label id="provinceLabel">Provinsi</label>
+                    <div class="custom-select" id="provinceSelect" data-placeholder="Pilih provinsi...">
+                      <button type="button" class="custom-select__trigger" id="provinceTrigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="provinceLabel">
+                        <span class="custom-select__value" id="provinceValue">Pilih provinsi...</span>
+                        <svg class="custom-select__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                      </button>
+                      <ul class="custom-select__menu" id="provinceMenu" role="listbox" hidden></ul>
+                      <input type="hidden" id="cartProvince" value="" />
+                    </div>
                   </div>
 
                   <div class="cart-field">
-                    <label for="cartCity">Kota / Kabupaten</label>
-                    <select id="cartCity" disabled>
-                      <option value="">Pilih kota/kabupaten...</option>
-                    </select>
+                    <label id="cityLabel">Kota / Kabupaten</label>
+                    <div class="custom-select is-disabled" id="citySelect" data-placeholder="Pilih kota/kabupaten...">
+                      <button type="button" class="custom-select__trigger" id="cityTrigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cityLabel" disabled>
+                        <span class="custom-select__value" id="cityValue">Pilih kota/kabupaten...</span>
+                        <svg class="custom-select__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                      </button>
+                      <ul class="custom-select__menu" id="cityMenu" role="listbox" hidden></ul>
+                      <input type="hidden" id="cartCity" value="" />
+                    </div>
                   </div>
 
                   <div class="cart-field">
-                    <label for="cartDistrict">Kecamatan</label>
-                    <select id="cartDistrict" disabled>
-                      <option value="">Pilih kecamatan...</option>
-                    </select>
+                    <label id="districtLabel">Kecamatan</label>
+                    <div class="custom-select is-disabled" id="districtSelect" data-placeholder="Pilih kecamatan...">
+                      <button type="button" class="custom-select__trigger" id="districtTrigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="districtLabel" disabled>
+                        <span class="custom-select__value" id="districtValue">Pilih kecamatan...</span>
+                        <svg class="custom-select__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                      </button>
+                      <ul class="custom-select__menu" id="districtMenu" role="listbox" hidden></ul>
+                      <input type="hidden" id="cartDistrict" value="" />
+                    </div>
                   </div>
 
                   <div class="cart-field">
-                    <label for="cartSubdistrict">Kelurahan / Desa</label>
-                    <select id="cartSubdistrict" disabled>
-                      <option value="">Pilih kelurahan/desa...</option>
-                    </select>
+                    <label id="subdistrictLabel">Kelurahan / Desa</label>
+                    <div class="custom-select is-disabled" id="subdistrictSelect" data-placeholder="Pilih kelurahan/desa...">
+                      <button type="button" class="custom-select__trigger" id="subdistrictTrigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="subdistrictLabel" disabled>
+                        <span class="custom-select__value" id="subdistrictValue">Pilih kelurahan/desa...</span>
+                        <svg class="custom-select__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                      </button>
+                      <ul class="custom-select__menu" id="subdistrictMenu" role="listbox" hidden></ul>
+                      <input type="hidden" id="cartSubdistrict" value="" />
+                    </div>
                   </div>
 
                   <input type="hidden" id="cartDestinationId" value="" />
@@ -129,22 +149,38 @@
 
                   <div class="cart-field">
                     <label>Kurir</label>
-                    <div class="cart-ongkir-row">
-                      <div class="custom-select" id="kurirSelect">
-                        <button type="button" class="custom-select__trigger" id="kurirSelectTrigger" aria-haspopup="listbox" aria-expanded="false">
-                          <span class="custom-select__value" id="kurirSelectValue">JNE</span>
-                          <svg class="custom-select__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </button>
-                        <ul class="custom-select__menu" id="kurirSelectMenu" role="listbox" hidden>
-                          <li class="custom-select__option is-selected" data-value="jne" role="option" aria-selected="true">JNE</li>
-                          <li class="custom-select__option" data-value="jnt" role="option" aria-selected="false">J&amp;T Express</li>
-                          <li class="custom-select__option" data-value="sicepat" role="option" aria-selected="false">SiCepat</li>
-                          <li class="custom-select__option" data-value="anteraja" role="option" aria-selected="false">AnterAja</li>
-                        </ul>
-                        <input type="hidden" id="cartKurir" value="jne" />
+                    <button type="button" class="cart-btn-cekongkir" id="cekOngkirBtn">Cek Ongkir</button>
+                    <div class="cart-kurir-list" id="kurirResultList">
+                      <div class="cart-kurir-item" data-courier="jne" data-name="JNE">
+                        <div class="cart-kurir-item__left">
+                          <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi1.webp" alt="JNE" loading="lazy" /></span>
+                          <span class="cart-kurir-item__name">JNE</span>
+                        </div>
+                        <span class="cart-kurir-item__cost" data-cost>—</span>
                       </div>
-                      <button type="button" class="cart-btn-secondary" id="cekOngkirBtn">Cek Ongkir</button>
+                      <div class="cart-kurir-item" data-courier="jnt" data-name="J&amp;T Express">
+                        <div class="cart-kurir-item__left">
+                          <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi2.webp" alt="J&amp;T Express" loading="lazy" /></span>
+                          <span class="cart-kurir-item__name">J&amp;T Express</span>
+                        </div>
+                        <span class="cart-kurir-item__cost" data-cost>—</span>
+                      </div>
+                      <div class="cart-kurir-item" data-courier="sicepat" data-name="SiCepat">
+                        <div class="cart-kurir-item__left">
+                          <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi3.webp" alt="SiCepat" loading="lazy" /></span>
+                          <span class="cart-kurir-item__name">SiCepat</span>
+                        </div>
+                        <span class="cart-kurir-item__cost" data-cost>—</span>
+                      </div>
+                      <div class="cart-kurir-item" data-courier="anteraja" data-name="AnterAja">
+                        <div class="cart-kurir-item__left">
+                          <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi4.webp" alt="AnterAja" loading="lazy" /></span>
+                          <span class="cart-kurir-item__name">AnterAja</span>
+                        </div>
+                        <span class="cart-kurir-item__cost" data-cost>—</span>
+                      </div>
                     </div>
+                    <input type="hidden" id="cartKurir" value="" />
                     <p class="cart-ongkir-note" id="cartOngkirNote" hidden></p>
                   </div>
                 </div>

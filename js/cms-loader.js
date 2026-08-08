@@ -9,15 +9,24 @@
         if (g) g.textContent = '';
     });
 
+    async function safeJson(res) {
+        if (!res.ok) return [];
+        try {
+            return await res.json();
+        } catch (e) {
+            return [];
+        }
+    }
+
     const [resTim, resDesk, resMateri] = await Promise.all([
         fetch("api/public_contents.php?type=tim",      { cache: "no-store" }),
         fetch("api/public_contents.php?type=deskripsi",{ cache: "no-store" }),
         fetch("api/public_contents.php?type=materi",   { cache: "no-store" })
     ]);
 
-    const dataTim    = await resTim.json();
-    const dataDesk   = await resDesk.json();
-    const dataMateri = await resMateri.json();
+    const dataTim    = await safeJson(resTim);
+    const dataDesk   = await safeJson(resDesk);
+    const dataMateri = await safeJson(resMateri);
     if (dataDesk && dataDesk.length > 0) {
         const desk = dataDesk.find(d => d.kategori === 'Mengenal M-DGPT') || dataDesk[0];
         const wwaTexts = document.querySelectorAll('.wwa__text');

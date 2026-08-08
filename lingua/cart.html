@@ -93,13 +93,34 @@
                   <h2 class="cart-summary__title">Detail Pengiriman</h2>
 
                   <div class="cart-field">
-                    <label for="cartDestinationInput">Kecamatan / Kota Tujuan</label>
-                    <div class="destination-picker" id="destinationPicker">
-                      <input type="text" id="cartDestinationInput" placeholder="Ketik nama kecamatan atau kota..." autocomplete="off" />
-                      <ul class="destination-picker__menu" id="destinationMenu" hidden></ul>
-                    </div>
-                    <input type="hidden" id="cartDestinationId" value="" />
+                    <label for="cartProvince">Provinsi</label>
+                    <select id="cartProvince">
+                      <option value="">Pilih provinsi...</option>
+                    </select>
                   </div>
+
+                  <div class="cart-field">
+                    <label for="cartCity">Kota / Kabupaten</label>
+                    <select id="cartCity" disabled>
+                      <option value="">Pilih kota/kabupaten...</option>
+                    </select>
+                  </div>
+
+                  <div class="cart-field">
+                    <label for="cartDistrict">Kecamatan</label>
+                    <select id="cartDistrict" disabled>
+                      <option value="">Pilih kecamatan...</option>
+                    </select>
+                  </div>
+
+                  <div class="cart-field">
+                    <label for="cartSubdistrict">Kelurahan / Desa</label>
+                    <select id="cartSubdistrict" disabled>
+                      <option value="">Pilih kelurahan/desa...</option>
+                    </select>
+                  </div>
+
+                  <input type="hidden" id="cartDestinationId" value="" />
 
                   <div class="cart-field">
                     <label for="cartAddressDetail">Detail Alamat</label>

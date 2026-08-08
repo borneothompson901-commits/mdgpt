@@ -449,7 +449,7 @@
       cityDd.reset("Memuat...");
       fetchHierarchy("city", provinceId).then(function (items) {
         cityDd.setItems(items);
-        cityDd.reset("Pilih kota/kabupaten...");
+        cityDd.setValue("");
         cityDd.setDisabled(items.length === 0);
       });
     });
@@ -467,7 +467,7 @@
       districtDd.reset("Memuat...");
       fetchHierarchy("district", cityId).then(function (items) {
         districtDd.setItems(items);
-        districtDd.reset("Pilih kecamatan...");
+        districtDd.setValue("");
         districtDd.setDisabled(items.length === 0);
       });
     });
@@ -483,7 +483,7 @@
       subdistrictDd.reset("Memuat...");
       fetchHierarchy("subdistrict", districtId).then(function (items) {
         subdistrictDd.setItems(items);
-        subdistrictDd.reset("Pilih kelurahan/desa...");
+        subdistrictDd.setValue("");
         subdistrictDd.setDisabled(items.length === 0);
       });
     });

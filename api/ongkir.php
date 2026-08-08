@@ -82,8 +82,10 @@ $services = array_map(function ($item) {
 $cheapest = $services[0];
 
 echo json_encode([
+    // dipertahankan untuk kompatibilitas mundur (mis. kode lama yang baca field ini langsung)
     'cost' => $cheapest['cost'],
     'service' => $cheapest['service'] ?: $courier,
     'etd' => $cheapest['etd'],
+    // daftar lengkap semua paket layanan milik kurir ini, urut dari termurah
     'services' => $services
 ]);

@@ -268,6 +268,11 @@
     if (catMoreLabel) catMoreLabel.textContent = matchedItem ? matchedItem.textContent : catMoreDefaultLabel;
   }
 
+  function scrollCatalogToTop() {
+    var target = (toolbarWrap && toolbar) ? toolbarTriggerPoint : 0;
+    window.scrollTo({ top: Math.max(target - 4, 0), behavior: "smooth" });
+  }
+
   function selectCategoryTab(value) {
     updateCategoryTabsUI(value);
 
@@ -277,6 +282,7 @@
 
     state.categories = value ? [value] : [];
     applyFilters();
+    scrollCatalogToTop();
   }
 
   if (catBar) {
@@ -348,16 +354,29 @@
     });
   }
 
-  if (resetBtn) {
-    resetBtn.addEventListener("click", function () {
-      document.querySelectorAll('input[name="category"]').forEach(function (el) { el.checked = false; });
-      var allPriceRadio = document.querySelector('input[name="price"][value="all"]');
-      if (allPriceRadio) allPriceRadio.checked = true;
+  function resetAllFilters() {
+    document.querySelectorAll('input[name="category"]').forEach(function (el) { el.checked = false; });
+    var allPriceRadio = document.querySelector('input[name="price"][value="all"]');
+    if (allPriceRadio) allPriceRadio.checked = true;
 
-      state.categories = [];
-      state.priceRange = "all";
-      updateCategoryTabsUI("");
-      applyFilters();
+    state.categories = [];
+    state.priceRange = "all";
+    state.query = "";
+    if (searchInput) searchInput.value = "";
+
+    updateCategoryTabsUI("");
+    applyFilters();
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", resetAllFilters);
+  }
+
+  var emptyResetBtn = document.getElementById("catalogEmptyReset");
+  if (emptyResetBtn) {
+    emptyResetBtn.addEventListener("click", function () {
+      resetAllFilters();
+      closeDrawer();
     });
   }
 

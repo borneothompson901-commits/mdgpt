@@ -23,6 +23,8 @@
 
   var digitalOnlyNoteEl = document.getElementById("digitalOnlyNote");
   var shippingSectionEl = document.getElementById("shippingSection");
+  var cartSummaryEl = document.getElementById("cartSummary");
+  var cartLayoutEl = document.querySelector(".cart-layout");
 
   var destinationIdEl = document.getElementById("cartDestinationId");
   var addressDetailEl = document.getElementById("cartAddressDetail");
@@ -33,6 +35,7 @@
 
   var cekOngkirBtn = document.getElementById("cekOngkirBtn");
   var ongkirNoteEl = document.getElementById("cartOngkirNote");
+  var ongkirHintEl = document.getElementById("cartOngkirHint");
   var sumOngkirRowEl = document.getElementById("sumOngkirRow");
 
   var COURIER_NAMES = {
@@ -304,6 +307,21 @@
   }
 
   function reconcileShippingVisibility() {
+    var cart = window.CartStore.getCart();
+    var isEmpty = !Array.isArray(cart) || cart.length === 0;
+
+    if (cartLayoutEl) cartLayoutEl.classList.toggle("is-empty", isEmpty);
+    setVisible(cartSummaryEl, !isEmpty);
+
+    if (isEmpty) {
+      setVisible(digitalOnlyNoteEl, false);
+      setVisible(shippingSectionEl, false);
+      setVisible(sumOngkirRowEl, false);
+      state.ongkir = 0;
+      state.ongkirChecked = true;
+      return;
+    }
+
     var needsShipping = window.CartStore.needsShipping();
 
     setVisible(shippingSectionEl, needsShipping);
@@ -400,7 +418,9 @@
   function resetKurirResults() {
     kurirHiddenEl.value = "";
     state.ongkirServiceCode = "";
+    if (ongkirHintEl) setVisible(ongkirHintEl, false);
     if (!kurirListEl) return;
+    setVisible(kurirListEl, false);
     var items = kurirListEl.querySelectorAll(".cart-kurir-item");
     items.forEach(function (item) {
       item.classList.remove("is-selected", "is-loading", "is-unavailable");
@@ -600,6 +620,10 @@
       destinationIdEl.value = subdistrictDd.value;
       state.destinationLabel = subdistrictDd.value ? buildDestinationLabel() : "";
 
+      if (subdistrictDd.value && ongkirHintEl) {
+        setVisible(ongkirHintEl, false);
+      }
+
       if (state.ongkirChecked) {
         state.ongkirChecked = false;
         ongkirNoteEl.hidden = true;
@@ -654,10 +678,13 @@
   if (cekOngkirBtn) {
     cekOngkirBtn.addEventListener("click", function () {
       if (!hasValidDestination()) {
-        showOngkirNote("Lengkapi provinsi sampai kelurahan/desa tujuan dulu ya.", "error");
+        if (ongkirHintEl) setVisible(ongkirHintEl, true);
+        ongkirNoteEl.hidden = true;
         if (provinceDd) provinceDd.root.querySelector(".custom-select__trigger").focus();
         return;
       }
+
+      if (ongkirHintEl) setVisible(ongkirHintEl, false);
 
       var weight = window.CartStore.getTotalWeight();
       if (weight <= 0) weight = 1000;
@@ -668,6 +695,7 @@
       state.ongkirChecked = false;
       ongkirNoteEl.hidden = true;
       kurirHiddenEl.value = "";
+      setVisible(kurirListEl, true);
       groups.forEach(function (group) {
         var item = group.querySelector(".cart-kurir-item");
         var panel = group.querySelector("[data-paket-panel]");
@@ -753,9 +781,7 @@
           );
 
           showOngkirNote(
-            "Ongkir termurah " + state.ongkirService + ": " + formatRupiah(cheapest.cost) +
-              (cheapest.etd ? " (est. " + cheapest.etd + " hari)" : "") +
-              ". Klik nama ekspedisi untuk lihat & pilih paket lain.",
+            "Termurah: " + cheapest.courierName + " " + formatRupiah(cheapest.cost),
             "success"
           );
         } else {

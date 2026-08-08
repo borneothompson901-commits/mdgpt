@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Katalog Produk - M-DGPT Agency</title>
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1577130400783020');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1577130400783020&ev=PageView&noscript=1"
+    /></noscript>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" href="../assets/icons/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/store.css" />
+    <link rel="stylesheet" href="../css/product.css" />
+    <script src="../js/products-data.js"></script>
+    <link rel="preload" as="image" href="../assets/icons/logo.png">
+  </head>
+  <body>
+    <main class="page product-page">
+      <div class="catalog-toolbar-wrap" id="catalogToolbarWrap">
+      <div class="catalog-toolbar" id="catalogToolbar">
+        <div class="catalog-toolbar__inner">
+          <a href="../lingua.html" class="catalog-back-btn" id="catalogBackBtn" aria-label="Kembali ke halaman utama">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m12 19-7-7 7-7" />
+              <path d="M19 12H5" />
+            </svg>
+          </a>
+          <form class="catalog-search" role="search" action="#" onsubmit="return false;">
+            <svg class="catalog-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input type="search" id="catalogSearchInput" class="catalog-search__input" placeholder="Cari produk digital..." aria-label="Cari produk" />
+          </form>
+
+          <button class="catalog-filter-btn" id="filterBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="filterDrawer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <circle cx="9" cy="6" r="2.3" fill="var(--white)" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <circle cx="16" cy="12" r="2.3" fill="var(--white)" />
+              <line x1="4" y1="18" x2="20" y2="18" />
+              <circle cx="11" cy="18" r="2.3" fill="var(--white)" />
+            </svg>
+            <span>Filter</span>
+          </button>
+          <a href="../lingua/cart.html" class="catalog-cart-btn" id="catalogCartBtn" aria-label="Keranjang belanja">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+            <span class="catalog-cart-btn__count" id="catalogCartCount" hidden>0</span>
+          </a>
+        </div>
+      </div>
+      </div>
+      <div class="catalog-categories-wrap" id="catalogCategoriesWrap">
+      <nav class="catalog-categories" id="catalogCategories" aria-label="Kategori produk">
+        <div class="catalog-categories__inner">
+          <div class="catalog-categories__scroll">
+            <button type="button" class="catalog-cat" data-cat="all" aria-current="true">Semua Produk</button>
+            <button type="button" class="catalog-cat" data-cat="template-konten">Template Konten</button>
+            <button type="button" class="catalog-cat" data-cat="ebook-strategi">Ebook Strategi</button>
+            <button type="button" class="catalog-cat" data-cat="tools-otomasi">Tools Otomasi</button>
+            <button type="button" class="catalog-cat" data-cat="workshop-kit">Workshop Kit</button>
+          </div>
+          <div class="catalog-cat-more" id="catalogCatMore">
+            <button type="button" class="catalog-cat catalog-cat-more__toggle" id="catalogCatMoreToggle" aria-haspopup="true" aria-expanded="false" aria-controls="catalogCatMoreMenu">
+              <span id="catalogCatMoreLabel">Lainnya</span>
+              <svg class="catalog-cat-more__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            <div class="catalog-cat-more__menu" id="catalogCatMoreMenu" role="menu" hidden>
+              <button type="button" class="catalog-cat-more__item" role="menuitem" data-cat="social-media-kit">Social Media Kit</button>
+              <button type="button" class="catalog-cat-more__item" role="menuitem" data-cat="branding-bundle">Branding Bundle</button>
+              <button type="button" class="catalog-cat-more__item" role="menuitem" data-cat="content-planner">Content Planner</button>
+              <button type="button" class="catalog-cat-more__item" role="menuitem" data-cat="automation-script">Automation Script</button>
+            </div>
+          </div>
+        </div>
+      </nav>
+      </div>
+      <section class="catalog-section">
+        <div class="catalog-section__inner">
+          <div class="catalog-section__meta">
+            <span class="catalog-section__count" id="resultCount">Menampilkan 16 produk</span>
+            <div class="catalog-sort" id="catalogSort">
+              <span class="catalog-sort__label">Urutkan:</span>
+
+              <div class="sort-item" id="sortTerbaruItem">
+                <span class="sort-item__label">Terbaru</span>
+                <span class="sort-item__arrows">
+                  <button type="button" class="sort-item__arrow" data-sort="terbaru" aria-label="Urutkan dari yang terbaru" title="Terbaru">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l8 10H4z"/></svg>
+                  </button>
+                  <button type="button" class="sort-item__arrow" data-sort="terlama" aria-label="Urutkan dari yang terlama" title="Terlama">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20 4 10h16z"/></svg>
+                  </button>
+                </span>
+              </div>
+
+              <div class="sort-item" id="sortTerlarisItem">
+                <span class="sort-item__label">Terlaris</span>
+                <span class="sort-item__arrows">
+                  <button type="button" class="sort-item__arrow" data-sort="terlaris-asc" aria-label="Urutkan dari paling sedikit terjual" title="Paling sedikit terjual">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l8 10H4z"/></svg>
+                  </button>
+                  <button type="button" class="sort-item__arrow" data-sort="terlaris-desc" aria-label="Urutkan dari paling laris" title="Paling laris">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20 4 10h16z"/></svg>
+                  </button>
+                </span>
+              </div>
+
+              <div class="sort-item" id="sortHargaItem">
+                <span class="sort-item__label">Harga</span>
+                <span class="sort-item__arrows">
+                  <button type="button" class="sort-item__arrow" data-sort="termurah" aria-label="Urutkan harga terendah" title="Harga terendah">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l8 10H4z"/></svg>
+                  </button>
+                  <button type="button" class="sort-item__arrow" data-sort="termahal" aria-label="Urutkan harga tertinggi" title="Harga tertinggi">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20 4 10h16z"/></svg>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="explore-grid catalog-grid" id="catalogGrid">
+
+            <article class="explore-card" data-id="1" data-sold="1240" data-category="template-konten" data-price="149000" data-title="Template Konten Elite Multi Platform Sosial Media">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Template Konten</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-1/500/625" alt="Template Konten Elite Multi Platform Sosial Media" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title"><span class="catalog-badge">-25%</span>Template Konten Elite Multi Platform Sosial Media</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp149.000</span>
+                  <span class="explore-card__price-old">Rp199.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=1" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="2" data-sold="860" data-category="template-konten" data-price="119000" data-title="Template Feed Instagram Minimal Estetik Siap Pakai">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Template Konten</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-2/500/625" alt="Template Feed Instagram Minimal Estetik Siap Pakai" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title">Template Feed Instagram Minimal Estetik Siap Pakai</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp119.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=2" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="3" data-sold="980" data-category="ebook-strategi" data-price="99000" data-title="Ebook Growth Playbook Strategi Digital Marketing">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Ebook Strategi</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-3/500/625" alt="Ebook Growth Playbook Strategi Digital Marketing" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title"><span class="catalog-badge">-34%</span>Ebook Growth Playbook Strategi Digital Marketing</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp99.000</span>
+                  <span class="explore-card__price-old">Rp149.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=3" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="4" data-sold="705" data-category="ebook-strategi" data-price="89000" data-title="Ebook Copywriting Konversi Tinggi untuk Penjualan">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Ebook Strategi</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-4/500/625" alt="Ebook Copywriting Konversi Tinggi untuk Penjualan" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title">Ebook Copywriting Konversi Tinggi untuk Penjualan</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp89.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=4" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="5" data-sold="875" data-category="tools-otomasi" data-price="199000" data-title="Toolkit Automasi Bisnis Digital Serba Otomatis">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Tools Otomasi</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-5/500/625" alt="Toolkit Automasi Bisnis Digital Serba Otomatis" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title"><span class="catalog-badge">-24%</span>Toolkit Automasi Bisnis Digital Serba Otomatis</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp199.000</span>
+                  <span class="explore-card__price-old">Rp259.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=5" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="6" data-sold="512" data-category="tools-otomasi" data-price="229000" data-title="Script Auto-Reply WhatsApp Bisnis Respon Cepat">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Tools Otomasi</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-6/500/625" alt="Script Auto-Reply WhatsApp Bisnis Respon Cepat" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title">Script Auto-Reply WhatsApp Bisnis Respon Cepat</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp229.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=6" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="7" data-sold="690" data-category="workshop-kit" data-price="249000" data-title="Workshop Kit Digital Marketing Lengkap dan Praktis">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Workshop Kit</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-7/500/625" alt="Workshop Kit Digital Marketing Lengkap dan Praktis" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title"><span class="catalog-badge">-24%</span>Workshop Kit Digital Marketing Lengkap dan Praktis</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp249.000</span>
+                  <span class="explore-card__price-old">Rp329.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=7" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="8" data-sold="430" data-category="workshop-kit" data-price="179000" data-title="Slide Kit Materi Workshop Desain Profesional">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Workshop Kit</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-8/500/625" alt="Slide Kit Materi Workshop Desain Profesional" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title">Slide Kit Materi Workshop Desain Profesional</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp179.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=8" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="9" data-sold="640" data-category="social-media-kit" data-price="129000" data-title="Social Media Kit Growth untuk Bisnis dan Brand">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Social Media Kit</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-9/500/625" alt="Social Media Kit Growth untuk Bisnis dan Brand" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title"><span class="catalog-badge">-19%</span>Social Media Kit Growth untuk Bisnis dan Brand</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp129.000</span>
+                  <span class="explore-card__price-old">Rp159.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=9" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="10" data-sold="390" data-category="social-media-kit" data-price="139000" data-title="Story Highlight Cover Pack Estetik Instagram">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Social Media Kit</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-10/500/625" alt="Story Highlight Cover Pack Estetik Instagram" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title">Story Highlight Cover Pack Estetik Instagram</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp139.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=10" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="11" data-sold="760" data-category="branding-bundle" data-price="179000" data-title="Branding Bundle Pro Lengkap untuk Identitas Brand">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Branding Bundle</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-11/500/625" alt="Branding Bundle Pro Lengkap untuk Identitas Brand" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title"><span class="catalog-badge">-31%</span>Branding Bundle Pro Lengkap untuk Identitas Brand</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp179.000</span>
+                  <span class="explore-card__price-old">Rp259.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=11" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="12" data-sold="320" data-category="branding-bundle" data-price="159000" data-title="Logo dan Brand Guideline Kit Profesional Lengkap">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Branding Bundle</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-12/500/625" alt="Logo dan Brand Guideline Kit Profesional Lengkap" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title">Logo dan Brand Guideline Kit Profesional Lengkap</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp159.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=12" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="13" data-sold="540" data-category="content-planner" data-price="79000" data-title="Content Planner Notion Template Rapi dan Fleksibel">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Content Planner</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-13/500/625" alt="Content Planner Notion Template Rapi dan Fleksibel" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title"><span class="catalog-badge">-20%</span>Content Planner Notion Template Rapi dan Fleksibel</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp79.000</span>
+                  <span class="explore-card__price-old">Rp99.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=13" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="14" data-sold="275" data-category="content-planner" data-price="69000" data-title="Kalender Konten 90 Hari Siap Pakai untuk Bisnis">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Content Planner</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-14/500/625" alt="Kalender Konten 90 Hari Siap Pakai untuk Bisnis" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title">Kalender Konten 90 Hari Siap Pakai untuk Bisnis</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp69.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=14" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="15" data-sold="480" data-category="automation-script" data-price="299000" data-title="Automation Script Order Otomatis untuk Toko Online">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Automation Script</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-15/500/625" alt="Automation Script Order Otomatis untuk Toko Online" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title"><span class="catalog-badge">-15%</span>Automation Script Order Otomatis untuk Toko Online</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp299.000</span>
+                  <span class="explore-card__price-old">Rp349.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=15" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="explore-card" data-id="16" data-sold="210" data-category="automation-script" data-price="219000" data-title="Bot Rekap Laporan Harian Otomatis untuk Tim">
+              <div class="explore-card__img">
+                <span class="explore-card__category">Automation Script</span>
+                <img src="https://picsum.photos/seed/mdgpt-prod-16/500/625" alt="Bot Rekap Laporan Harian Otomatis untuk Tim" loading="lazy" />
+              </div>
+              <div class="explore-card__body">
+                <h3 class="explore-card__title">Bot Rekap Laporan Harian Otomatis untuk Tim</h3>
+                <div class="explore-card__price">
+                  <span class="explore-card__price-now">Rp219.000</span>
+                </div>
+                <div class="explore-card__actions">
+                  <a href="produk.html?id=16" class="explore-card__view">Lihat Produk</a>
+                  <button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+          </div>
+
+          <p class="catalog-empty" id="catalogEmpty" hidden>Tidak ada produk yang cocok dengan pencarian/filter kamu.</p>
+          <p class="catalog-end" id="catalogEnd">-Sudah semua produk ditampilkan-</p>
+        </div>
+      </section>
+    </main>
+    <div class="filter-overlay" id="filterOverlay"></div>
+    <aside class="filter-drawer" id="filterDrawer" aria-hidden="true" aria-label="Filter produk">
+      <div class="filter-drawer__head">
+        <h3>Filter Produk</h3>
+        <button class="filter-drawer__close" id="filterCloseBtn" type="button" aria-label="Tutup filter">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="filter-drawer__body">
+        <div class="filter-group">
+          <h4 class="filter-group__title">Kategori</h4>
+          <label class="filter-check"><input type="checkbox" name="category" value="template-konten" /><span>Template Konten</span></label>
+          <label class="filter-check"><input type="checkbox" name="category" value="ebook-strategi" /><span>Ebook Strategi</span></label>
+          <label class="filter-check"><input type="checkbox" name="category" value="tools-otomasi" /><span>Tools Otomasi</span></label>
+          <label class="filter-check"><input type="checkbox" name="category" value="workshop-kit" /><span>Workshop Kit</span></label>
+          <label class="filter-check"><input type="checkbox" name="category" value="social-media-kit" /><span>Social Media Kit</span></label>
+          <label class="filter-check"><input type="checkbox" name="category" value="branding-bundle" /><span>Branding Bundle</span></label>
+          <label class="filter-check"><input type="checkbox" name="category" value="content-planner" /><span>Content Planner</span></label>
+          <label class="filter-check"><input type="checkbox" name="category" value="automation-script" /><span>Automation Script</span></label>
+        </div>
+
+        <div class="filter-group">
+          <h4 class="filter-group__title">Rentang Harga</h4>
+          <label class="filter-radio"><input type="radio" name="price" value="all" checked /><span>Semua Harga</span></label>
+          <label class="filter-radio"><input type="radio" name="price" value="0-100000" /><span>Di bawah Rp100.000</span></label>
+          <label class="filter-radio"><input type="radio" name="price" value="100000-200000" /><span>Rp100.000 &ndash; Rp200.000</span></label>
+          <label class="filter-radio"><input type="radio" name="price" value="200000-300000" /><span>Rp200.000 &ndash; Rp300.000</span></label>
+          <label class="filter-radio"><input type="radio" name="price" value="300000-999999999" /><span>Di atas Rp300.000</span></label>
+        </div>
+      </div>
+
+      <div class="filter-drawer__footer">
+        <button class="filter-btn-reset" id="filterResetBtn" type="button">Reset</button>
+        <button class="filter-btn-apply" id="filterApplyBtn" type="button">Terapkan Filter</button>
+      </div>
+    </aside>
+
+    <footer class="footer" role="contentinfo">
+      <div class="footer__inner">
+        <div class="footer__col footer__col--brand">
+          <div class="footer__logos">
+            <img src="../assets/icons/logo.png" alt="MDGPT Agency" class="footer__logo-img" loading="lazy" />
+            <img src="../assets/icons/logo2.png" alt="Naek Level" class="footer__logo-img" loading="lazy" />
+          </div>
+          <p class="footer__legal">CV Indomarketing Digital Teknologi</p>
+          <address class="footer__address"> Jl. Simo Gn. Bar. Tol I No.7, Simomulyo, <br /> Kec. Sukomanunggal, Surabaya </address>
+        </div>
+        <div class="footer__col">
+          <h3 class="footer__heading">Informasi</h3>
+          <ul class="footer__links">
+            <li><a href="../index.html" class="footer__link">Beranda</a></li>
+            <li><a href="../layanan.html" class="footer__link">Layanan</a></li>
+            <li><a href="../workshop.html" class="footer__link">Info Webinar &amp; Workshop</a></li>
+            <li><a href="../member.html" class="footer__link">Member Tahunan</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h3 class="footer__heading">Layanan</h3>
+          <ul class="footer__links">
+            <li><a href="../layanan.html#services" class="footer__link">Social Media Service</a></li>
+            <li><a href="../layanan.html#services" class="footer__link">Digital Ads Service</a></li>
+            <li><a href="../layanan.html#services" class="footer__link">Workshop Digital Service & Organizer</a></li>
+            <li><a href="../layanan.html#services" class="footer__link">Business Process Automation</a></li>
+            <li><a href="../layanan.html#services" class="footer__link">Event Documentation</a></li>
+            <li><a href="../layanan.html#services" class="footer__link">Generate Content Publishing</a></li>
+          </ul>
+        </div>
+        <div class="footer__col footer__col--end">
+          <div class="footer__group">
+            <h3 class="footer__heading">Ikuti Kami</h3>
+            <ul class="footer__links">
+              <li>
+                <a href="https://www.instagram.com/mdgpt_agency/" class="footer__link footer__link--icon" target="_blank" rel="noopener noreferrer">
+                  <span class="footer__icon-sq footer__icon-sq--ig" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" />
+                      <circle cx="12" cy="12" r="4" />
+                      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+                    </svg>
+                  </span> @mdgpt_agency
+                </a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/company/m-dgpt-agency" class="footer__link footer__link--icon" target="_blank" rel="noopener noreferrer">
+                  <span class="footer__icon-sq footer__icon-sq--li" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>
+                  </span> M-DGPT Agency
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="footer__group">
+            <h3 class="footer__heading">Hubungi Kami</h3>
+            <ul class="footer__links">
+              <li>
+                <a href="https://wa.me/6287777222572" class="footer__link footer__link--icon" target="_blank" rel="noopener noreferrer">
+                  <span class="footer__icon-sq footer__icon-sq--wa" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                  </span> 0877 7722 2572
+                </a>
+              </li>
+              <li>
+                <a href="mailto:indomarketingdigitalteknologi@gmail.com" class="footer__link footer__link--icon">
+                  <span class="footer__icon-sq footer__icon-sq--em" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                  </span> indomarketingdigitalteknologi@gmail.com
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <div class="footer__bottom-inner">
+          <p class="footer__copy">&copy; <span id="footer-year"></span> CV Indomarketing Digital Teknologi. Hak cipta dilindungi.</p>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/global.js" defer></script>
+    <script src="../js/cms-loader.js" defer></script>
+    <script src="../js/cart-store.js" defer></script>
+    <script src="../js/variant-modal.js" defer></script>
+    <script src="../js/product.js" defer></script>
+  </body>
+</html>

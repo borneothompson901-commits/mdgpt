@@ -135,7 +135,7 @@
     var activeHref    = activeLink ? activeLink.getAttribute('href') : null;
     var namaHalaman   = activeHref ? (HREF_MAP[activeHref] || null) : null;
 
-    if (!namaHalaman) return; // halaman tidak di-map, biarkan HTML asli
+    if (!namaHalaman) return;
 
     fetch('api/public_contents.php?type=cta', { cache: 'no-store' })
         .then(function(r) { return r.json(); })

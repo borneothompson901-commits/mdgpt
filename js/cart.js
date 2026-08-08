@@ -913,6 +913,7 @@
   });
 
   document.addEventListener("cart:updated", renderCart);
+  resetKurirResults();
   renderCart();
 
   function isEffectivelyVisible(el) {

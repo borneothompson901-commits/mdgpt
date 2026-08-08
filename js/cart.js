@@ -3,8 +3,14 @@
 
   if (!window.CartStore) return;
   var ADMIN_WHATSAPP = "6287777222572";
-  var ONGKIR_ENDPOINT = "/api/ongkir.php";
-  var HIERARCHY_ENDPOINT = "/api/destination-hierarchy.php";
+  var SUPABASE_URL = "https://xjtkipgopiormwmbdtfa.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_5abZti9M8zHWuHyh59q8Ew_Otn-QopO";
+  var SUPABASE_FN_HEADERS = {
+    apikey: SUPABASE_KEY,
+    Authorization: "Bearer " + SUPABASE_KEY
+  };
+  var ONGKIR_ENDPOINT = SUPABASE_URL + "/functions/v1/ongkir";
+  var HIERARCHY_ENDPOINT = SUPABASE_URL + "/functions/v1/destination-hierarchy";
 
   var SERVICE_FEE = 0;
   var TAX_RATE = 0;
@@ -45,8 +51,6 @@
     anteraja: "AnterAja"
   };
 
-  // Custom dropdown controller (replaces native <select> so styling is
-  // fully custom, with menu list capped to 5 rows + scroll for the rest).
   function makeDropdown(rootId) {
     var root = document.getElementById(rootId);
     if (!root) return null;
@@ -409,7 +413,7 @@
     var url = HIERARCHY_ENDPOINT + "?level=" + encodeURIComponent(level);
     if (parentId) url += "&parent_id=" + encodeURIComponent(parentId);
 
-    return fetch(url)
+    return fetch(url, { headers: SUPABASE_FN_HEADERS })
       .then(function (res) { return res.json(); })
       .then(function (data) { return data.results || []; })
       .catch(function () { return []; });
@@ -723,7 +727,7 @@
 
         return fetch(ONGKIR_ENDPOINT, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
           body: JSON.stringify(payload)
         })
           .then(function (res) { return res.json(); })

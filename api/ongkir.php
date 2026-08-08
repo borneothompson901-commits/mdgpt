@@ -70,10 +70,20 @@ usort($results, function ($a, $b) {
     return ($a['cost'] ?? PHP_INT_MAX) <=> ($b['cost'] ?? PHP_INT_MAX);
 });
 
-$cheapest = $results[0];
+$services = array_map(function ($item) {
+    return [
+        'service' => $item['service'] ?? '',
+        'description' => $item['description'] ?? '',
+        'cost' => (int)($item['cost'] ?? 0),
+        'etd' => $item['etd'] ?? ''
+    ];
+}, $results);
+
+$cheapest = $services[0];
 
 echo json_encode([
-    'cost' => (int)($cheapest['cost'] ?? 0),
-    'service' => $cheapest['service'] ?? $courier,
-    'etd' => $cheapest['etd'] ?? ''
+    'cost' => $cheapest['cost'],
+    'service' => $cheapest['service'] ?: $courier,
+    'etd' => $cheapest['etd'],
+    'services' => $services
 ]);

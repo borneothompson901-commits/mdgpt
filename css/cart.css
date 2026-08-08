@@ -761,23 +761,38 @@
   flex-direction: column;
   gap: 8px;
 }
+
+.cart-page .cart-kurir-group {
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.14));
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+.cart-page .cart-kurir-group:has(.cart-kurir-item.is-selected) {
+  border-color: var(--cat-accent, #ee4d2d);
+}
+
+/* Row utama kurir (JNE / J&T / dst) — ini yang harus paling menonjol secara visual */
 .cart-page .cart-kurir-item {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  border: 1px solid var(--border, rgba(0, 0, 0, 0.14));
-  border-radius: 10px;
+  border: none;
+  border-radius: 0;
   padding: 10px 12px;
   cursor: pointer;
   box-sizing: border-box;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  background: var(--white, #fff);
+  font: inherit;
+  text-align: left;
+  transition: background-color 0.15s ease;
 }
 .cart-page .cart-kurir-item:hover {
-  border-color: var(--cat-accent, #ee4d2d);
+  background: rgba(238, 77, 45, 0.04);
 }
 .cart-page .cart-kurir-item.is-selected {
-  border-color: var(--cat-accent, #ee4d2d);
   background: rgba(238, 77, 45, 0.06);
 }
 .cart-page .cart-kurir-item.is-loading {
@@ -793,6 +808,93 @@
   align-items: center;
   gap: 10px;
   min-width: 0;
+}
+.cart-page .cart-kurir-item__right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cart-page .cart-kurir-chevron {
+  color: var(--gray-400, #999);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.cart-page .cart-kurir-item[aria-expanded="true"] .cart-kurir-chevron {
+  transform: rotate(180deg);
+  color: var(--cat-accent, #ee4d2d);
+}
+
+/* Panel accordion paket layanan — dibuat custom (bukan <details> bawaan browser)
+   pakai trik CSS grid-template-rows biar transisinya smooth */
+.cart-page .cart-kurir-paket-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.22s ease;
+  background: var(--gray-50, #f7f7f8);
+  border-top: 1px solid transparent;
+}
+.cart-page .cart-kurir-paket-panel.is-open {
+  grid-template-rows: 1fr;
+  border-top-color: var(--border, rgba(0, 0, 0, 0.08));
+}
+.cart-page .cart-kurir-paket-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.cart-page .cart-kurir-paket-list {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px;
+  gap: 4px;
+}
+
+/* Opsi paket (REG/YES/OKE dst) — sengaja dibikin lebih redup/kecil
+   dibanding row kurir utama supaya fokus mata tetap di nama ekspedisi */
+.cart-page .cart-kurir-paket-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+.cart-page .cart-kurir-paket-item:hover {
+  background: rgba(0, 0, 0, 0.035);
+}
+.cart-page .cart-kurir-paket-item.is-selected {
+  background: rgba(238, 77, 45, 0.05);
+}
+.cart-page .cart-kurir-paket-item__estimasi {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--gray-500, #6b6b70);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cart-page .cart-kurir-paket-item.is-selected .cart-kurir-paket-item__estimasi {
+  color: var(--gray-700, #444);
+}
+.cart-page .cart-kurir-paket-item__harga {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--gray-500, #6b6b70);
+  white-space: nowrap;
+}
+.cart-page .cart-kurir-paket-item.is-selected .cart-kurir-paket-item__harga {
+  color: var(--cat-accent, #ee4d2d);
+}
+.cart-page .cart-kurir-paket-empty {
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: var(--gray-400, #999);
 }
 .cart-page .cart-kurir-logo {
   flex-shrink: 0;

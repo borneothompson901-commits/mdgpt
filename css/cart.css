@@ -107,6 +107,21 @@
   align-items: start;
 }
 
+/* State keranjang kosong: cuma tampilin card "kosong" di tengah,
+   summary/field harga dkk disembunyikan total */
+.cart-page .cart-layout.is-empty {
+  grid-template-columns: 1fr;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cart-page .cart-layout.is-empty .cart-items {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
 @media (max-width: 900px) {
   .cart-page .cart-layout {
     grid-template-columns: 1fr;
@@ -754,6 +769,12 @@
 .cart-page .cart-btn-cekongkir:disabled {
   opacity: 0.65;
   cursor: not-allowed;
+}
+
+.cart-page .cart-ongkir-hint {
+  margin: -4px 0 10px;
+  font-size: 0.8rem;
+  color: #d9534f;
 }
 
 .cart-page .cart-kurir-list {

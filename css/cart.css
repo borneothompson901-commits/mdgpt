@@ -641,6 +641,7 @@
   position: relative;
   flex: 1 1 auto;
   min-width: 0;
+  width: 100%;
 }
 .cart-page .custom-select__trigger {
   width: 100%;
@@ -664,6 +665,13 @@
 .cart-page .custom-select[aria-expanded="true"] .custom-select__trigger,
 .cart-page .custom-select__trigger[aria-expanded="true"] {
   border-color: var(--cat-accent, #ee4d2d);
+}
+.cart-page .custom-select.is-disabled .custom-select__trigger,
+.cart-page .custom-select__trigger:disabled {
+  background-color: var(--gray-50, #f7f7f7);
+  color: var(--gray-400, #999);
+  cursor: not-allowed;
+  border-color: var(--border, rgba(0, 0, 0, 0.14));
 }
 .cart-page .custom-select__value {
   overflow: hidden;
@@ -691,6 +699,22 @@
   margin: 0;
   padding: 6px;
   z-index: 30;
+  /* Show at most 5 options, the rest scrolls */
+  max-height: 212px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
+}
+.cart-page .custom-select__menu::-webkit-scrollbar {
+  width: 6px;
+}
+.cart-page .custom-select__menu::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 6px;
+}
+.cart-page .custom-select__menu::-webkit-scrollbar-track {
+  background: transparent;
 }
 .cart-page .custom-select__option {
   padding: 9px 10px;
@@ -706,4 +730,111 @@
   color: var(--cat-accent, #ee4d2d);
   font-weight: 600;
   background: rgba(238, 77, 45, 0.06);
+}
+
+/* Cek Ongkir: full-width button + 4 expedition rows shown at once */
+.cart-page .cart-btn-cekongkir {
+  width: 100%;
+  display: block;
+  border: none;
+  background: var(--cat-accent, #ee4d2d);
+  color: var(--white, #fff);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+.cart-page .cart-btn-cekongkir:hover {
+  background: var(--cat-accent-dark, #d6431f);
+}
+.cart-page .cart-btn-cekongkir:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.cart-page .cart-kurir-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cart-page .cart-kurir-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.14));
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.cart-page .cart-kurir-item:hover {
+  border-color: var(--cat-accent, #ee4d2d);
+}
+.cart-page .cart-kurir-item.is-selected {
+  border-color: var(--cat-accent, #ee4d2d);
+  background: rgba(238, 77, 45, 0.06);
+}
+.cart-page .cart-kurir-item.is-loading {
+  cursor: default;
+  opacity: 0.7;
+}
+.cart-page .cart-kurir-item.is-unavailable {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.cart-page .cart-kurir-item__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.cart-page .cart-kurir-logo {
+  flex-shrink: 0;
+  width: 64px;
+  aspect-ratio: 1920 / 1080;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-50, #f7f7f7);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+}
+.cart-page .cart-kurir-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cart-page .cart-kurir-item__name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--gray-900, #1a1a1a);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.cart-page .cart-kurir-item__cost {
+  flex-shrink: 0;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--gray-900, #1a1a1a);
+  white-space: nowrap;
+}
+.cart-page .cart-kurir-item.is-loading .cart-kurir-item__cost {
+  font-weight: 500;
+  color: var(--gray-500, #6b6b70);
+}
+.cart-page .cart-kurir-item.is-unavailable .cart-kurir-item__cost {
+  font-weight: 500;
+  color: var(--gray-400, #999);
+}
+.cart-page .cart-kurir-item.is-selected .cart-kurir-item__cost {
+  color: var(--cat-accent, #ee4d2d);
 }

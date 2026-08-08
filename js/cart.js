@@ -23,23 +23,125 @@
   var digitalOnlyNoteEl = document.getElementById("digitalOnlyNote");
   var shippingSectionEl = document.getElementById("shippingSection");
 
-  var provinceEl = document.getElementById("cartProvince");
-  var cityEl = document.getElementById("cartCity");
-  var districtEl = document.getElementById("cartDistrict");
-  var subdistrictEl = document.getElementById("cartSubdistrict");
   var destinationIdEl = document.getElementById("cartDestinationId");
   var addressDetailEl = document.getElementById("cartAddressDetail");
   var waEl = document.getElementById("cartWhatsapp");
 
-  var kurirSelectEl = document.getElementById("kurirSelect");
-  var kurirTriggerEl = document.getElementById("kurirSelectTrigger");
-  var kurirMenuEl = document.getElementById("kurirSelectMenu");
-  var kurirValueEl = document.getElementById("kurirSelectValue");
   var kurirHiddenEl = document.getElementById("cartKurir");
+  var kurirListEl = document.getElementById("kurirResultList");
 
   var cekOngkirBtn = document.getElementById("cekOngkirBtn");
   var ongkirNoteEl = document.getElementById("cartOngkirNote");
   var sumOngkirRowEl = document.getElementById("sumOngkirRow");
+
+  var COURIER_NAMES = {
+    jne: "JNE",
+    jnt: "J&T Express",
+    sicepat: "SiCepat",
+    anteraja: "AnterAja"
+  };
+
+  // Custom dropdown controller (replaces native <select> so styling is
+  // fully custom, with menu list capped to 5 rows + scroll for the rest).
+  function makeDropdown(rootId) {
+    var root = document.getElementById(rootId);
+    if (!root) return null;
+
+    var trigger = root.querySelector(".custom-select__trigger");
+    var valueEl = root.querySelector(".custom-select__value");
+    var menu = root.querySelector(".custom-select__menu");
+    var hidden = root.querySelector("input[type=hidden]");
+    var placeholder = root.getAttribute("data-placeholder") || "Pilih...";
+    var changeCb = null;
+
+    function close() {
+      menu.hidden = true;
+      trigger.setAttribute("aria-expanded", "false");
+    }
+
+    function open() {
+      if (root.classList.contains("is-disabled")) return;
+      menu.hidden = false;
+      trigger.setAttribute("aria-expanded", "true");
+    }
+
+    trigger.addEventListener("click", function () {
+      if (menu.hidden) open(); else close();
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!root.contains(e.target)) close();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") close();
+    });
+
+    menu.addEventListener("click", function (e) {
+      var opt = e.target.closest(".custom-select__option");
+      if (!opt) return;
+      setValue(opt.getAttribute("data-value"), opt.textContent);
+      close();
+      if (changeCb) changeCb(hidden.value);
+    });
+
+    function setValue(val, label) {
+      hidden.value = val || "";
+      valueEl.textContent = val ? label : placeholder;
+      var opts = menu.querySelectorAll(".custom-select__option");
+      opts.forEach(function (o) {
+        var match = val !== "" && o.getAttribute("data-value") === val;
+        o.classList.toggle("is-selected", match);
+        o.setAttribute("aria-selected", match ? "true" : "false");
+      });
+    }
+
+    function setItems(items) {
+      menu.innerHTML = "";
+      items.forEach(function (item) {
+        var li = document.createElement("li");
+        li.className = "custom-select__option";
+        li.setAttribute("role", "option");
+        li.setAttribute("aria-selected", "false");
+        li.setAttribute("data-value", item.id);
+        li.textContent = item.name;
+        menu.appendChild(li);
+      });
+    }
+
+    function reset(customPlaceholder) {
+      close();
+      setItems([]);
+      hidden.value = "";
+      valueEl.textContent = customPlaceholder || placeholder;
+    }
+
+    function setDisabled(disabled) {
+      root.classList.toggle("is-disabled", disabled);
+      trigger.disabled = disabled;
+      if (disabled) close();
+    }
+
+    function onChange(cb) {
+      changeCb = cb;
+    }
+
+    return {
+      root: root,
+      setItems: setItems,
+      reset: reset,
+      setDisabled: setDisabled,
+      setValue: setValue,
+      onChange: onChange,
+      get value() { return hidden.value; },
+      get label() { return hidden.value ? valueEl.textContent : ""; }
+    };
+  }
+
+  var provinceDd = makeDropdown("provinceSelect");
+  var cityDd = makeDropdown("citySelect");
+  var districtDd = makeDropdown("districtSelect");
+  var subdistrictDd = makeDropdown("subdistrictSelect");
 
   var sumSubtotalEl = document.getElementById("sumSubtotal");
   var sumOngkirEl = document.getElementById("sumOngkir");
@@ -284,75 +386,6 @@
     window.CartStore.updateQty(id, qty, variantKey);
   });
 
-  function closeKurirMenu() {
-    kurirMenuEl.hidden = true;
-    kurirTriggerEl.setAttribute("aria-expanded", "false");
-  }
-
-  function openKurirMenu() {
-    kurirMenuEl.hidden = false;
-    kurirTriggerEl.setAttribute("aria-expanded", "true");
-  }
-
-  if (kurirTriggerEl) {
-    kurirTriggerEl.addEventListener("click", function () {
-      if (kurirMenuEl.hidden) openKurirMenu(); else closeKurirMenu();
-    });
-  }
-
-  if (kurirMenuEl) {
-    kurirMenuEl.addEventListener("click", function (e) {
-      var option = e.target.closest(".custom-select__option");
-      if (!option) return;
-
-      var options = kurirMenuEl.querySelectorAll(".custom-select__option");
-      options.forEach(function (opt) {
-        opt.classList.remove("is-selected");
-        opt.setAttribute("aria-selected", "false");
-      });
-      option.classList.add("is-selected");
-      option.setAttribute("aria-selected", "true");
-
-      kurirValueEl.textContent = option.textContent;
-      kurirHiddenEl.value = option.getAttribute("data-value");
-      closeKurirMenu();
-
-      if (state.ongkirChecked) {
-        state.ongkirChecked = false;
-        ongkirNoteEl.hidden = true;
-        updateTotals();
-        updateCheckoutState();
-      }
-    });
-  }
-
-  document.addEventListener("click", function (e) {
-    if (kurirSelectEl && !kurirSelectEl.contains(e.target)) closeKurirMenu();
-  });
-
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") closeKurirMenu();
-  });
-
-  function resetSelect(el, placeholder) {
-    el.innerHTML = "";
-    var opt = document.createElement("option");
-    opt.value = "";
-    opt.textContent = placeholder;
-    el.appendChild(opt);
-  }
-
-  function populateSelect(el, items, placeholder) {
-    resetSelect(el, placeholder);
-    items.forEach(function (item) {
-      var opt = document.createElement("option");
-      opt.value = item.id;
-      opt.textContent = item.name;
-      el.appendChild(opt);
-    });
-    el.disabled = items.length === 0;
-  }
-
   function fetchHierarchy(level, parentId) {
     var url = HIERARCHY_ENDPOINT + "?level=" + encodeURIComponent(level);
     if (parentId) url += "&parent_id=" + encodeURIComponent(parentId);
@@ -361,6 +394,17 @@
       .then(function (res) { return res.json(); })
       .then(function (data) { return data.results || []; })
       .catch(function () { return []; });
+  }
+
+  function resetKurirResults() {
+    kurirHiddenEl.value = "";
+    if (!kurirListEl) return;
+    var items = kurirListEl.querySelectorAll(".cart-kurir-item");
+    items.forEach(function (item) {
+      item.classList.remove("is-selected", "is-loading", "is-unavailable");
+      var costEl = item.querySelector("[data-cost]");
+      if (costEl) costEl.textContent = "—";
+    });
   }
 
   function clearDestinationSelection() {
@@ -372,85 +416,88 @@
       ongkirNoteEl.hidden = true;
       updateTotals();
     }
+    resetKurirResults();
     updateCheckoutState();
-  }
-
-  function selectedLabel(selectEl) {
-    var opt = selectEl.options[selectEl.selectedIndex];
-    return opt && opt.value ? opt.textContent : "";
   }
 
   function buildDestinationLabel() {
     return [
-      selectedLabel(subdistrictEl),
-      selectedLabel(districtEl),
-      selectedLabel(cityEl),
-      selectedLabel(provinceEl)
+      subdistrictDd.label,
+      districtDd.label,
+      cityDd.label,
+      provinceDd.label
     ].filter(Boolean).join(", ");
   }
 
-  if (provinceEl) {
+  if (provinceDd) {
     fetchHierarchy("province").then(function (items) {
-      populateSelect(provinceEl, items, "Pilih provinsi...");
+      provinceDd.setItems(items);
     });
 
-    provinceEl.addEventListener("change", function () {
-      resetSelect(cityEl, "Pilih kota/kabupaten...");
-      resetSelect(districtEl, "Pilih kecamatan...");
-      resetSelect(subdistrictEl, "Pilih kelurahan/desa...");
-      cityEl.disabled = true;
-      districtEl.disabled = true;
-      subdistrictEl.disabled = true;
+    provinceDd.onChange(function () {
+      cityDd.reset();
+      districtDd.reset();
+      subdistrictDd.reset();
+      cityDd.setDisabled(true);
+      districtDd.setDisabled(true);
+      subdistrictDd.setDisabled(true);
       clearDestinationSelection();
 
-      var provinceId = provinceEl.value;
+      var provinceId = provinceDd.value;
       if (!provinceId) return;
 
-      cityEl.innerHTML = "<option value=\"\">Memuat...</option>";
+      cityDd.reset("Memuat...");
       fetchHierarchy("city", provinceId).then(function (items) {
-        populateSelect(cityEl, items, "Pilih kota/kabupaten...");
+        cityDd.setItems(items);
+        cityDd.reset("Pilih kota/kabupaten...");
+        cityDd.setDisabled(items.length === 0);
       });
     });
 
-    cityEl.addEventListener("change", function () {
-      resetSelect(districtEl, "Pilih kecamatan...");
-      resetSelect(subdistrictEl, "Pilih kelurahan/desa...");
-      districtEl.disabled = true;
-      subdistrictEl.disabled = true;
+    cityDd.onChange(function () {
+      districtDd.reset();
+      subdistrictDd.reset();
+      districtDd.setDisabled(true);
+      subdistrictDd.setDisabled(true);
       clearDestinationSelection();
 
-      var cityId = cityEl.value;
+      var cityId = cityDd.value;
       if (!cityId) return;
 
-      districtEl.innerHTML = "<option value=\"\">Memuat...</option>";
+      districtDd.reset("Memuat...");
       fetchHierarchy("district", cityId).then(function (items) {
-        populateSelect(districtEl, items, "Pilih kecamatan...");
+        districtDd.setItems(items);
+        districtDd.reset("Pilih kecamatan...");
+        districtDd.setDisabled(items.length === 0);
       });
     });
 
-    districtEl.addEventListener("change", function () {
-      resetSelect(subdistrictEl, "Pilih kelurahan/desa...");
-      subdistrictEl.disabled = true;
+    districtDd.onChange(function () {
+      subdistrictDd.reset();
+      subdistrictDd.setDisabled(true);
       clearDestinationSelection();
 
-      var districtId = districtEl.value;
+      var districtId = districtDd.value;
       if (!districtId) return;
 
-      subdistrictEl.innerHTML = "<option value=\"\">Memuat...</option>";
+      subdistrictDd.reset("Memuat...");
       fetchHierarchy("subdistrict", districtId).then(function (items) {
-        populateSelect(subdistrictEl, items, "Pilih kelurahan/desa...");
+        subdistrictDd.setItems(items);
+        subdistrictDd.reset("Pilih kelurahan/desa...");
+        subdistrictDd.setDisabled(items.length === 0);
       });
     });
 
-    subdistrictEl.addEventListener("change", function () {
-      destinationIdEl.value = subdistrictEl.value;
-      state.destinationLabel = subdistrictEl.value ? buildDestinationLabel() : "";
+    subdistrictDd.onChange(function () {
+      destinationIdEl.value = subdistrictDd.value;
+      state.destinationLabel = subdistrictDd.value ? buildDestinationLabel() : "";
 
       if (state.ongkirChecked) {
         state.ongkirChecked = false;
         ongkirNoteEl.hidden = true;
         updateTotals();
       }
+      resetKurirResults();
       updateCheckoutState();
     });
   }
@@ -461,55 +508,136 @@
     ongkirNoteEl.textContent = text;
   }
 
+  function selectKurirItem(courier) {
+    if (!kurirListEl) return;
+    var items = kurirListEl.querySelectorAll(".cart-kurir-item");
+    items.forEach(function (item) {
+      item.classList.toggle("is-selected", item.getAttribute("data-courier") === courier);
+    });
+    kurirHiddenEl.value = courier;
+  }
+
+  if (kurirListEl) {
+    kurirListEl.addEventListener("click", function (e) {
+      var item = e.target.closest(".cart-kurir-item");
+      if (!item || item.classList.contains("is-unavailable") || item.classList.contains("is-loading")) return;
+      var costEl = item.querySelector("[data-cost]");
+      if (!costEl || !costEl.hasAttribute("data-value")) return;
+
+      selectKurirItem(item.getAttribute("data-courier"));
+
+      state.ongkir = parseInt(costEl.getAttribute("data-value"), 10) || 0;
+      state.ongkirChecked = true;
+      state.ongkirService = item.getAttribute("data-name") || "";
+      state.ongkirEtd = costEl.getAttribute("data-etd") || "";
+
+      showOngkirNote(
+        "Kurir dipilih " + state.ongkirService + ": " + formatRupiah(state.ongkir) +
+          (state.ongkirEtd ? " (est. " + state.ongkirEtd + " hari)" : ""),
+        "success"
+      );
+
+      updateTotals();
+      updateCheckoutState();
+    });
+  }
+
   if (cekOngkirBtn) {
     cekOngkirBtn.addEventListener("click", function () {
       if (!hasValidDestination()) {
         showOngkirNote("Lengkapi provinsi sampai kelurahan/desa tujuan dulu ya.", "error");
-        provinceEl.focus();
+        if (provinceDd) provinceDd.root.querySelector(".custom-select__trigger").focus();
         return;
       }
 
       var weight = window.CartStore.getTotalWeight();
       if (weight <= 0) weight = 1000;
 
-      var payload = {
-        destination_id: destinationIdEl.value,
-        weight: weight,
-        courier: kurirHiddenEl.value
-      };
+      var couriers = Object.keys(COURIER_NAMES);
+      var items = kurirListEl ? kurirListEl.querySelectorAll(".cart-kurir-item") : [];
+
+      state.ongkirChecked = false;
+      ongkirNoteEl.hidden = true;
+      kurirHiddenEl.value = "";
+      items.forEach(function (item) {
+        item.classList.remove("is-selected", "is-unavailable");
+        item.classList.add("is-loading");
+        var costEl = item.querySelector("[data-cost]");
+        if (costEl) {
+          costEl.textContent = "Mengecek...";
+          costEl.removeAttribute("data-value");
+          costEl.removeAttribute("data-etd");
+        }
+      });
 
       cekOngkirBtn.disabled = true;
-      cekOngkirBtn.textContent = "Mengecek...";
+      cekOngkirBtn.textContent = "Mengecek ongkir...";
 
-      fetch(ONGKIR_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
+      var requests = couriers.map(function (courier) {
+        var payload = {
+          destination_id: destinationIdEl.value,
+          weight: weight,
+          courier: courier
+        };
+
+        return fetch(ONGKIR_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        })
+          .then(function (res) { return res.json(); })
+          .then(function (data) { return { courier: courier, data: data }; })
+          .catch(function () { return { courier: courier, data: null }; });
+      });
+
+      Promise.all(requests).then(function (results) {
+        var cheapest = null;
+
+        results.forEach(function (result) {
+          var item = kurirListEl.querySelector('.cart-kurir-item[data-courier="' + result.courier + '"]');
+          if (!item) return;
+          item.classList.remove("is-loading");
+
+          var costEl = item.querySelector("[data-cost]");
+          var data = result.data;
+
           if (!data || typeof data.cost !== "number") {
-            showOngkirNote("Gagal ambil ongkir, coba lagi.", "error");
+            item.classList.add("is-unavailable");
+            if (costEl) costEl.textContent = "Tidak tersedia";
             return;
           }
 
-          state.ongkir = data.cost;
+          if (costEl) {
+            costEl.textContent = formatRupiah(data.cost);
+            costEl.setAttribute("data-value", String(data.cost));
+            costEl.setAttribute("data-etd", data.etd || "");
+          }
+
+          if (!cheapest || data.cost < cheapest.cost) {
+            cheapest = { courier: result.courier, cost: data.cost, service: data.service, etd: data.etd };
+          }
+        });
+
+        if (cheapest) {
+          selectKurirItem(cheapest.courier);
+          state.ongkir = cheapest.cost;
           state.ongkirChecked = true;
-          state.ongkirService = data.service || "";
-          state.ongkirEtd = data.etd || "";
+          state.ongkirService = cheapest.service || COURIER_NAMES[cheapest.courier] || "";
+          state.ongkirEtd = cheapest.etd || "";
 
           showOngkirNote(
-            "Ongkir " + (data.service || "") + ": " + formatRupiah(data.cost) +
-              (data.etd ? " (est. " + data.etd + " hari)" : ""),
+            "Ongkir termurah " + state.ongkirService + ": " + formatRupiah(cheapest.cost) +
+              (cheapest.etd ? " (est. " + cheapest.etd + " hari)" : "") +
+              ". Bisa pilih kurir lain di bawah.",
             "success"
           );
-
-          updateTotals();
-          updateCheckoutState();
-        })
-        .catch(function () {
+        } else {
           showOngkirNote("Gagal ambil ongkir, coba lagi.", "error");
-        })
+        }
+
+        updateTotals();
+        updateCheckoutState();
+      })
         .finally(function () {
           cekOngkirBtn.disabled = false;
           cekOngkirBtn.textContent = "Cek Ongkir";

@@ -53,7 +53,7 @@
    }
 })();
 
-(function () {
+function initStoreWithProductsData() {
   var DATA = window.PRODUCTS_DATA;
 
   if (!DATA) {
@@ -534,4 +534,10 @@
 
   renderBestsellers();
   renderExplore();
-})();
+}
+
+if (window.PRODUCTS_DATA) {
+  initStoreWithProductsData();
+} else {
+  document.addEventListener("products-data:ready", initStoreWithProductsData);
+}

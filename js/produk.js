@@ -1,5 +1,7 @@
 (function () {
   "use strict";
+
+  function init() {
   var navbar = document.getElementById("navbar");
   if (navbar) navbar.classList.add("scrolled");
 
@@ -642,4 +644,11 @@
     });
     card.style.cursor = "pointer";
   });
+  } 
+
+  if (window.PRODUCTS_DATA) {
+    init();
+  } else {
+    document.addEventListener("products-data:ready", init, { once: true });
+  }
 })();

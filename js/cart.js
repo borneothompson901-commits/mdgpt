@@ -3,23 +3,45 @@
 
   if (!window.CartStore) return;
   var ADMIN_WHATSAPP = "6287777222572";
+  var ONGKIR_ENDPOINT = "/api/ongkir.php";
+  var DESTINATION_ENDPOINT = "/api/destination-search.php";
+  var DESTINATION_DEBOUNCE_MS = 300;
+  var DESTINATION_MIN_CHARS = 3;
 
   var SERVICE_FEE = 0;
   var TAX_RATE = 0;
   var state = {
     ongkir: 0,
-    ongkirChecked: false
+    ongkirChecked: false,
+    ongkirService: "",
+    ongkirEtd: "",
+    destinationLabel: "",
+    destinationTimer: null,
+    destinationRequestId: 0
   };
 
   var cartListEl = document.getElementById("cartList");
   var cartEmptyEl = document.getElementById("cartEmpty");
   var itemTemplate = document.getElementById("cartItemTemplate");
 
-  var addressEl = document.getElementById("cartAddress");
+  var digitalOnlyNoteEl = document.getElementById("digitalOnlyNote");
+  var shippingSectionEl = document.getElementById("shippingSection");
+
+  var destinationInputEl = document.getElementById("cartDestinationInput");
+  var destinationMenuEl = document.getElementById("destinationMenu");
+  var destinationIdEl = document.getElementById("cartDestinationId");
+  var addressDetailEl = document.getElementById("cartAddressDetail");
   var waEl = document.getElementById("cartWhatsapp");
-  var kurirEl = document.getElementById("cartKurir");
+
+  var kurirSelectEl = document.getElementById("kurirSelect");
+  var kurirTriggerEl = document.getElementById("kurirSelectTrigger");
+  var kurirMenuEl = document.getElementById("kurirSelectMenu");
+  var kurirValueEl = document.getElementById("kurirSelectValue");
+  var kurirHiddenEl = document.getElementById("cartKurir");
+
   var cekOngkirBtn = document.getElementById("cekOngkirBtn");
   var ongkirNoteEl = document.getElementById("cartOngkirNote");
+  var sumOngkirRowEl = document.getElementById("sumOngkirRow");
 
   var sumSubtotalEl = document.getElementById("sumSubtotal");
   var sumOngkirEl = document.getElementById("sumOngkir");
@@ -175,8 +197,28 @@
       });
     }
 
+    reconcileShippingVisibility();
     updateTotals();
     updateCheckoutState();
+  }
+
+  function reconcileShippingVisibility() {
+    var needsShipping = window.CartStore.needsShipping();
+
+    setVisible(shippingSectionEl, needsShipping);
+    setVisible(digitalOnlyNoteEl, !needsShipping);
+    setVisible(sumOngkirRowEl, needsShipping);
+
+    if (!needsShipping) {
+      state.ongkir = 0;
+      state.ongkirChecked = true;
+    } else if (!hasValidDestination()) {
+      state.ongkirChecked = false;
+    }
+  }
+
+  function hasValidDestination() {
+    return destinationIdEl && destinationIdEl.value.trim().length > 0;
   }
 
   function updateTotals() {
@@ -244,33 +286,39 @@
     window.CartStore.updateQty(id, qty, variantKey);
   });
 
-  if (cekOngkirBtn) {
-    cekOngkirBtn.addEventListener("click", function () {
-      var address = addressEl.value.trim();
-      if (!address) {
-        ongkirNoteEl.hidden = false;
-        ongkirNoteEl.style.color = "#d9534f";
-        ongkirNoteEl.textContent = "Isi alamat dulu ya sebelum cek ongkir.";
-        addressEl.focus();
-        return;
-      }
+  function closeKurirMenu() {
+    kurirMenuEl.hidden = true;
+    kurirTriggerEl.setAttribute("aria-expanded", "false");
+  }
 
-      state.ongkir = 0;
-      state.ongkirChecked = true;
+  function openKurirMenu() {
+    kurirMenuEl.hidden = false;
+    kurirTriggerEl.setAttribute("aria-expanded", "true");
+  }
 
-      ongkirNoteEl.hidden = false;
-      ongkirNoteEl.style.color = "#1a9c5c";
-      ongkirNoteEl.textContent =
-        "Ongkir " + kurirEl.options[kurirEl.selectedIndex].text + ": " + formatRupiah(state.ongkir) + " (gratis, promo peluncuran)";
-
-      updateTotals();
-      updateCheckoutState();
+  if (kurirTriggerEl) {
+    kurirTriggerEl.addEventListener("click", function () {
+      if (kurirMenuEl.hidden) openKurirMenu(); else closeKurirMenu();
     });
   }
 
-  [addressEl, kurirEl].forEach(function (el) {
-    if (!el) return;
-    el.addEventListener("input", function () {
+  if (kurirMenuEl) {
+    kurirMenuEl.addEventListener("click", function (e) {
+      var option = e.target.closest(".custom-select__option");
+      if (!option) return;
+
+      var options = kurirMenuEl.querySelectorAll(".custom-select__option");
+      options.forEach(function (opt) {
+        opt.classList.remove("is-selected");
+        opt.setAttribute("aria-selected", "false");
+      });
+      option.classList.add("is-selected");
+      option.setAttribute("aria-selected", "true");
+
+      kurirValueEl.textContent = option.textContent;
+      kurirHiddenEl.value = option.getAttribute("data-value");
+      closeKurirMenu();
+
       if (state.ongkirChecked) {
         state.ongkirChecked = false;
         ongkirNoteEl.hidden = true;
@@ -278,27 +326,195 @@
         updateCheckoutState();
       }
     });
+  }
+
+  document.addEventListener("click", function (e) {
+    if (kurirSelectEl && !kurirSelectEl.contains(e.target)) closeKurirMenu();
   });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeKurirMenu();
+  });
+
+  function renderDestinationSuggestions(items) {
+    destinationMenuEl.innerHTML = "";
+
+    if (!items || items.length === 0) {
+      destinationMenuEl.hidden = true;
+      return;
+    }
+
+    items.forEach(function (item) {
+      var li = document.createElement("li");
+      li.className = "destination-picker__option";
+      li.setAttribute("data-id", item.id);
+      li.setAttribute("data-label", item.label);
+      li.textContent = item.label;
+      destinationMenuEl.appendChild(li);
+    });
+
+    destinationMenuEl.hidden = false;
+  }
+
+  function fetchDestinations(query) {
+    var requestId = ++state.destinationRequestId;
+
+    fetch(DESTINATION_ENDPOINT + "?search=" + encodeURIComponent(query))
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (requestId !== state.destinationRequestId) return;
+        renderDestinationSuggestions(data.results || []);
+      })
+      .catch(function () {
+        if (requestId !== state.destinationRequestId) return;
+        renderDestinationSuggestions([]);
+      });
+  }
+
+  if (destinationInputEl) {
+    destinationInputEl.addEventListener("input", function () {
+      var query = destinationInputEl.value.trim();
+
+      destinationIdEl.value = "";
+      state.destinationLabel = "";
+
+      if (state.ongkirChecked) {
+        state.ongkirChecked = false;
+        ongkirNoteEl.hidden = true;
+        updateTotals();
+      }
+      updateCheckoutState();
+
+      clearTimeout(state.destinationTimer);
+
+      if (query.length < DESTINATION_MIN_CHARS) {
+        renderDestinationSuggestions([]);
+        return;
+      }
+
+      state.destinationTimer = setTimeout(function () {
+        fetchDestinations(query);
+      }, DESTINATION_DEBOUNCE_MS);
+    });
+
+    destinationInputEl.addEventListener("focus", function () {
+      if (destinationMenuEl.children.length > 0) destinationMenuEl.hidden = false;
+    });
+  }
+
+  if (destinationMenuEl) {
+    destinationMenuEl.addEventListener("click", function (e) {
+      var option = e.target.closest(".destination-picker__option");
+      if (!option) return;
+
+      destinationInputEl.value = option.getAttribute("data-label");
+      destinationIdEl.value = option.getAttribute("data-id");
+      state.destinationLabel = option.getAttribute("data-label");
+      destinationMenuEl.hidden = true;
+
+      updateCheckoutState();
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    if (destinationInputEl && destinationMenuEl && !destinationInputEl.contains(e.target) && !destinationMenuEl.contains(e.target)) {
+      destinationMenuEl.hidden = true;
+    }
+  });
+
+  function showOngkirNote(text, kind) {
+    ongkirNoteEl.hidden = false;
+    ongkirNoteEl.style.color = kind === "error" ? "#d9534f" : "#1a9c5c";
+    ongkirNoteEl.textContent = text;
+  }
+
+  if (cekOngkirBtn) {
+    cekOngkirBtn.addEventListener("click", function () {
+      if (!hasValidDestination()) {
+        showOngkirNote("Pilih tujuan dari daftar saran dulu ya.", "error");
+        destinationInputEl.focus();
+        return;
+      }
+
+      var weight = window.CartStore.getTotalWeight();
+      if (weight <= 0) weight = 1000;
+
+      var payload = {
+        destination_id: destinationIdEl.value,
+        weight: weight,
+        courier: kurirHiddenEl.value
+      };
+
+      cekOngkirBtn.disabled = true;
+      cekOngkirBtn.textContent = "Mengecek...";
+
+      fetch(ONGKIR_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (!data || typeof data.cost !== "number") {
+            showOngkirNote("Gagal ambil ongkir, coba lagi.", "error");
+            return;
+          }
+
+          state.ongkir = data.cost;
+          state.ongkirChecked = true;
+          state.ongkirService = data.service || "";
+          state.ongkirEtd = data.etd || "";
+
+          showOngkirNote(
+            "Ongkir " + (data.service || "") + ": " + formatRupiah(data.cost) +
+              (data.etd ? " (est. " + data.etd + " hari)" : ""),
+            "success"
+          );
+
+          updateTotals();
+          updateCheckoutState();
+        })
+        .catch(function () {
+          showOngkirNote("Gagal ambil ongkir, coba lagi.", "error");
+        })
+        .finally(function () {
+          cekOngkirBtn.disabled = false;
+          cekOngkirBtn.textContent = "Cek Ongkir";
+        });
+    });
+  }
+
+  if (addressDetailEl) {
+    addressDetailEl.addEventListener("input", updateCheckoutState);
+  }
 
   function updateCheckoutState() {
     var cart = window.CartStore.getCart();
     var hasItems = cart.length > 0;
-    var hasAddress = addressEl.value.trim().length > 0;
     var hasWa = waEl.value.trim().length >= 9;
+    var needsShipping = window.CartStore.needsShipping();
 
-    checkoutBtn.disabled = !(hasItems && hasAddress && hasWa);
+    var shippingOk = true;
+    if (needsShipping) {
+      shippingOk =
+        hasValidDestination() &&
+        addressDetailEl.value.trim().length > 0 &&
+        state.ongkirChecked;
+    }
+
+    checkoutBtn.disabled = !(hasItems && hasWa && shippingOk);
   }
 
-  [addressEl, waEl].forEach(function (el) {
-    if (!el) return;
-    el.addEventListener("input", updateCheckoutState);
-  });
+  if (waEl) {
+    waEl.addEventListener("input", updateCheckoutState);
+  }
 
   if (checkoutBtn) {
     checkoutBtn.addEventListener("click", function () {
       var cart = window.CartStore.getCart();
       if (cart.length === 0) return;
 
+      var needsShipping = window.CartStore.needsShipping();
       var subtotal = window.CartStore.getSubtotal();
       var ongkir = state.ongkirChecked ? state.ongkir : 0;
       var layanan = SERVICE_FEE;
@@ -310,17 +526,24 @@
       lines.push("");
       cart.forEach(function (item, idx) {
         lines.push(
-          (idx + 1) + ". " + item.title + " x" + item.qty + " = " + formatRupiah(item.price * item.qty)
+          (idx + 1) + ". " + item.title + " x" + item.qty + " = " + formatRupiah(item.price * item.qty) +
+            (item.type === "fisik" ? " (fisik)" : " (digital)")
         );
       });
       lines.push("");
       lines.push("Subtotal: " + formatRupiah(subtotal));
-      lines.push("Ongkir: " + formatRupiah(ongkir));
+      if (needsShipping) {
+        lines.push("Ongkir (" + (state.ongkirService || kurirHiddenEl.value) + "): " + formatRupiah(ongkir));
+      }
       lines.push("Biaya Layanan: " + formatRupiah(layanan));
       lines.push("Pajak: " + formatRupiah(pajak));
       lines.push("Total: " + formatRupiah(total));
       lines.push("");
-      lines.push("Alamat: " + addressEl.value.trim());
+
+      if (needsShipping) {
+        lines.push("Tujuan: " + state.destinationLabel);
+        lines.push("Alamat: " + addressDetailEl.value.trim());
+      }
       lines.push("No. WhatsApp: " + waEl.value.trim());
 
       var waUrl = "https://wa.me/" + ADMIN_WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n"));

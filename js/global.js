@@ -7,7 +7,7 @@
     const mobileLinks = document.querySelectorAll('.mobile-link');
 
     function handleScroll() {
-        navbar.classList.toggle('scrolled', window.scrollY > 20);
+        if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 20);
     }
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
@@ -15,21 +15,26 @@
     let menuOpen = false;
     function toggleMenu() {
         menuOpen = !menuOpen;
-        hamburger.classList.toggle('is-open', menuOpen);
-        mobileMenu.classList.toggle('is-open', menuOpen);
-        hamburger.setAttribute('aria-expanded', String(menuOpen));
+        if (hamburger) {
+            hamburger.classList.toggle('is-open', menuOpen);
+            hamburger.setAttribute('aria-expanded', String(menuOpen));
+        }
+        if (mobileMenu) mobileMenu.classList.toggle('is-open', menuOpen);
         document.body.style.overflow = menuOpen ? 'hidden' : '';
     }
-    hamburger.addEventListener('click', toggleMenu);
-    document.addEventListener('click', function(e) {
-        if (menuOpen && !navbar.contains(e.target)) toggleMenu();
-    });
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && menuOpen) toggleMenu();
-    });
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768 && menuOpen) toggleMenu();
-    });
+
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', toggleMenu);
+        document.addEventListener('click', function(e) {
+            if (menuOpen && navbar && !navbar.contains(e.target)) toggleMenu();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && menuOpen) toggleMenu();
+        });
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768 && menuOpen) toggleMenu();
+        });
+    }
 
     navLinks.forEach(function(link) {
         link.addEventListener('click', function() {

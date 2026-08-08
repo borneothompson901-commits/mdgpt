@@ -151,33 +151,73 @@
                     <label>Kurir</label>
                     <button type="button" class="cart-btn-cekongkir" id="cekOngkirBtn">Cek Ongkir</button>
                     <div class="cart-kurir-list" id="kurirResultList">
-                      <div class="cart-kurir-item" data-courier="jne" data-name="JNE">
-                        <div class="cart-kurir-item__left">
-                          <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi1.webp" alt="JNE" loading="lazy" /></span>
-                          <span class="cart-kurir-item__name">JNE</span>
+                      <div class="cart-kurir-group" data-courier-group="jne">
+                        <button type="button" class="cart-kurir-item" data-courier="jne" data-name="JNE" aria-expanded="false">
+                          <div class="cart-kurir-item__left">
+                            <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi1.webp" alt="JNE" loading="lazy" /></span>
+                            <span class="cart-kurir-item__name">JNE</span>
+                          </div>
+                          <div class="cart-kurir-item__right">
+                            <span class="cart-kurir-item__cost" data-cost>—</span>
+                            <svg class="cart-kurir-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                          </div>
+                        </button>
+                        <div class="cart-kurir-paket-panel" data-paket-panel>
+                          <div class="cart-kurir-paket-inner">
+                            <div class="cart-kurir-paket-list" data-paket-list></div>
+                          </div>
                         </div>
-                        <span class="cart-kurir-item__cost" data-cost>—</span>
                       </div>
-                      <div class="cart-kurir-item" data-courier="jnt" data-name="J&amp;T Express">
-                        <div class="cart-kurir-item__left">
-                          <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi2.webp" alt="J&amp;T Express" loading="lazy" /></span>
-                          <span class="cart-kurir-item__name">J&amp;T Express</span>
+                      <div class="cart-kurir-group" data-courier-group="jnt">
+                        <button type="button" class="cart-kurir-item" data-courier="jnt" data-name="J&amp;T Express" aria-expanded="false">
+                          <div class="cart-kurir-item__left">
+                            <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi2.webp" alt="J&amp;T Express" loading="lazy" /></span>
+                            <span class="cart-kurir-item__name">J&amp;T Express</span>
+                          </div>
+                          <div class="cart-kurir-item__right">
+                            <span class="cart-kurir-item__cost" data-cost>—</span>
+                            <svg class="cart-kurir-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                          </div>
+                        </button>
+                        <div class="cart-kurir-paket-panel" data-paket-panel>
+                          <div class="cart-kurir-paket-inner">
+                            <div class="cart-kurir-paket-list" data-paket-list></div>
+                          </div>
                         </div>
-                        <span class="cart-kurir-item__cost" data-cost>—</span>
                       </div>
-                      <div class="cart-kurir-item" data-courier="sicepat" data-name="SiCepat">
-                        <div class="cart-kurir-item__left">
-                          <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi3.webp" alt="SiCepat" loading="lazy" /></span>
-                          <span class="cart-kurir-item__name">SiCepat</span>
+                      <div class="cart-kurir-group" data-courier-group="sicepat">
+                        <button type="button" class="cart-kurir-item" data-courier="sicepat" data-name="SiCepat" aria-expanded="false">
+                          <div class="cart-kurir-item__left">
+                            <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi3.webp" alt="SiCepat" loading="lazy" /></span>
+                            <span class="cart-kurir-item__name">SiCepat</span>
+                          </div>
+                          <div class="cart-kurir-item__right">
+                            <span class="cart-kurir-item__cost" data-cost>—</span>
+                            <svg class="cart-kurir-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                          </div>
+                        </button>
+                        <div class="cart-kurir-paket-panel" data-paket-panel>
+                          <div class="cart-kurir-paket-inner">
+                            <div class="cart-kurir-paket-list" data-paket-list></div>
+                          </div>
                         </div>
-                        <span class="cart-kurir-item__cost" data-cost>—</span>
                       </div>
-                      <div class="cart-kurir-item" data-courier="anteraja" data-name="AnterAja">
-                        <div class="cart-kurir-item__left">
-                          <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi4.webp" alt="AnterAja" loading="lazy" /></span>
-                          <span class="cart-kurir-item__name">AnterAja</span>
+                      <div class="cart-kurir-group" data-courier-group="anteraja">
+                        <button type="button" class="cart-kurir-item" data-courier="anteraja" data-name="AnterAja" aria-expanded="false">
+                          <div class="cart-kurir-item__left">
+                            <span class="cart-kurir-logo"><img src="../assets/icons/ekspedisi4.webp" alt="AnterAja" loading="lazy" /></span>
+                            <span class="cart-kurir-item__name">AnterAja</span>
+                          </div>
+                          <div class="cart-kurir-item__right">
+                            <span class="cart-kurir-item__cost" data-cost>—</span>
+                            <svg class="cart-kurir-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                          </div>
+                        </button>
+                        <div class="cart-kurir-paket-panel" data-paket-panel>
+                          <div class="cart-kurir-paket-inner">
+                            <div class="cart-kurir-paket-list" data-paket-list></div>
+                          </div>
                         </div>
-                        <span class="cart-kurir-item__cost" data-cost>—</span>
                       </div>
                     </div>
                     <input type="hidden" id="cartKurir" value="" />

@@ -1,21 +1,6 @@
-/* ==========================================================================
-   admin-core.js
-   Gabungan admin-shared.js + admin-sidebar.js + auth session.
-   Isinya hal-hal yang dipakai bareng di SEMUA halaman admin:
-     1) AdminShared  -> konfigurasi Supabase, helper (rupiah/slugify/toast),
-        upload gambar, auth (login/logout/session). Dipakai Linguahub.html
-        (dashboard), tambah-produk.html (wizard), & login.html.
-     2) Sidebar behavior -> buka/tutup sidebar mobile, collapse desktop.
-        Otomatis no-op kalau elemen #sidebar tidak ada di halaman (aman dipakai di mana saja).
-     3) Auth gate -> kalau halaman ada #sidebar (halaman admin, bukan login.html),
-        otomatis cek session & redirect ke login.html kalau belum login.
-   ========================================================================== */
 (function (global) {
   "use strict";
 
-  /* ============================== 1) AdminShared ============================== */
-
-  // -- Samakan dengan js/products-data.js --
   var SUPABASE_URL = "https://xjtkipgopiormwmbdtfa.supabase.co";
   var SUPABASE_KEY = "sb_publishable_5abZti9M8zHWuHyh59q8Ew_Otn-QopO";
   var SUPABASE_HEADERS = {
@@ -24,7 +9,6 @@
     "Content-Type": "application/json"
   };
 
-  // Endpoint upload file yang sudah ada di project (butuh login admin/session).
   var UPLOAD_ENDPOINT = "/api/upload-file.php";
 
   function rupiah(n) {

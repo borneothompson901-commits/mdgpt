@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Produk — Admin Panel</title>
+<link rel="icon" href="../assets/icons/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin-produk.css" />
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="header-actions">
+      <button class="sidebar-toggle" id="sidebarToggleBtn" aria-label="Ciutkan sidebar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L6 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="close-btn" id="closeBtn" aria-label="Tutup menu">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 4L4 11M4 4l7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="nav-label">Menu</div>
+  <nav class="sidebar-nav">
+    <ul>
+      <li>
+        <a href="#" class="nav-item active" data-page="overview">
+          <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2.5h4.5v4.5H2v-4.5zM9.5 2.5H14v4.5H9.5v-4.5zM2 9h4.5v4.5H2V9zM9.5 9H14v4.5H9.5V9z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>
+          <span class="nav-text">Overview</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-item" data-page="produk">
+          <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5.2l6-3.2 6 3.2v5.6l-6 3.2-6-3.2V5.2z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M2 5.2L8 8.4l6-3.2M8 8.4v6" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>
+          <span class="nav-text">Produk</span>
+          <span class="nav-count" id="navProdukCount">0</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <a href="../lingua/index.html" target="_blank" class="view-site-btn">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M6.5 2H14v7.5M14 2 7 9M6 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="nav-text">Lihat Toko</span>
+    </a>
+    <div class="user-row">
+      <div class="user-avatar">A</div>
+      <div class="user-meta">
+        <div class="user-name">Admin</div>
+        <div class="user-role">Pengelola Toko</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="main" id="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5.5h14M3 10h14M3 14.5h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="breadcrumb"><span>Admin</span><span>/</span><span class="bc-current" id="bcCurrent">Overview</span></div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="content-inner">
+
+      <!-- ========== PAGE: Overview ========== -->
+      <section class="page-section active" id="pageOverview" data-page-section="overview">
+        <div class="page-head">
+          <div class="page-head-left">
+            <div class="page-title">Overview</div>
+            <div class="page-sub">Ringkasan katalog produk digital &amp; fisik toko kamu.</div>
+          </div>
+        </div>
+
+        <div class="stat-grid" id="statGrid">
+          <div class="stat-card"><div class="stat-card__label">Total Produk</div><div class="stat-card__value" id="statTotal">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Produk Digital</div><div class="stat-card__value" id="statDigital">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Produk Fisik</div><div class="stat-card__value" id="statFisik">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Stok Menipis</div><div class="stat-card__value" id="statLowStock">0</div></div>
+        </div>
+
+        <div class="overview-grid">
+          <div class="card overview-panel">
+            <div class="overview-panel__head">
+              <span>Stok Menipis</span>
+              <span class="badge badge-orange" id="lowStockCount">0</span>
+            </div>
+            <div class="overview-list" id="lowStockList"></div>
+            <div class="overview-empty" id="lowStockEmpty" hidden>Tidak ada produk dengan stok menipis.</div>
+          </div>
+          <div class="card overview-panel">
+            <div class="overview-panel__head">
+              <span>Stok Habis</span>
+              <span class="badge badge-red" id="outStockCount">0</span>
+            </div>
+            <div class="overview-list" id="outStockList"></div>
+            <div class="overview-empty" id="outStockEmpty" hidden>Tidak ada produk dengan stok habis.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== PAGE: Produk ========== -->
+      <section class="page-section" id="pageProduk" data-page-section="produk" hidden>
+        <div class="page-head">
+          <div class="page-head-left">
+            <div class="page-title">Produk</div>
+            <div class="page-sub">Kelola katalog produk digital &amp; fisik toko kamu.</div>
+          </div>
+          <div class="page-head-actions">
+            <button class="btn btn-primary" id="btnTambahProduk">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Tambah Produk
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-toolbar">
+            <div class="search-wrap">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="m14 14-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <input type="text" class="search-input" id="searchInput" placeholder="Cari nama produk..." />
+            </div>
+            <div class="xselect filter-xselect" id="xselect_filterKategori">
+              <button type="button" class="xselect__trigger" id="xselect_filterKategori_trigger">
+                <span class="xselect__value is-placeholder">Semua Kategori</span>
+                <svg class="xselect__chev" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="xselect__menu" id="xselect_filterKategori_menu" hidden></div>
+            </div>
+            <div class="xselect filter-xselect" id="xselect_filterTipe">
+              <button type="button" class="xselect__trigger" id="xselect_filterTipe_trigger">
+                <span class="xselect__value is-placeholder">Semua Tipe</span>
+                <svg class="xselect__chev" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="xselect__menu" id="xselect_filterTipe_menu" hidden></div>
+            </div>
+            <div class="toolbar-spacer"></div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Produk</th>
+                  <th class="col-tipe">Tipe</th>
+                  <th>Stok</th>
+                  <th>Harga</th>
+                  <th class="col-sold">Terjual</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="productTbody">
+                <!-- rows injected -->
+              </tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="emptyState" hidden>
+            <p>Belum ada produk. Klik "Tambah Produk" untuk mulai menambahkan.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- Gate modal: pilih jenis produk, lalu jumlah varian, sebelum masuk wizard -->
+<div class="modal-backdrop" id="gateModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="gateTitle">Tambah Produk Baru</h3>
+      <button class="modal-close" id="gateCloseBtn">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 4L4 11M4 4l7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Langkah 1: jenis produk -->
+      <div class="gate-panel" data-gate-panel="1">
+        <div class="gate-options">
+          <button type="button" class="gate-opt" data-type="digital">
+            <span class="gate-opt__icon"><svg width="18" height="18" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="9" rx="1.4" stroke="currentColor" stroke-width="1.35"/><path d="M5.5 14h5M8 11v3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg></span>
+            <span class="gate-opt__title">Produk Digital</span>
+            <span class="gate-opt__desc">Ebook, template, tools, file — tanpa pengiriman fisik.</span>
+          </button>
+          <button type="button" class="gate-opt" data-type="fisik">
+            <span class="gate-opt__icon"><svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M2 5.2l6-3.2 6 3.2v5.6l-6 3.2-6-3.2V5.2z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M2 5.2L8 8.4l6-3.2M8 8.4v6" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg></span>
+            <span class="gate-opt__title">Produk Fisik</span>
+            <span class="gate-opt__desc">Barang nyata yang perlu dikirim &amp; punya berat.</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Langkah 2: jumlah varian -->
+      <div class="gate-panel" data-gate-panel="2" hidden>
+        <button type="button" class="gate-back" id="gateBackBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          Kembali
+        </button>
+        <div class="gate-options">
+          <button type="button" class="gate-opt" data-variant="single">
+            <span class="gate-opt__icon"><svg width="18" height="18" viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.35"/></svg></span>
+            <span class="gate-opt__title">Hanya 1 Varian</span>
+            <span class="gate-opt__desc">Satu harga &amp; satu stok untuk produk ini.</span>
+          </button>
+          <button type="button" class="gate-opt" data-variant="multi">
+            <span class="gate-opt__icon"><svg width="18" height="18" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.35"/><rect x="9" y="2" width="5" height="6" rx="1.3" stroke="currentColor" stroke-width="1.35"/><rect x="2" y="9" width="12" height="5" rx="1.3" stroke="currentColor" stroke-width="1.35"/></svg></span>
+            <span class="gate-opt__title">Lebih dari 1 Varian</span>
+            <span class="gate-opt__desc">Mis. warna / ukuran — beda harga &amp; stok per kombinasi.</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirm modal -->
+<div class="modal-backdrop" id="deleteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Hapus Produk</h3>
+      <button class="modal-close" id="deleteCloseBtn">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 4L4 11M4 4l7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="delete-warn">Yakin mau menghapus produk "<strong id="deleteProdName"></strong>"? Tindakan ini tidak bisa dibatalkan.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="deleteCancelBtn">Batal</button>
+      <button class="btn btn-danger" id="deleteConfirmBtn">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/admin-core.js"></script>
+<script src="js/admin-page.js"></script>
+</body>
+</html>

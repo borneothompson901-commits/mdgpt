@@ -120,12 +120,80 @@
 
   var searchInput = document.getElementById("catalogSearchInput");
   var grid = document.getElementById("catalogGrid");
-  var cards = grid ? Array.prototype.slice.call(grid.querySelectorAll(".explore-card")) : [];
+  var cards = []; // diisi oleh renderCatalogFromData() setelah data Supabase siap
+  var catalogDataLoaded = false; // biar "Tidak ada produk" gak kedip pas data masih loading
   var resultCount = document.getElementById("resultCount");
   var catalogEmpty = document.getElementById("catalogEmpty");
   var catalogEnd = document.getElementById("catalogEnd");
   var applyBtn = document.getElementById("filterApplyBtn");
   var resetBtn = document.getElementById("filterResetBtn");
+
+  function escapeHtmlCard(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function cartIconSvgCard() {
+    return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+  }
+
+  // Bikin markup satu kartu produk dari row Supabase (lewat PRODUCTS_DATA.mapRow),
+  // strukturnya sengaja disamain persis sama kartu statis versi lama supaya
+  // CSS (.explore-card dst) & logic filter/sort/cart di bawah tetap jalan tanpa ubahan.
+  function buildCardHTML(p, rupiah) {
+    var img = (p.images && p.images[0]) || "../assets/icons/logo.png";
+    var catLabel = p.categoryLabel || p.category || "";
+    var price = Number(p.price) || 0;
+    var oldPrice = Number(p.oldPrice) || 0;
+    var hasDiscount = oldPrice > price;
+    var discountPct = hasDiscount ? Math.round((1 - price / oldPrice) * 100) : 0;
+
+    return (
+      '<article class="explore-card" data-id="' + escapeHtmlCard(p.id) + '" data-sold="' + (parseInt(p.sold, 10) || 0) +
+      '" data-category="' + escapeHtmlCard(p.category || "") + '" data-price="' + price +
+      '" data-title="' + escapeHtmlCard(p.title || "") + '">' +
+        '<div class="explore-card__img">' +
+          '<span class="explore-card__category">' + escapeHtmlCard(catLabel) + '</span>' +
+          '<img src="' + escapeHtmlCard(img) + '" alt="' + escapeHtmlCard(p.title || "") + '" loading="lazy" />' +
+        '</div>' +
+        '<div class="explore-card__body">' +
+          '<h3 class="explore-card__title">' +
+            (hasDiscount ? '<span class="catalog-badge">-' + discountPct + '%</span>' : "") +
+            escapeHtmlCard(p.title || "(Tanpa nama)") +
+          '</h3>' +
+          '<div class="explore-card__price">' +
+            '<span class="explore-card__price-now">' + rupiah(price) + '</span>' +
+            (hasDiscount ? '<span class="explore-card__price-old">' + rupiah(oldPrice) + '</span>' : "") +
+          '</div>' +
+          '<div class="explore-card__actions">' +
+            '<a href="produk.html?id=' + escapeHtmlCard(p.id) + '" class="explore-card__view">Lihat Produk</a>' +
+            '<button class="explore-card__cart" type="button" aria-label="Tambah ke keranjang">' + cartIconSvgCard() + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>'
+    );
+  }
+
+  // Render seluruh grid dari window.PRODUCTS_DATA (Supabase), lalu (re)bind
+  // event yang butuh elemen kartu (klik buka detail, tombol tambah keranjang)
+  // dan refresh filter/sort supaya kartu baru langsung kepakai.
+  function renderCatalogFromData(DATA) {
+    if (!grid) return;
+    var products = DATA.all || [];
+    grid.innerHTML = products.map(function (p) { return buildCardHTML(p, DATA.rupiah); }).join("");
+    cards = Array.prototype.slice.call(grid.querySelectorAll(".explore-card"));
+    catalogDataLoaded = true;
+    bindCardInteractions();
+    applyFilters();
+    applySort();
+  }
+
+  function initCatalogFromProductsData() {
+    var DATA = window.PRODUCTS_DATA;
+    if (!DATA) return;
+    renderCatalogFromData(DATA);
+  }
 
   var state = {
     query: "",
@@ -158,8 +226,8 @@
     });
 
     if (resultCount) resultCount.textContent = "Menampilkan " + visibleCount + " produk";
-    if (catalogEmpty) catalogEmpty.hidden = visibleCount !== 0;
-    if (catalogEnd) catalogEnd.hidden = visibleCount === 0;
+    if (catalogEmpty) catalogEmpty.hidden = !catalogDataLoaded || visibleCount !== 0;
+    if (catalogEnd) catalogEnd.hidden = !catalogDataLoaded || visibleCount === 0;
 
     var activeFilterCount = state.categories.length + (state.priceRange !== "all" ? 1 : 0);
     if (filterBtn) {
@@ -382,56 +450,62 @@
 
   applyFilters();
 
-  cards.forEach(function (card) {
-    var id = card.getAttribute("data-id");
-    if (!id) return;
-    card.style.cursor = "pointer";
-    card.addEventListener("click", function (e) {
-      if (e.target.closest(".explore-card__cart")) return;
-      if (e.target.closest("a")) return;
-      window.location.href = "produk.html?id=" + id;
-    });
-  });
-
-  if (window.CartStore) {
+  // Bind klik-buka-detail & tombol tambah-keranjang ke kartu yang sedang ada
+  // di grid. Dipanggil sekali di awal (buat kondisi cards masih kosong,
+  // no-op) dan dipanggil ulang tiap kali renderCatalogFromData() ngegambar
+  // ulang grid dari data Supabase.
+  function bindCardInteractions() {
     cards.forEach(function (card) {
-      var cartBtn = card.querySelector(".explore-card__cart");
-      if (!cartBtn) return;
-
-      cartBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        var img = card.querySelector(".explore-card__img img");
-        var cardId = card.getAttribute("data-id");
-        var fullProduct = window.PRODUCTS_DATA ? window.PRODUCTS_DATA.getById(cardId) : null;
-
-        var basicProduct = {
-          id: cardId,
-          title: card.getAttribute("data-title") || "",
-          price: card.getAttribute("data-price") || 0,
-          category: card.getAttribute("data-category") || "",
-          image: img ? img.getAttribute("src") : ""
-        };
-
-        if (fullProduct && Array.isArray(fullProduct.variantGroups) && fullProduct.variantGroups.length > 0) {
-          openVariantModal(fullProduct, {
-            image: basicProduct.image,
-            sourceImgEl: img,
-            sourceBtnEl: cartBtn,
-            onAdded: function () {
-              flashAddedToCart(cartBtn);
-            }
-          });
-          return;
-        }
-
-        window.CartStore.addItem(basicProduct, 1);
-        flashAddedToCart(cartBtn);
-        flyToCart(img, cartBtn);
-        showAddedToCartToast(basicProduct);
+      var id = card.getAttribute("data-id");
+      if (!id) return;
+      card.style.cursor = "pointer";
+      card.addEventListener("click", function (e) {
+        if (e.target.closest(".explore-card__cart")) return;
+        if (e.target.closest("a")) return;
+        window.location.href = "produk.html?id=" + id;
       });
     });
+
+    if (window.CartStore) {
+      cards.forEach(function (card) {
+        var cartBtn = card.querySelector(".explore-card__cart");
+        if (!cartBtn) return;
+
+        cartBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          var img = card.querySelector(".explore-card__img img");
+          var cardId = card.getAttribute("data-id");
+          var fullProduct = window.PRODUCTS_DATA ? window.PRODUCTS_DATA.getById(cardId) : null;
+
+          var basicProduct = {
+            id: cardId,
+            title: card.getAttribute("data-title") || "",
+            price: card.getAttribute("data-price") || 0,
+            category: card.getAttribute("data-category") || "",
+            image: img ? img.getAttribute("src") : ""
+          };
+
+          if (fullProduct && Array.isArray(fullProduct.variantGroups) && fullProduct.variantGroups.length > 0) {
+            openVariantModal(fullProduct, {
+              image: basicProduct.image,
+              sourceImgEl: img,
+              sourceBtnEl: cartBtn,
+              onAdded: function () {
+                flashAddedToCart(cartBtn);
+              }
+            });
+            return;
+          }
+
+          window.CartStore.addItem(basicProduct, 1);
+          flashAddedToCart(cartBtn);
+          flyToCart(img, cartBtn);
+          showAddedToCartToast(basicProduct);
+        });
+      });
+    }
   }
 
   function flashAddedToCart(btn) {
@@ -603,4 +677,13 @@
       document.head.appendChild(style);
     }
   })();
+
+  // Baru trigger render katalog di titik paling akhir, supaya semua setup
+  // di atas (state, event binding, dst) udah pasti kelar duluan sebelum
+  // renderCatalogFromData() manggil applyFilters()/applySort().
+  if (window.PRODUCTS_DATA) {
+    initCatalogFromProductsData();
+  } else {
+    document.addEventListener("products-data:ready", initCatalogFromProductsData, { once: true });
+  }
 })();

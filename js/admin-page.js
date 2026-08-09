@@ -1,17 +1,6 @@
-/* ==========================================================================
-   admin-page.js
-   Gabungan admin-dashboard.js + admin-wizard.js.
-   File ini dipakai di Linguahub.html (dashboard) MAUPUN tambah-produk.html (wizard).
-   Deteksi otomatis lewat elemen yang ada di DOM:
-     - Ada #productTbody         -> jalankan logic Dashboard (daftar produk)
-     - Ada #wizardBackBtn        -> jalankan logic Wizard (tambah/edit produk)
-   Jadi kedua halaman cukup include script yang sama, tidak perlu ingat-ingat
-   mana yang butuh file JS apa.
-   ========================================================================== */
 (function () {
   "use strict";
 
-  /* ============================== DASHBOARD ============================== */
   if (document.getElementById("productTbody")) {
     var db = AdminShared.db;
     var rupiah = AdminShared.rupiah;
@@ -23,7 +12,6 @@
     var filterKategoriXSelect, filterTipeXSelect;
     var searchInput = document.getElementById("searchInput");
 
-    // ---------------- Page switch: Overview <-> Produk ----------------
     var PAGE_TITLES = { overview: "Overview", produk: "Produk" };
     document.querySelectorAll(".nav-item[data-page]").forEach(function (link) {
       link.addEventListener("click", function (e) {
@@ -364,7 +352,7 @@
 
     if (!editId && (!gateType || !gateVariant)) {
       // Tidak ada konteks lengkap (bukan tambah baru dari gate, bukan edit) -> balik ke daftar produk
-      location.replace("Linguahub.html");
+      location.replace("linguahub.html");
       return;
     }
 
@@ -402,7 +390,7 @@
     document.getElementById("exitCloseBtn").addEventListener("click", function () { exitModal.classList.remove("open"); });
     document.getElementById("exitCancelBtn").addEventListener("click", function () { exitModal.classList.remove("open"); });
     exitModal.addEventListener("click", function (e) { if (e.target === exitModal) exitModal.classList.remove("open"); });
-    document.getElementById("exitConfirmBtn").addEventListener("click", function () { location.href = "Linguahub.html"; });
+    document.getElementById("exitConfirmBtn").addEventListener("click", function () { location.href = "linguahub.html"; });
 
     // ---------------- Toggle preview handphone (layar sempit) ----------------
     var previewToggleBtn = document.getElementById("previewToggleBtn");
@@ -678,7 +666,7 @@
         document.getElementById("wizardTitle").textContent = "Edit Produk";
         try {
           var row = await wdb.getProduct(editId);
-          if (!row) { AdminShared.toast("Produk tidak ditemukan", "error"); location.href = "Linguahub.html"; return; }
+          if (!row) { AdminShared.toast("Produk tidak ditemukan", "error"); location.href = "linguahub.html"; return; }
           hydrateFromRow(row);
         } catch (e) {
           AdminShared.toast("Gagal memuat produk", "error");
@@ -1543,7 +1531,7 @@
           await wdb.createProduct(payload);
         }
         sessionStorage.setItem("admin_toast", publish ? "Produk berhasil dipublikasikan" : "Draft produk disimpan");
-        location.href = "Linguahub.html";
+        location.href = "linguahub.html";
       } catch (e) {
         console.error(e);
         AdminShared.toast(e.message || "Gagal menyimpan produk", "error");

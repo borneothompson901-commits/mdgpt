@@ -227,6 +227,11 @@
                 </div>
 
                 <div class="cart-field">
+                  <label for="cartCustomerName">Nama Lengkap</label>
+                  <input type="text" id="cartCustomerName" placeholder="Nama kamu" />
+                </div>
+
+                <div class="cart-field">
                   <label for="cartWhatsapp">Nomor WhatsApp</label>
                   <input type="tel" id="cartWhatsapp" inputmode="numeric" placeholder="08xxxxxxxxxx" />
                 </div>
@@ -258,9 +263,9 @@
                 </div>
 
                 <button type="button" class="cart-checkout-btn" id="checkoutBtn" disabled>
-                  Checkout via WhatsApp
+                  Lanjutkan Pembayaran
                 </button>
-                <p class="cart-checkout-hint">Klik checkout, kami akan bantu proses pesananmu lewat WhatsApp admin.</p>
+                <p class="cart-checkout-hint">Pilih metode pembayaran (VA / QRIS / E-Wallet) di langkah berikutnya.</p>
               </div>
             </aside>
           </div>
@@ -271,6 +276,45 @@
               <div class="cart-confirm-actions">
                 <button type="button" class="cart-confirm-btn cart-confirm-btn--cancel" id="cartConfirmCancel">Batal</button>
                 <button type="button" class="cart-confirm-btn cart-confirm-btn--danger" id="cartConfirmOk">Ya, Hapus</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="payment-overlay" id="paymentOverlay" hidden>
+            <div class="payment-modal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+              <button type="button" class="payment-modal__close" id="paymentModalClose" aria-label="Tutup">&times;</button>
+
+              <div id="paymentStepMethod">
+                <h3 id="paymentModalTitle">Pilih Metode Pembayaran</h3>
+                <p class="payment-modal__total">Total Bayar: <strong id="paymentModalTotal">Rp0</strong></p>
+
+                <div class="payment-method-tabs" id="paymentMethodTabs">
+                  <button type="button" class="payment-method-tab" data-method="VA">
+                    <span>Virtual Account</span>
+                  </button>
+                  <button type="button" class="payment-method-tab" data-method="QRIS">
+                    <span>QRIS</span>
+                  </button>
+                  <button type="button" class="payment-method-tab" data-method="EWALLET">
+                    <span>E-Wallet</span>
+                  </button>
+                </div>
+
+                <div class="payment-channel-list" id="paymentChannelList" hidden></div>
+                <p class="payment-channel-hint" id="paymentChannelHint" hidden>QRIS bisa dibayar pakai aplikasi bank atau e-wallet apa saja yang support QR.</p>
+
+                <p class="payment-modal__error" id="paymentModalError" hidden></p>
+
+                <button type="button" class="cart-checkout-btn" id="paymentPayBtn" disabled>
+                  Bayar Sekarang
+                </button>
+              </div>
+
+              <div id="paymentStepResult" hidden>
+                <div id="paymentResultContent"></div>
+                <button type="button" class="cart-checkout-btn payment-result__done-btn" id="paymentDoneBtn">
+                  Selesai
+                </button>
               </div>
             </div>
           </div>

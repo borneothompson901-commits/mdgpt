@@ -11,6 +11,26 @@
   };
   var ONGKIR_ENDPOINT = SUPABASE_URL + "/functions/v1/ongkir";
   var HIERARCHY_ENDPOINT = SUPABASE_URL + "/functions/v1/destination-hierarchy";
+  var PIVOT_ENDPOINT = SUPABASE_URL + "/functions/v1/pivot-create-payment";
+
+  var VA_CHANNELS = [
+    { code: "BCA", label: "BCA" },
+    { code: "PERMATA", label: "Permata" },
+    { code: "BNI", label: "BNI" },
+    { code: "BRI", label: "BRI" },
+    { code: "MANDIRI", label: "Mandiri" },
+    { code: "CIMB", label: "CIMB Niaga" },
+    { code: "DANAMON", label: "Danamon" },
+    { code: "MAYBANK", label: "Maybank" },
+    { code: "SAHABAT_SAMPOERNA", label: "Bank Sahabat Sampoerna" }
+  ];
+  var EWALLET_CHANNELS = [
+    { code: "SHOPEEPAY", label: "ShopeePay" },
+    { code: "DANA", label: "DANA" },
+    { code: "OVO", label: "OVO" },
+    { code: "LINKAJA", label: "LinkAja" },
+    { code: "ASTRAPAY", label: "AstraPay" }
+  ];
 
   var SERVICE_FEE = 0;
   var TAX_RATE = 0;
@@ -157,6 +177,22 @@
   var sumPajakEl = document.getElementById("sumPajak");
   var sumTotalEl = document.getElementById("sumTotal");
   var checkoutBtn = document.getElementById("checkoutBtn");
+  var customerNameEl = document.getElementById("cartCustomerName");
+
+  var paymentOverlay = document.getElementById("paymentOverlay");
+  var paymentModalClose = document.getElementById("paymentModalClose");
+  var paymentStepMethod = document.getElementById("paymentStepMethod");
+  var paymentStepResult = document.getElementById("paymentStepResult");
+  var paymentModalTotal = document.getElementById("paymentModalTotal");
+  var paymentMethodTabs = document.getElementById("paymentMethodTabs");
+  var paymentChannelList = document.getElementById("paymentChannelList");
+  var paymentChannelHint = document.getElementById("paymentChannelHint");
+  var paymentModalError = document.getElementById("paymentModalError");
+  var paymentPayBtn = document.getElementById("paymentPayBtn");
+  var paymentResultContent = document.getElementById("paymentResultContent");
+  var paymentDoneBtn = document.getElementById("paymentDoneBtn");
+
+  var paymentState = { method: "", channel: "" };
 
   var confirmOverlay = document.getElementById("cartConfirmOverlay");
   var confirmDescEl = document.getElementById("cartConfirmDesc");
@@ -834,45 +870,263 @@
     waEl.addEventListener("input", updateCheckoutState);
   }
 
+  function getOrderTotal() {
+    var subtotal = window.CartStore.getSubtotal();
+    var ongkir = state.ongkirChecked ? state.ongkir : 0;
+    var layanan = SERVICE_FEE;
+    var pajak = Math.round(subtotal * TAX_RATE);
+    return subtotal + ongkir + layanan + pajak;
+  }
+
+  function showPaymentError(msg) {
+    if (!paymentModalError) return;
+    paymentModalError.textContent = msg;
+    paymentModalError.hidden = false;
+  }
+
+  function hidePaymentError() {
+    if (!paymentModalError) return;
+    paymentModalError.hidden = true;
+    paymentModalError.textContent = "";
+  }
+
+  function renderChannelList() {
+    if (!paymentChannelList) return;
+    paymentChannelList.innerHTML = "";
+
+    var channels = [];
+    if (paymentState.method === "VA") channels = VA_CHANNELS;
+    if (paymentState.method === "EWALLET") channels = EWALLET_CHANNELS;
+
+    if (paymentState.method === "QRIS" || !paymentState.method) {
+      setVisible(paymentChannelList, false);
+      setVisible(paymentChannelHint, paymentState.method === "QRIS");
+      return;
+    }
+
+    setVisible(paymentChannelHint, false);
+    setVisible(paymentChannelList, true);
+
+    channels.forEach(function (ch) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "payment-channel-btn";
+      btn.textContent = ch.label;
+      btn.setAttribute("data-channel", ch.code);
+      if (ch.code === paymentState.channel) btn.classList.add("is-selected");
+      btn.addEventListener("click", function () {
+        paymentState.channel = ch.code;
+        renderChannelList();
+        updatePayBtnState();
+      });
+      paymentChannelList.appendChild(btn);
+    });
+  }
+
+  function updatePayBtnState() {
+    if (!paymentPayBtn) return;
+    var ready =
+      paymentState.method === "QRIS" ||
+      ((paymentState.method === "VA" || paymentState.method === "EWALLET") && paymentState.channel);
+    paymentPayBtn.disabled = !ready;
+  }
+
+  if (paymentMethodTabs) {
+    paymentMethodTabs.addEventListener("click", function (e) {
+      var tab = e.target.closest(".payment-method-tab");
+      if (!tab) return;
+      paymentState.method = tab.getAttribute("data-method");
+      paymentState.channel = "";
+      hidePaymentError();
+
+      paymentMethodTabs.querySelectorAll(".payment-method-tab").forEach(function (t) {
+        t.classList.toggle("is-active", t === tab);
+      });
+
+      renderChannelList();
+      updatePayBtnState();
+    });
+  }
+
+  function openPaymentModal() {
+    paymentState.method = "";
+    paymentState.channel = "";
+    hidePaymentError();
+    if (paymentMethodTabs) {
+      paymentMethodTabs.querySelectorAll(".payment-method-tab").forEach(function (t) {
+        t.classList.remove("is-active");
+      });
+    }
+    renderChannelList();
+    updatePayBtnState();
+    if (paymentModalTotal) paymentModalTotal.innerHTML = "Total Bayar: <strong>" + formatRupiah(getOrderTotal()) + "</strong>";
+    setVisible(paymentStepMethod, true);
+    setVisible(paymentStepResult, false);
+    if (paymentPayBtn) {
+      paymentPayBtn.textContent = "Bayar Sekarang";
+    }
+    if (paymentOverlay) paymentOverlay.hidden = false;
+  }
+
+  function closePaymentModal() {
+    if (paymentOverlay) paymentOverlay.hidden = true;
+  }
+
   if (checkoutBtn) {
     checkoutBtn.addEventListener("click", function () {
       var cart = window.CartStore.getCart();
       if (cart.length === 0) return;
+      openPaymentModal();
+    });
+  }
 
-      var needsShipping = window.CartStore.needsShipping();
-      var subtotal = window.CartStore.getSubtotal();
-      var ongkir = state.ongkirChecked ? state.ongkir : 0;
-      var layanan = SERVICE_FEE;
-      var pajak = Math.round(subtotal * TAX_RATE);
-      var total = subtotal + ongkir + layanan + pajak;
+  if (paymentModalClose) {
+    paymentModalClose.addEventListener("click", closePaymentModal);
+  }
+  if (paymentDoneBtn) {
+    paymentDoneBtn.addEventListener("click", closePaymentModal);
+  }
+  if (paymentOverlay) {
+    paymentOverlay.addEventListener("click", function (e) {
+      if (e.target === paymentOverlay) closePaymentModal();
+    });
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && paymentOverlay && !paymentOverlay.hidden) closePaymentModal();
+  });
 
-      var lines = [];
-      lines.push("Halo, saya mau checkout pesanan berikut:");
-      lines.push("");
-      cart.forEach(function (item, idx) {
-        lines.push(
-          (idx + 1) + ". " + item.title + " x" + item.qty + " = " + formatRupiah(item.price * item.qty) +
-            (item.type === "fisik" ? " (fisik)" : " (digital)")
-        );
+  function renderPaymentResult(method, data) {
+    if (!paymentResultContent) return;
+    var html = '<p class="payment-result__order-id">Order ID: ' + (data.clientReferenceId || data.orderId || "-") + '</p>';
+
+    if (method === "VA" && data.virtualAccount) {
+      var va = data.virtualAccount;
+      html +=
+        '<div class="payment-result__box">' +
+          '<p class="payment-result__label">Transfer ke Virtual Account</p>' +
+          '<p class="payment-result__va-bank">' + (va.bank || "") + '</p>' +
+          '<p class="payment-result__va-number" id="paymentVaNumber">' + (va.number || "-") + '</p>' +
+          '<button type="button" class="payment-result__copy-btn" id="paymentCopyVaBtn">Salin Nomor VA</button>' +
+          (va.expiryAt ? '<p class="payment-result__expiry">Bayar sebelum ' + new Date(va.expiryAt).toLocaleString("id-ID") + '</p>' : "") +
+        '</div>' +
+        '<p class="payment-result__note">Buka aplikasi bank atau mobile banking kamu, pilih transfer Virtual Account, lalu masukkan nomor di atas.</p>';
+    } else if (method === "QRIS" && data.qr) {
+      var qr = data.qr;
+      html +=
+        '<div class="payment-result__box">' +
+          '<p class="payment-result__label">Scan QRIS untuk bayar</p>' +
+          (qr.imageUrl ? '<img class="payment-result__qr-img" src="' + qr.imageUrl + '" alt="QRIS" />' : "") +
+          (qr.expiryAt ? '<p class="payment-result__expiry">Berlaku sampai ' + new Date(qr.expiryAt).toLocaleString("id-ID") + '</p>' : "") +
+        '</div>' +
+        '<p class="payment-result__note">Scan pakai aplikasi bank, DANA, OVO, GoPay, ShopeePay, atau aplikasi pendukung QRIS lainnya.</p>';
+    } else if (method === "EWALLET" && data.ewallet) {
+      var ew = data.ewallet;
+      html +=
+        '<div class="payment-result__box">' +
+          '<p class="payment-result__label">Lanjutkan pembayaran di aplikasi e-wallet</p>' +
+          (ew.redirectUrl
+            ? '<a class="payment-result__ewallet-btn" href="' + ew.redirectUrl + '" target="_blank" rel="noopener">Buka Aplikasi E-Wallet</a>'
+            : '<p class="payment-result__note">Link pembayaran tidak tersedia.</p>') +
+        '</div>' +
+        '<p class="payment-result__note">Kalau halaman tidak otomatis terbuka, klik tombol di atas.</p>';
+
+      if (ew.redirectUrl) {
+        window.open(ew.redirectUrl, "_blank", "noopener");
+      }
+    } else {
+      html += '<p class="payment-result__note">Pembayaran diproses. Silakan cek instruksi lebih lanjut dari admin.</p>';
+    }
+
+    paymentResultContent.innerHTML = html;
+
+    var copyBtn = document.getElementById("paymentCopyVaBtn");
+    var vaNumberEl = document.getElementById("paymentVaNumber");
+    if (copyBtn && vaNumberEl) {
+      copyBtn.addEventListener("click", function () {
+        var text = vaNumberEl.textContent.trim();
+        var done = function () {
+          copyBtn.textContent = "Tersalin!";
+          copyBtn.classList.add("is-copied");
+          setTimeout(function () {
+            copyBtn.textContent = "Salin Nomor VA";
+            copyBtn.classList.remove("is-copied");
+          }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(done);
+        } else {
+          done();
+        }
       });
-      lines.push("");
-      lines.push("Subtotal: " + formatRupiah(subtotal));
-      if (needsShipping) {
-        lines.push("Ongkir (" + (state.ongkirService || kurirHiddenEl.value) + "): " + formatRupiah(ongkir));
-      }
-      lines.push("Biaya Layanan: " + formatRupiah(layanan));
-      lines.push("Pajak: " + formatRupiah(pajak));
-      lines.push("Total: " + formatRupiah(total));
-      lines.push("");
+    }
+  }
 
-      if (needsShipping) {
-        lines.push("Tujuan: " + state.destinationLabel);
-        lines.push("Alamat: " + addressDetailEl.value.trim());
-      }
-      lines.push("No. WhatsApp: " + waEl.value.trim());
+  if (paymentPayBtn) {
+    paymentPayBtn.addEventListener("click", function () {
+      var cart = window.CartStore.getCart();
+      if (cart.length === 0) return;
 
-      var waUrl = "https://wa.me/" + ADMIN_WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n"));
-      window.open(waUrl, "_blank", "noopener");
+      var total = getOrderTotal();
+      var phone = waEl ? waEl.value.trim() : "";
+      var name = customerNameEl ? customerNameEl.value.trim() : "";
+
+      if (!phone) {
+        showPaymentError("Isi nomor WhatsApp dulu ya.");
+        return;
+      }
+
+      hidePaymentError();
+      paymentPayBtn.disabled = true;
+      paymentPayBtn.textContent = "Memproses...";
+
+      var items = cart.map(function (it) {
+        return {
+          id: it.id,
+          title: it.title,
+          qty: it.qty,
+          price: it.price,
+          type: it.type,
+          variant: it.variant || undefined
+        };
+      });
+
+      var payload = {
+        items: items,
+        amount: total,
+        method: paymentState.method,
+        channel: paymentState.channel || undefined,
+        customer: {
+          name: name || "Pelanggan",
+          phone: phone
+        }
+      };
+
+      fetch(PIVOT_ENDPOINT, {
+        method: "POST",
+        headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { ok: res.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          if (!result.ok) {
+            throw new Error((result.data && result.data.error) || "Gagal membuat pembayaran.");
+          }
+          renderPaymentResult(paymentState.method, result.data);
+          setVisible(paymentStepMethod, false);
+          setVisible(paymentStepResult, true);
+        })
+        .catch(function (err) {
+          showPaymentError(err.message || "Gagal membuat pembayaran, coba lagi.");
+        })
+        .finally(function () {
+          paymentPayBtn.disabled = false;
+          paymentPayBtn.textContent = "Bayar Sekarang";
+          updatePayBtnState();
+        });
     });
   }
 

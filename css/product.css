@@ -318,6 +318,10 @@ body {
    width: 100%;
 }
 
+.catalog-empty[hidden] {
+   display: none;
+}
+
 .catalog-empty__text {
    width: 100%;
    margin: 0 0 16px;

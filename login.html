@@ -20,8 +20,7 @@
   .login-btn { width:100%; padding:10px; border:none; border-radius:7px; background:var(--blue); color:#fff; font-weight:600; font-size:0.86rem; cursor:pointer; transition:background var(--t); }
   .login-btn:hover { background:var(--blue-h); }
   .login-btn:disabled { opacity:0.6; cursor:default; }
-  .login-divider { border-top:1px dashed var(--border-2); margin:16px 0 14px; padding-top:14px; }
-  .login-divider-label { font-size:0.72rem; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px; }
+  .login-error { font-size:0.78rem; color:var(--danger); margin-bottom:12px; display:none; }
 </style>
 </head>
 <body class="login-body" data-public="true">
@@ -39,19 +38,6 @@
     <label for="loginPassword">Password</label>
     <input type="password" id="loginPassword" name="password" required autocomplete="current-password" />
   </div>
-
-  <div class="login-divider">
-    <div class="login-divider-label">Akun CMS (buat upload foto)</div>
-  </div>
-  <div class="login-field">
-    <label for="cmsUsername">Username CMS</label>
-    <input type="text" id="cmsUsername" name="cms_username" autocomplete="off" />
-  </div>
-  <div class="login-field">
-    <label for="cmsPassword">Password CMS</label>
-    <input type="password" id="cmsPassword" name="cms_password" autocomplete="off" />
-  </div>
-
   <button type="submit" class="login-btn" id="loginSubmitBtn">Masuk</button>
 </form>
 
@@ -70,21 +56,6 @@
     var form = document.getElementById("loginForm");
     var errEl = document.getElementById("loginError");
     var btn = document.getElementById("loginSubmitBtn");
-    async function loginCms(username, password) {
-      if (!username || !password) return { ok: false, skipped: true };
-      try {
-        var res = await fetch("cms/login.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: "username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password),
-          credentials: "include"
-        });
-        var ok = res.redirected || /\/cms\.php/.test(res.url);
-        return { ok: ok };
-      } catch (e) {
-        return { ok: false, error: e };
-      }
-    }
 
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
@@ -94,16 +65,7 @@
       try {
         var email = document.getElementById("loginEmail").value.trim();
         var password = document.getElementById("loginPassword").value;
-        var cmsUser = document.getElementById("cmsUsername").value.trim();
-        var cmsPass = document.getElementById("cmsPassword").value;
-
         await AdminShared.auth.signIn(email, password);
-        var cmsResult = await loginCms(cmsUser, cmsPass);
-
-        if (!cmsResult.ok && !cmsResult.skipped) {
-          AdminShared.toast("Login database sukses, tapi login CMS (upload foto) gagal — cek username/password CMS.", "error");
-        }
-
         var params = new URLSearchParams(location.search);
         location.href = params.get("next") || "linguahub.html";
       } catch (err) {

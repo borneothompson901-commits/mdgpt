@@ -12,7 +12,7 @@
 }
 
 .affiliate-container {
-  max-width: 720px;
+  max-width: 1120px;
   margin: 0 auto;
   padding: 0 18px;
 }
@@ -20,11 +20,14 @@
 /* ---------- Hero ---------- */
 .aff-hero {
   background: var(--gradient-diag);
-  border-radius: 0 0 28px 28px;
+  border-radius: 24px;
   padding: 36px 22px 44px;
   color: var(--white);
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 .aff-hero::after {
   content: "";
@@ -35,6 +38,13 @@
   height: 220px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+.aff-hero__content {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .aff-hero__eyebrow {
   display: inline-flex;
@@ -55,8 +65,6 @@
   line-height: 1.28;
   margin: 0 0 10px;
   max-width: 26ch;
-  position: relative;
-  z-index: 1;
 }
 .aff-hero__desc {
   font-size: 0.92rem;
@@ -64,15 +72,11 @@
   color: rgba(255, 255, 255, 0.92);
   max-width: 42ch;
   margin: 0 0 20px;
-  position: relative;
-  z-index: 1;
 }
 .aff-hero__commission {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  position: relative;
-  z-index: 1;
 }
 .aff-hero__commission-num {
   font-size: 2.4rem;
@@ -85,6 +89,74 @@
   max-width: 16ch;
   line-height: 1.3;
 }
+.aff-hero__cta-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+.aff-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  color: var(--grad-1, #a91ab6);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 12px 22px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  transition: transform 0.12s ease, filter 0.15s ease;
+}
+.aff-hero__cta:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+.aff-hero__cta-note {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+.aff-hero__media {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  align-self: center;
+}
+.aff-hero__img {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+@media (min-width: 860px) {
+  .aff-hero {
+    flex-direction: row;
+    align-items: center;
+    padding: 52px 48px;
+    gap: 40px;
+  }
+  .aff-hero__content {
+    flex: 1 1 55%;
+  }
+  .aff-hero__title {
+    font-size: 2.15rem;
+    max-width: 20ch;
+  }
+  .aff-hero__desc {
+    font-size: 1rem;
+  }
+  .aff-hero__media {
+    flex: 1 1 40%;
+    max-width: 380px;
+  }
+  .aff-hero__img {
+    max-width: 100%;
+  }
+}
 
 /* ---------- Section heading ---------- */
 .aff-section {
@@ -95,6 +167,14 @@
   font-weight: 700;
   color: var(--gray-900, #1a1a1a);
   margin: 0 0 14px;
+}
+
+@media (min-width: 860px) {
+  .aff-section__title {
+    font-size: 1.3rem;
+    text-align: center;
+    margin: 0 0 22px;
+  }
 }
 
 /* ---------- Benefit cards ---------- */
@@ -137,6 +217,22 @@
 @media (max-width: 620px) {
   .aff-benefits {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 860px) {
+  .aff-benefit-card {
+    padding: 22px 20px;
+  }
+  .aff-benefit-card__icon {
+    width: 44px;
+    height: 44px;
+  }
+  .aff-benefit-card__title {
+    font-size: 0.95rem;
+  }
+  .aff-benefit-card__desc {
+    font-size: 0.84rem;
   }
 }
 
@@ -192,12 +288,97 @@
   margin: 0;
 }
 
-/* ---------- Registration form ---------- */
-.aff-form-card {
+@media (min-width: 860px) {
+  .aff-steps {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .aff-step {
+    flex: 1 1 25%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .aff-step:not(:last-child) {
+    border-bottom: none;
+    border-right: 1px solid var(--border, rgba(0, 0, 0, 0.07));
+  }
+}
+
+/* ---------- Trust / stats strip ---------- */
+.aff-trust {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 12px;
   background: var(--white);
   border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   border-radius: var(--radius-md);
+  padding: 22px 18px;
+  text-align: center;
+}
+.aff-trust__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.aff-trust__num {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--gray-900, #1a1a1a);
+}
+.aff-trust__label {
+  font-size: 0.74rem;
+  color: var(--gray-600, #666);
+}
+.aff-trust__divider {
+  display: none;
+}
+
+@media (min-width: 860px) {
+  .aff-trust {
+    grid-template-columns: repeat(7, auto);
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 26px 20px;
+  }
+  .aff-trust__item {
+    padding: 0 28px;
+  }
+  .aff-trust__num {
+    font-size: 1.5rem;
+  }
+  .aff-trust__divider {
+    display: block;
+    width: 1px;
+    height: 36px;
+    background: var(--border, rgba(0, 0, 0, 0.1));
+  }
+}
+
+/* ---------- Registration form ---------- */
+.aff-form-section {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 30px 20px;
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+}
+.aff-form-card {
+  background: var(--gray-50, #fafafa);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+  border-radius: var(--radius-md);
   padding: 20px 18px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+@media (min-width: 860px) {
+  .aff-form-section {
+    padding: 44px 40px;
+  }
+  .aff-form-card {
+    padding: 30px 28px;
+  }
 }
 .aff-form-card__title {
   font-size: 1rem;
@@ -314,6 +495,8 @@
 /* ---------- Dashboard (after registration) ---------- */
 .aff-dashboard {
   display: none;
+  max-width: 560px;
+  margin: 0 auto;
 }
 .aff-dashboard.is-visible {
   display: block;

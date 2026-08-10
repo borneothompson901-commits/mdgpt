@@ -36,8 +36,8 @@
             <path d="m12 19-7-7 7-7" />
           </svg>
         </a>
-        <h1 class="nav-product-title">Keranjang Belanja</h1>
-        <span class="nav-mobile-title" aria-hidden="true">Keranjang Belanja</span>
+        <h1 class="nav-product-title" id="navTitleMain">Keranjang Belanja</h1>
+        <span class="nav-mobile-title" id="navTitleMobile" aria-hidden="true">Keranjang Belanja</span>
         <a href="../lingua.html" class="nav-cart" id="navHomeBtn" aria-label="Beranda">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M3 9.5 12 3l9 6.5" />
@@ -269,6 +269,67 @@
               </div>
             </aside>
           </div>
+
+          <div class="checkout-card" id="checkoutCard" hidden>
+            <div class="checkout-card__inner">
+              <div id="checkoutStepMethod">
+                <button type="button" class="checkout-card__back-link" id="checkoutBackBtn">&larr; Ubah pesanan</button>
+                <h2 class="checkout-card__title">Pilih Metode Pembayaran</h2>
+                <p class="checkout-card__total">Total Bayar <strong id="checkoutTotal">Rp0</strong></p>
+
+                <div class="payment-accordion" id="paymentAccordion">
+                  <div class="payment-accordion__item" data-method-item="VA">
+                    <button type="button" class="payment-accordion__header" data-method-toggle="VA" aria-expanded="false">
+                      <span class="payment-accordion__label">
+                        <span class="payment-accordion__name">Virtual Account</span>
+                        <span class="payment-accordion__sub">Transfer via bank, semua bank besar tersedia</span>
+                      </span>
+                      <svg class="payment-accordion__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="payment-accordion__panel" data-method-panel="VA" hidden>
+                      <div class="payment-accordion__list" id="channelListVA"></div>
+                    </div>
+                  </div>
+
+                  <div class="payment-accordion__item" data-method-item="QRIS">
+                    <button type="button" class="payment-accordion__header" data-method-toggle="QRIS" aria-expanded="false">
+                      <span class="payment-accordion__label">
+                        <span class="payment-accordion__name">QRIS</span>
+                        <span class="payment-accordion__sub">Scan pakai aplikasi bank / e-wallet apa saja</span>
+                      </span>
+                      <svg class="payment-accordion__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="payment-accordion__panel" data-method-panel="QRIS" hidden>
+                      <div class="payment-accordion__list" id="channelListQRIS"></div>
+                    </div>
+                  </div>
+
+                  <div class="payment-accordion__item" data-method-item="EWALLET">
+                    <button type="button" class="payment-accordion__header" data-method-toggle="EWALLET" aria-expanded="false">
+                      <span class="payment-accordion__label">
+                        <span class="payment-accordion__name">E-Wallet</span>
+                        <span class="payment-accordion__sub">ShopeePay, DANA, OVO, LinkAja, AstraPay</span>
+                      </span>
+                      <svg class="payment-accordion__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div class="payment-accordion__panel" data-method-panel="EWALLET" hidden>
+                      <div class="payment-accordion__list" id="channelListEWALLET"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="checkout-card__error" id="checkoutError" hidden></p>
+              </div>
+
+              <div id="checkoutStepResult" hidden>
+                <div id="checkoutResultContent"></div>
+                <button type="button" class="cart-checkout-btn checkout-result__back-btn" id="checkoutDoneBtn">
+                  Selesai
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="cart-confirm-overlay" id="cartConfirmOverlay" hidden>
             <div class="cart-confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="cartConfirmTitle" aria-describedby="cartConfirmDesc">
               <h3 id="cartConfirmTitle">Hapus produk ini?</h3>
@@ -280,44 +341,6 @@
             </div>
           </div>
 
-          <div class="payment-overlay" id="paymentOverlay" hidden>
-            <div class="payment-modal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
-              <button type="button" class="payment-modal__close" id="paymentModalClose" aria-label="Tutup">&times;</button>
-
-              <div id="paymentStepMethod">
-                <h3 id="paymentModalTitle">Pilih Metode Pembayaran</h3>
-                <p class="payment-modal__total">Total Bayar: <strong id="paymentModalTotal">Rp0</strong></p>
-
-                <div class="payment-method-tabs" id="paymentMethodTabs">
-                  <button type="button" class="payment-method-tab" data-method="VA">
-                    <span>Virtual Account</span>
-                  </button>
-                  <button type="button" class="payment-method-tab" data-method="QRIS">
-                    <span>QRIS</span>
-                  </button>
-                  <button type="button" class="payment-method-tab" data-method="EWALLET">
-                    <span>E-Wallet</span>
-                  </button>
-                </div>
-
-                <div class="payment-channel-list" id="paymentChannelList" hidden></div>
-                <p class="payment-channel-hint" id="paymentChannelHint" hidden>QRIS bisa dibayar pakai aplikasi bank atau e-wallet apa saja yang support QR.</p>
-
-                <p class="payment-modal__error" id="paymentModalError" hidden></p>
-
-                <button type="button" class="cart-checkout-btn" id="paymentPayBtn" disabled>
-                  Bayar Sekarang
-                </button>
-              </div>
-
-              <div id="paymentStepResult" hidden>
-                <div id="paymentResultContent"></div>
-                <button type="button" class="cart-checkout-btn payment-result__done-btn" id="paymentDoneBtn">
-                  Selesai
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
     </main>

@@ -179,20 +179,50 @@
   var checkoutBtn = document.getElementById("checkoutBtn");
   var customerNameEl = document.getElementById("cartCustomerName");
 
-  var paymentOverlay = document.getElementById("paymentOverlay");
-  var paymentModalClose = document.getElementById("paymentModalClose");
-  var paymentStepMethod = document.getElementById("paymentStepMethod");
-  var paymentStepResult = document.getElementById("paymentStepResult");
-  var paymentModalTotal = document.getElementById("paymentModalTotal");
-  var paymentMethodTabs = document.getElementById("paymentMethodTabs");
-  var paymentChannelList = document.getElementById("paymentChannelList");
-  var paymentChannelHint = document.getElementById("paymentChannelHint");
-  var paymentModalError = document.getElementById("paymentModalError");
-  var paymentPayBtn = document.getElementById("paymentPayBtn");
-  var paymentResultContent = document.getElementById("paymentResultContent");
-  var paymentDoneBtn = document.getElementById("paymentDoneBtn");
+  var CHECKOUT_STORAGE_KEY = "mdgpt_lingua_checkout";
+  var COUNTDOWN_MS = 6 * 60 * 60 * 1000; // 6 jam
 
-  var paymentState = { method: "", channel: "" };
+  var navTitleMain = document.getElementById("navTitleMain");
+  var navTitleMobile = document.getElementById("navTitleMobile");
+
+  var checkoutCard = document.getElementById("checkoutCard");
+  var checkoutStepMethod = document.getElementById("checkoutStepMethod");
+  var checkoutStepResult = document.getElementById("checkoutStepResult");
+  var checkoutTotalEl = document.getElementById("checkoutTotal");
+  var checkoutErrorEl = document.getElementById("checkoutError");
+  var checkoutResultContent = document.getElementById("checkoutResultContent");
+  var paymentAccordion = document.getElementById("paymentAccordion");
+  var channelListEls = {
+    VA: document.getElementById("channelListVA"),
+    QRIS: document.getElementById("channelListQRIS"),
+    EWALLET: document.getElementById("channelListEWALLET")
+  };
+
+  var countdownTimer = null;
+
+  function readCheckoutState() {
+    try {
+      var raw = localStorage.getItem(CHECKOUT_STORAGE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (!parsed || !parsed.step) return null;
+      return parsed;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeCheckoutState(next) {
+    try {
+      if (!next) {
+        localStorage.removeItem(CHECKOUT_STORAGE_KEY);
+      } else {
+        localStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(next));
+      }
+    } catch (e) {}
+  }
+
+  var checkoutState = readCheckoutState();
 
   var confirmOverlay = document.getElementById("cartConfirmOverlay");
   var confirmDescEl = document.getElementById("cartConfirmDesc");
@@ -878,126 +908,190 @@
     return subtotal + ongkir + layanan + pajak;
   }
 
-  function showPaymentError(msg) {
-    if (!paymentModalError) return;
-    paymentModalError.textContent = msg;
-    paymentModalError.hidden = false;
+  var METHOD_META = {
+    VA: { name: "Virtual Account", rowDesc: "Transfer melalui " },
+    QRIS: { name: "QRIS", rowDesc: "Bayar pakai aplikasi bank / e-wallet apa saja yang support QRIS." },
+    EWALLET: { name: "E-Wallet", rowDesc: "Lanjutkan pembayaran lewat aplikasi " }
+  };
+
+  var PAYMENT_GUIDES = {
+    VA: [
+      "Buka aplikasi mobile banking atau kunjungi ATM terdekat.",
+      "Pilih menu Transfer &gt; Virtual Account / Bank Lain.",
+      "Masukkan nomor Virtual Account di atas.",
+      "Cek detail tagihan, lalu konfirmasi & selesaikan pembayaran."
+    ],
+    QRIS: [
+      "Buka aplikasi bank atau e-wallet yang mendukung QRIS.",
+      "Pilih menu Scan QR / Bayar.",
+      "Arahkan kamera ke kode QRIS di atas.",
+      "Cek nominal, lalu konfirmasi pembayaran."
+    ],
+    EWALLET: [
+      "Klik tombol \"Buka Aplikasi E-Wallet\" di atas.",
+      "Login ke akun e-wallet kamu.",
+      "Cek detail tagihan yang muncul.",
+      "Konfirmasi untuk menyelesaikan pembayaran."
+    ]
+  };
+
+  function showCheckoutError(msg) {
+    if (!checkoutErrorEl) return;
+    checkoutErrorEl.textContent = msg;
+    checkoutErrorEl.hidden = false;
   }
 
-  function hidePaymentError() {
-    if (!paymentModalError) return;
-    paymentModalError.hidden = true;
-    paymentModalError.textContent = "";
+  function hideCheckoutError() {
+    if (!checkoutErrorEl) return;
+    checkoutErrorEl.hidden = true;
+    checkoutErrorEl.textContent = "";
   }
 
-  function renderChannelList() {
-    if (!paymentChannelList) return;
-    paymentChannelList.innerHTML = "";
+  function setNavTitle(title) {
+    if (navTitleMain) navTitleMain.textContent = title;
+    if (navTitleMobile) navTitleMobile.textContent = title;
+  }
 
-    var channels = [];
-    if (paymentState.method === "VA") channels = VA_CHANNELS;
-    if (paymentState.method === "EWALLET") channels = EWALLET_CHANNELS;
+  function closeAllAccordionPanels() {
+    if (!paymentAccordion) return;
+    paymentAccordion.querySelectorAll(".payment-accordion__item").forEach(function (item) {
+      item.classList.remove("is-open");
+      var header = item.querySelector(".payment-accordion__header");
+      var panel = item.querySelector(".payment-accordion__panel");
+      if (header) header.setAttribute("aria-expanded", "false");
+      if (panel) panel.hidden = true;
+    });
+  }
 
-    if (paymentState.method === "QRIS" || !paymentState.method) {
-      setVisible(paymentChannelList, false);
-      setVisible(paymentChannelHint, paymentState.method === "QRIS");
-      return;
+  function renderChannelRows(method) {
+    var listEl = channelListEls[method];
+    if (!listEl || listEl.childElementCount > 0) return; // render once
+
+    var rows = [];
+    if (method === "VA") {
+      rows = VA_CHANNELS.map(function (ch) {
+        return { code: ch.code, title: ch.label, desc: METHOD_META.VA.rowDesc + ch.label };
+      });
+    } else if (method === "EWALLET") {
+      rows = EWALLET_CHANNELS.map(function (ch) {
+        return { code: ch.code, title: ch.label, desc: METHOD_META.EWALLET.rowDesc + ch.label };
+      });
+    } else if (method === "QRIS") {
+      rows = [{ code: "", title: "QRIS", desc: METHOD_META.QRIS.rowDesc }];
     }
 
-    setVisible(paymentChannelHint, false);
-    setVisible(paymentChannelList, true);
+    rows.forEach(function (row) {
+      var rowEl = document.createElement("div");
+      rowEl.className = "payment-channel-row";
 
-    channels.forEach(function (ch) {
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "payment-channel-btn";
-      btn.textContent = ch.label;
-      btn.setAttribute("data-channel", ch.code);
-      if (ch.code === paymentState.channel) btn.classList.add("is-selected");
-      btn.addEventListener("click", function () {
-        paymentState.channel = ch.code;
-        renderChannelList();
-        updatePayBtnState();
+      var infoEl = document.createElement("div");
+      infoEl.className = "payment-channel-row__info";
+      infoEl.innerHTML =
+        '<span class="payment-channel-row__title">' + row.title + '</span>' +
+        '<span class="payment-channel-row__desc">' + row.desc + '</span>';
+
+      var pickBtn = document.createElement("button");
+      pickBtn.type = "button";
+      pickBtn.className = "payment-pick-btn";
+      pickBtn.textContent = "Pilih";
+      pickBtn.addEventListener("click", function () {
+        pickChannel(method, row.code, row.title, pickBtn);
       });
-      paymentChannelList.appendChild(btn);
+
+      rowEl.appendChild(infoEl);
+      rowEl.appendChild(pickBtn);
+      listEl.appendChild(rowEl);
     });
   }
 
-  function updatePayBtnState() {
-    if (!paymentPayBtn) return;
-    var ready =
-      paymentState.method === "QRIS" ||
-      ((paymentState.method === "VA" || paymentState.method === "EWALLET") && paymentState.channel);
-    paymentPayBtn.disabled = !ready;
-  }
+  ["VA", "QRIS", "EWALLET"].forEach(renderChannelRows);
 
-  if (paymentMethodTabs) {
-    paymentMethodTabs.addEventListener("click", function (e) {
-      var tab = e.target.closest(".payment-method-tab");
-      if (!tab) return;
-      paymentState.method = tab.getAttribute("data-method");
-      paymentState.channel = "";
-      hidePaymentError();
+  if (paymentAccordion) {
+    paymentAccordion.addEventListener("click", function (e) {
+      var header = e.target.closest(".payment-accordion__header");
+      if (!header) return;
+      var item = header.closest(".payment-accordion__item");
+      var panel = item.querySelector(".payment-accordion__panel");
+      var isOpen = item.classList.contains("is-open");
 
-      paymentMethodTabs.querySelectorAll(".payment-method-tab").forEach(function (t) {
-        t.classList.toggle("is-active", t === tab);
-      });
+      closeAllAccordionPanels();
 
-      renderChannelList();
-      updatePayBtnState();
+      if (!isOpen) {
+        item.classList.add("is-open");
+        header.setAttribute("aria-expanded", "true");
+        panel.hidden = false;
+      }
     });
   }
 
-  function openPaymentModal() {
-    paymentState.method = "";
-    paymentState.channel = "";
-    hidePaymentError();
-    if (paymentMethodTabs) {
-      paymentMethodTabs.querySelectorAll(".payment-method-tab").forEach(function (t) {
-        t.classList.remove("is-active");
-      });
+  function showCartView() {
+    if (checkoutCard) checkoutCard.hidden = true;
+    if (cartLayoutEl) cartLayoutEl.hidden = false;
+    setNavTitle("Keranjang Belanja");
+    stopCountdown();
+  }
+
+  function showCheckoutMethodView() {
+    if (cartLayoutEl) cartLayoutEl.hidden = true;
+    if (checkoutCard) checkoutCard.hidden = false;
+    setNavTitle("Pembayaran");
+    setVisible(checkoutStepMethod, true);
+    setVisible(checkoutStepResult, false);
+    hideCheckoutError();
+    closeAllAccordionPanels();
+    if (checkoutTotalEl) {
+      var total = checkoutState && checkoutState.orderSnapshot ? checkoutState.orderSnapshot.total : getOrderTotal();
+      checkoutTotalEl.textContent = formatRupiah(total);
     }
-    renderChannelList();
-    updatePayBtnState();
-    if (paymentModalTotal) paymentModalTotal.innerHTML = "Total Bayar: <strong>" + formatRupiah(getOrderTotal()) + "</strong>";
-    setVisible(paymentStepMethod, true);
-    setVisible(paymentStepResult, false);
-    if (paymentPayBtn) {
-      paymentPayBtn.textContent = "Bayar Sekarang";
+    stopCountdown();
+  }
+
+  function stopCountdown() {
+    if (countdownTimer) {
+      clearInterval(countdownTimer);
+      countdownTimer = null;
     }
-    if (paymentOverlay) paymentOverlay.hidden = false;
   }
 
-  function closePaymentModal() {
-    if (paymentOverlay) paymentOverlay.hidden = true;
+  function formatCountdown(ms) {
+    var totalSec = Math.max(0, Math.floor(ms / 1000));
+    var h = Math.floor(totalSec / 3600);
+    var m = Math.floor((totalSec % 3600) / 60);
+    var s = totalSec % 60;
+    function pad(n) { return n < 10 ? "0" + n : "" + n; }
+    return pad(h) + ":" + pad(m) + ":" + pad(s);
   }
 
-  if (checkoutBtn) {
-    checkoutBtn.addEventListener("click", function () {
-      var cart = window.CartStore.getCart();
-      if (cart.length === 0) return;
-      openPaymentModal();
-    });
+  function startCountdown(expiryAt) {
+    stopCountdown();
+    var timeEl = document.getElementById("checkoutCountdownTime");
+    var wrapEl = document.getElementById("checkoutCountdownWrap");
+    if (!timeEl) return;
+
+    function tick() {
+      var remaining = expiryAt - Date.now();
+      if (remaining <= 0) {
+        timeEl.textContent = "00:00:00";
+        if (wrapEl) wrapEl.classList.add("is-expired");
+        stopCountdown();
+        return;
+      }
+      timeEl.textContent = formatCountdown(remaining);
+    }
+    tick();
+    countdownTimer = setInterval(tick, 1000);
   }
 
-  if (paymentModalClose) {
-    paymentModalClose.addEventListener("click", closePaymentModal);
-  }
-  if (paymentDoneBtn) {
-    paymentDoneBtn.addEventListener("click", closePaymentModal);
-  }
-  if (paymentOverlay) {
-    paymentOverlay.addEventListener("click", function (e) {
-      if (e.target === paymentOverlay) closePaymentModal();
-    });
-  }
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && paymentOverlay && !paymentOverlay.hidden) closePaymentModal();
-  });
+  function renderResultView() {
+    if (!checkoutResultContent || !checkoutState) return;
+    var method = checkoutState.method;
+    var data = checkoutState.resultData || {};
+    var html = '<div class="payment-countdown" id="checkoutCountdownWrap">' +
+        '<span class="payment-countdown__label">Selesaikan pembayaran dalam</span>' +
+        '<span class="payment-countdown__time" id="checkoutCountdownTime">06:00:00</span>' +
+      '</div>';
 
-  function renderPaymentResult(method, data) {
-    if (!paymentResultContent) return;
-    var html = '<p class="payment-result__order-id">Order ID: ' + (data.clientReferenceId || data.orderId || "-") + '</p>';
+    html += '<p class="payment-result__order-id">Order ID: ' + (data.clientReferenceId || data.orderId || "-") + '</p>';
 
     if (method === "VA" && data.virtualAccount) {
       var va = data.virtualAccount;
@@ -1005,20 +1099,16 @@
         '<div class="payment-result__box">' +
           '<p class="payment-result__label">Transfer ke Virtual Account</p>' +
           '<p class="payment-result__va-bank">' + (va.bank || "") + '</p>' +
-          '<p class="payment-result__va-number" id="paymentVaNumber">' + (va.number || "-") + '</p>' +
-          '<button type="button" class="payment-result__copy-btn" id="paymentCopyVaBtn">Salin Nomor VA</button>' +
-          (va.expiryAt ? '<p class="payment-result__expiry">Bayar sebelum ' + new Date(va.expiryAt).toLocaleString("id-ID") + '</p>' : "") +
-        '</div>' +
-        '<p class="payment-result__note">Buka aplikasi bank atau mobile banking kamu, pilih transfer Virtual Account, lalu masukkan nomor di atas.</p>';
+          '<p class="payment-result__va-number" id="checkoutVaNumber">' + (va.number || "-") + '</p>' +
+          '<button type="button" class="payment-result__copy-btn" id="checkoutCopyVaBtn">Salin Nomor VA</button>' +
+        '</div>';
     } else if (method === "QRIS" && data.qr) {
       var qr = data.qr;
       html +=
         '<div class="payment-result__box">' +
           '<p class="payment-result__label">Scan QRIS untuk bayar</p>' +
           (qr.imageUrl ? '<img class="payment-result__qr-img" src="' + qr.imageUrl + '" alt="QRIS" />' : "") +
-          (qr.expiryAt ? '<p class="payment-result__expiry">Berlaku sampai ' + new Date(qr.expiryAt).toLocaleString("id-ID") + '</p>' : "") +
-        '</div>' +
-        '<p class="payment-result__note">Scan pakai aplikasi bank, DANA, OVO, GoPay, ShopeePay, atau aplikasi pendukung QRIS lainnya.</p>';
+        '</div>';
     } else if (method === "EWALLET" && data.ewallet) {
       var ew = data.ewallet;
       html +=
@@ -1027,20 +1117,23 @@
           (ew.redirectUrl
             ? '<a class="payment-result__ewallet-btn" href="' + ew.redirectUrl + '" target="_blank" rel="noopener">Buka Aplikasi E-Wallet</a>'
             : '<p class="payment-result__note">Link pembayaran tidak tersedia.</p>') +
-        '</div>' +
-        '<p class="payment-result__note">Kalau halaman tidak otomatis terbuka, klik tombol di atas.</p>';
-
-      if (ew.redirectUrl) {
-        window.open(ew.redirectUrl, "_blank", "noopener");
-      }
+        '</div>';
     } else {
       html += '<p class="payment-result__note">Pembayaran diproses. Silakan cek instruksi lebih lanjut dari admin.</p>';
     }
 
-    paymentResultContent.innerHTML = html;
+    var guide = PAYMENT_GUIDES[method] || [];
+    if (guide.length) {
+      html += '<div class="payment-result__guide">' +
+        '<p class="payment-result__guide-title">Panduan Pembayaran</p>' +
+        '<ol>' + guide.map(function (g) { return "<li>" + g + "</li>"; }).join("") + '</ol>' +
+      '</div>';
+    }
 
-    var copyBtn = document.getElementById("paymentCopyVaBtn");
-    var vaNumberEl = document.getElementById("paymentVaNumber");
+    checkoutResultContent.innerHTML = html;
+
+    var copyBtn = document.getElementById("checkoutCopyVaBtn");
+    var vaNumberEl = document.getElementById("checkoutVaNumber");
     if (copyBtn && vaNumberEl) {
       copyBtn.addEventListener("click", function () {
         var text = vaNumberEl.textContent.trim();
@@ -1059,25 +1152,103 @@
         }
       });
     }
+
+    if (method === "EWALLET" && data.ewallet && data.ewallet.redirectUrl && checkoutState.justCreated) {
+      window.open(data.ewallet.redirectUrl, "_blank", "noopener");
+    }
   }
 
-  if (paymentPayBtn) {
-    paymentPayBtn.addEventListener("click", function () {
+  function showCheckoutResultView() {
+    if (cartLayoutEl) cartLayoutEl.hidden = true;
+    if (checkoutCard) checkoutCard.hidden = false;
+    setNavTitle("Pembayaran");
+    setVisible(checkoutStepMethod, false);
+    setVisible(checkoutStepResult, true);
+    renderResultView();
+    var expiryAt = checkoutState.expiryAt || (Date.now() + COUNTDOWN_MS);
+    startCountdown(expiryAt);
+    checkoutState.justCreated = false;
+    writeCheckoutState(checkoutState);
+  }
+
+  function pickChannel(method, channelCode, channelLabel, btnEl) {
+    if (!checkoutState || !checkoutState.orderSnapshot) {
+      showCheckoutError("Sesi checkout tidak ditemukan, silakan ulangi dari keranjang.");
+      return;
+    }
+
+    hideCheckoutError();
+    var listEl = channelListEls[method];
+    if (listEl) {
+      listEl.querySelectorAll(".payment-pick-btn").forEach(function (b) { b.disabled = true; });
+    }
+    if (btnEl) btnEl.textContent = "Memproses...";
+
+    var snap = checkoutState.orderSnapshot;
+    var payload = {
+      items: snap.items,
+      amount: snap.total,
+      method: method,
+      channel: channelCode || undefined,
+      customer: {
+        name: snap.customerName || "Pelanggan",
+        phone: snap.phone
+      }
+    };
+
+    fetch(PIVOT_ENDPOINT, {
+      method: "POST",
+      headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
+      body: JSON.stringify(payload)
+    })
+      .then(function (res) {
+        return res.json().then(function (data) {
+          return { ok: res.ok, data: data };
+        });
+      })
+      .then(function (result) {
+        if (!result.ok) {
+          throw new Error((result.data && result.data.error) || "Gagal membuat pembayaran.");
+        }
+
+        var serverExpiry = null;
+        if (result.data.virtualAccount && result.data.virtualAccount.expiryAt) {
+          serverExpiry = new Date(result.data.virtualAccount.expiryAt).getTime();
+        } else if (result.data.qr && result.data.qr.expiryAt) {
+          serverExpiry = new Date(result.data.qr.expiryAt).getTime();
+        }
+
+        checkoutState.step = "result";
+        checkoutState.method = method;
+        checkoutState.channel = channelCode || "";
+        checkoutState.resultData = result.data;
+        checkoutState.expiryAt = serverExpiry && serverExpiry > Date.now() ? serverExpiry : Date.now() + COUNTDOWN_MS;
+        checkoutState.justCreated = true;
+        writeCheckoutState(checkoutState);
+
+        showCheckoutResultView();
+      })
+      .catch(function (err) {
+        showCheckoutError(err.message || "Gagal membuat pembayaran, coba lagi.");
+      })
+      .finally(function () {
+        if (listEl) {
+          listEl.querySelectorAll(".payment-pick-btn").forEach(function (b) {
+            b.disabled = false;
+            b.textContent = "Pilih";
+          });
+        }
+      });
+  }
+
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener("click", function () {
       var cart = window.CartStore.getCart();
       if (cart.length === 0) return;
 
       var total = getOrderTotal();
       var phone = waEl ? waEl.value.trim() : "";
       var name = customerNameEl ? customerNameEl.value.trim() : "";
-
-      if (!phone) {
-        showPaymentError("Isi nomor WhatsApp dulu ya.");
-        return;
-      }
-
-      hidePaymentError();
-      paymentPayBtn.disabled = true;
-      paymentPayBtn.textContent = "Memproses...";
 
       var items = cart.map(function (it) {
         return {
@@ -1090,45 +1261,61 @@
         };
       });
 
-      var payload = {
-        items: items,
-        amount: total,
-        method: paymentState.method,
-        channel: paymentState.channel || undefined,
-        customer: {
-          name: name || "Pelanggan",
+      checkoutState = {
+        step: "method",
+        method: "",
+        channel: "",
+        orderSnapshot: {
+          items: items,
+          total: total,
+          customerName: name,
           phone: phone
-        }
+        },
+        createdAt: Date.now()
       };
-
-      fetch(PIVOT_ENDPOINT, {
-        method: "POST",
-        headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
-        body: JSON.stringify(payload)
-      })
-        .then(function (res) {
-          return res.json().then(function (data) {
-            return { ok: res.ok, data: data };
-          });
-        })
-        .then(function (result) {
-          if (!result.ok) {
-            throw new Error((result.data && result.data.error) || "Gagal membuat pembayaran.");
-          }
-          renderPaymentResult(paymentState.method, result.data);
-          setVisible(paymentStepMethod, false);
-          setVisible(paymentStepResult, true);
-        })
-        .catch(function (err) {
-          showPaymentError(err.message || "Gagal membuat pembayaran, coba lagi.");
-        })
-        .finally(function () {
-          paymentPayBtn.disabled = false;
-          paymentPayBtn.textContent = "Bayar Sekarang";
-          updatePayBtnState();
-        });
+      writeCheckoutState(checkoutState);
+      showCheckoutMethodView();
     });
   }
+
+  var checkoutBackBtn = document.getElementById("checkoutBackBtn");
+  var checkoutDoneBtn = document.getElementById("checkoutDoneBtn");
+
+  function cancelCheckoutAndReturnToCart() {
+    checkoutState = null;
+    writeCheckoutState(null);
+    showCartView();
+  }
+
+  if (checkoutBackBtn) {
+    checkoutBackBtn.addEventListener("click", cancelCheckoutAndReturnToCart);
+  }
+  if (checkoutDoneBtn) {
+    checkoutDoneBtn.addEventListener("click", cancelCheckoutAndReturnToCart);
+  }
+
+  // Restore last checkout step on load / reload / back navigation
+  function applyPersistedCheckoutState() {
+    checkoutState = readCheckoutState();
+    if (!checkoutState) {
+      showCartView();
+      return;
+    }
+    if (checkoutState.step === "result" && checkoutState.resultData) {
+      showCheckoutResultView();
+    } else if (checkoutState.step === "method" && checkoutState.orderSnapshot) {
+      showCheckoutMethodView();
+    } else {
+      showCartView();
+    }
+  }
+
+  applyPersistedCheckoutState();
+
+  window.addEventListener("pageshow", function (e) {
+    // Handles bfcache back/forward navigation so the last checkout step is kept
+    if (e.persisted) applyPersistedCheckoutState();
+  });
 
   function openConfirmRemove(id, variantKey, title) {
     pendingRemove = { id: id, variantKey: variantKey };

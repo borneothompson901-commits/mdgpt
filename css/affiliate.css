@@ -351,19 +351,31 @@
 
 /* ---------- Registration form ---------- */
 .aff-form-section {
-  background: var(--white);
+  background: var(--gray-50, #f7f7f8);
   border-radius: 28px 28px 28px 4px;
   padding: 30px 20px;
   border: none;
-  box-shadow: var(--shadow-nav, 0 4px 18px rgba(0, 0, 0, 0.08));
 }
 .aff-form-card {
-  background: var(--gray-50, #fafafa);
-  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
-  border-radius: 16px;
-  padding: 20px 18px;
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.06));
+  border-radius: 20px 20px 20px 6px;
+  padding: 24px 18px 22px;
   max-width: 480px;
   margin: 0 auto;
+  box-shadow: 0 16px 40px -18px rgba(169, 26, 182, 0.28),
+    0 4px 14px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+.aff-form-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient);
 }
 
 @media (min-width: 860px) {
@@ -371,19 +383,38 @@
     padding: 44px 40px;
   }
   .aff-form-card {
-    padding: 30px 28px;
+    padding: 34px 32px 30px;
   }
 }
-.aff-form-card__title {
-  font-size: 1rem;
+
+.aff-form-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(90deg, rgba(169, 26, 182, 0.1), rgba(4, 123, 254, 0.1));
+  color: var(--cat-accent);
+  font-size: 0.7rem;
   font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill, 999px);
+  margin-bottom: 12px;
+}
+.aff-form-card__badge svg {
+  flex: 0 0 auto;
+}
+
+.aff-form-card__title {
+  font-size: 1.15rem;
+  font-weight: 800;
   color: var(--gray-900, #1a1a1a);
   margin: 0 0 4px;
+  letter-spacing: -0.01em;
 }
 .aff-form-card__sub {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   color: var(--gray-600, #666);
-  margin: 0 0 18px;
+  margin: 0 0 20px;
 }
 
 .aff-field {
@@ -391,85 +422,183 @@
 }
 .aff-field label {
   display: block;
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: var(--gray-700, #444);
   margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
-.aff-field input[type="text"],
-.aff-field input[type="tel"],
-.aff-field input[type="email"] {
+
+.aff-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--gray-50, #fafafa);
+  border: 1.5px solid var(--border, rgba(0, 0, 0, 0.1));
+  border-radius: 12px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.aff-input__icon {
+  flex: 0 0 auto;
+  margin-left: 13px;
+  color: var(--gray-600, #9a9aa2);
+  transition: color 0.15s ease;
+}
+.aff-input__prefix {
+  flex: 0 0 auto;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--gray-700, #444);
+  margin-left: 8px;
+  padding-right: 8px;
+  border-right: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+}
+.aff-input input {
   width: 100%;
-  border: 1px solid var(--border, rgba(0, 0, 0, 0.14));
-  border-radius: 10px;
-  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 12px;
+  padding: 12px 12px;
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   color: var(--gray-900, #1a1a1a);
-  background: var(--white, #fff);
   box-sizing: border-box;
 }
-.aff-field input:focus {
-  outline: none;
-  border-color: var(--cat-accent);
+.aff-input--prefixed input {
+  padding-left: 8px;
 }
+.aff-input input:focus {
+  outline: none;
+}
+.aff-input:focus-within {
+  border-color: var(--cat-accent);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(169, 26, 182, 0.1);
+}
+.aff-input:focus-within .aff-input__icon {
+  color: var(--cat-accent);
+}
+
 .aff-field__error {
   font-size: 0.74rem;
   color: #d92d20;
   margin-top: 5px;
   display: none;
 }
-.aff-field.has-error input {
+.aff-field.has-error .aff-input {
   border-color: #d92d20;
+  background: rgba(217, 45, 32, 0.04);
 }
 .aff-field.has-error .aff-field__error {
   display: block;
 }
 
 .aff-consent {
+  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  margin-bottom: 18px;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  background: var(--gray-50, #fafafa);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+  border-radius: 12px;
+  cursor: pointer;
 }
 .aff-consent input {
-  margin-top: 3px;
-  flex: 0 0 auto;
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
 }
-.aff-consent label {
+.aff-consent__box {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 5px;
+  border: 1.5px solid var(--gray-300, #c9c9ce);
+  background: var(--white);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.aff-consent input:checked ~ .aff-consent__box {
+  background: var(--gradient);
+  border-color: transparent;
+}
+.aff-consent input:focus-visible ~ .aff-consent__box {
+  box-shadow: 0 0 0 3px rgba(169, 26, 182, 0.22);
+}
+.aff-consent__text {
   font-size: 0.78rem;
   line-height: 1.5;
   color: var(--gray-600, #666);
 }
+.aff-consent.has-error {
+  border-color: #d92d20;
+  background: rgba(217, 45, 32, 0.04);
+}
 
 .aff-submit-btn {
   width: 100%;
-  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px;
   border: none;
   border-radius: 12px;
   background: var(--gradient);
+  background-size: 160% 100%;
+  background-position: 0% 0%;
   color: var(--white);
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 700;
   cursor: pointer;
-  transition: filter 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 10px 24px -10px rgba(169, 26, 182, 0.55);
+  transition: background-position 0.35s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+.aff-submit-btn svg {
+  transition: transform 0.15s ease;
 }
 .aff-submit-btn:hover:not(:disabled) {
-  filter: brightness(1.05);
+  background-position: 100% 0%;
+  box-shadow: 0 12px 28px -8px rgba(169, 26, 182, 0.65);
+}
+.aff-submit-btn:hover:not(:disabled) svg {
+  transform: translateX(3px);
 }
 .aff-submit-btn:active:not(:disabled) {
   transform: translateY(1px);
 }
 .aff-submit-btn:disabled {
   background: var(--gray-300, #d5d5d8);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
-.aff-form-note {
-  margin-top: 12px;
-  font-size: 0.76rem;
+.aff-form-trust {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 16px;
+  margin-top: 14px;
+}
+.aff-form-trust span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
   color: var(--gray-600, #888);
-  text-align: center;
+}
+.aff-form-trust svg {
+  flex: 0 0 auto;
+  color: var(--cat-accent);
+  opacity: 0.85;
 }
 
 .aff-submit-error {

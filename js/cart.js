@@ -1079,6 +1079,7 @@
     stopCountdown();
     var timeEl = document.getElementById("checkoutCountdownTime");
     var wrapEl = document.getElementById("checkoutCountdownWrap");
+    var reorderBtn = document.getElementById("checkoutReorderBtn");
     if (!timeEl) return;
 
     function tick() {
@@ -1086,10 +1087,12 @@
       if (remaining <= 0) {
         timeEl.textContent = "00:00:00";
         if (wrapEl) wrapEl.classList.add("is-expired");
+        if (reorderBtn) reorderBtn.hidden = false;
         stopCountdown();
         return;
       }
       timeEl.textContent = formatCountdown(remaining);
+      if (reorderBtn) reorderBtn.hidden = true;
     }
     tick();
     countdownTimer = setInterval(tick, 1000);
@@ -1102,7 +1105,8 @@
     var html = '<div class="payment-countdown" id="checkoutCountdownWrap">' +
         '<span class="payment-countdown__label">Selesaikan pembayaran dalam</span>' +
         '<span class="payment-countdown__time" id="checkoutCountdownTime">06:00:00</span>' +
-      '</div>';
+      '</div>' +
+      '<button type="button" class="checkout-reorder-btn" id="checkoutReorderBtn" hidden>Pesan Ulang</button>';
 
     html += '<p class="payment-result__order-id">Order ID: ' + (data.clientReferenceId || data.orderId || "-") + '</p>';
 
@@ -1144,6 +1148,11 @@
     }
 
     checkoutResultContent.innerHTML = html;
+
+    var reorderBtn = document.getElementById("checkoutReorderBtn");
+    if (reorderBtn) {
+      reorderBtn.addEventListener("click", cancelCheckoutAndReturnToCart);
+    }
 
     var copyBtn = document.getElementById("checkoutCopyVaBtn");
     var vaNumberEl = document.getElementById("checkoutVaNumber");

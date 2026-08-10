@@ -185,10 +185,9 @@
   var navTitleMain = document.getElementById("navTitleMain");
   var navTitleMobile = document.getElementById("navTitleMobile");
 
-  var checkoutCard = document.getElementById("checkoutCard");
+  var checkoutPanel = document.getElementById("checkoutPanel");
   var checkoutStepMethod = document.getElementById("checkoutStepMethod");
   var checkoutStepResult = document.getElementById("checkoutStepResult");
-  var checkoutTotalEl = document.getElementById("checkoutTotal");
   var checkoutErrorEl = document.getElementById("checkoutError");
   var checkoutResultContent = document.getElementById("checkoutResultContent");
   var paymentAccordion = document.getElementById("paymentAccordion");
@@ -197,6 +196,10 @@
     QRIS: document.getElementById("channelListQRIS"),
     EWALLET: document.getElementById("channelListEWALLET")
   };
+
+  var customerInfoSectionEl = document.getElementById("customerInfoSection");
+  var checkoutBtnSectionEl = document.getElementById("checkoutBtnSection");
+  var checkoutModeActive = false;
 
   var countdownTimer = null;
 
@@ -331,11 +334,11 @@
     cartListEl.innerHTML = "";
 
     if (cart.length === 0) {
-      setVisible(cartEmptyEl, true);
+      setVisible(cartEmptyEl, !checkoutModeActive);
       setVisible(cartListEl, false);
     } else {
       setVisible(cartEmptyEl, false);
-      setVisible(cartListEl, true);
+      setVisible(cartListEl, !checkoutModeActive);
 
       cart.forEach(function (item) {
         var node = itemTemplate.content.cloneNode(true);
@@ -380,7 +383,7 @@
     var cart = window.CartStore.getCart();
     var isEmpty = !Array.isArray(cart) || cart.length === 0;
 
-    if (cartLayoutEl) cartLayoutEl.classList.toggle("is-empty", isEmpty);
+    if (cartLayoutEl) cartLayoutEl.classList.toggle("is-empty", isEmpty && !checkoutModeActive);
     setVisible(cartSummaryEl, !isEmpty);
 
     if (isEmpty) {
@@ -389,6 +392,14 @@
       setVisible(sumOngkirRowEl, false);
       state.ongkir = 0;
       state.ongkirChecked = true;
+      return;
+    }
+
+    // Saat sedang di step pembayaran, sembunyikan form alamat/kurir & catatan digital,
+    // kolom kanan cukup nampilin Ringkasan Pesanan aja.
+    if (checkoutModeActive) {
+      setVisible(digitalOnlyNoteEl, false);
+      setVisible(shippingSectionEl, false);
       return;
     }
 
@@ -1025,25 +1036,27 @@
   }
 
   function showCartView() {
-    if (checkoutCard) checkoutCard.hidden = true;
-    if (cartLayoutEl) cartLayoutEl.hidden = false;
+    checkoutModeActive = false;
+    if (checkoutPanel) checkoutPanel.hidden = true;
+    setVisible(customerInfoSectionEl, true);
+    setVisible(checkoutBtnSectionEl, true);
     setNavTitle("Keranjang Belanja");
     stopCountdown();
+    renderCart();
   }
 
   function showCheckoutMethodView() {
-    if (cartLayoutEl) cartLayoutEl.hidden = true;
-    if (checkoutCard) checkoutCard.hidden = false;
+    checkoutModeActive = true;
+    if (checkoutPanel) checkoutPanel.hidden = false;
+    setVisible(customerInfoSectionEl, false);
+    setVisible(checkoutBtnSectionEl, false);
     setNavTitle("Pembayaran");
     setVisible(checkoutStepMethod, true);
     setVisible(checkoutStepResult, false);
     hideCheckoutError();
     closeAllAccordionPanels();
-    if (checkoutTotalEl) {
-      var total = checkoutState && checkoutState.orderSnapshot ? checkoutState.orderSnapshot.total : getOrderTotal();
-      checkoutTotalEl.textContent = formatRupiah(total);
-    }
     stopCountdown();
+    renderCart();
   }
 
   function stopCountdown() {
@@ -1159,8 +1172,10 @@
   }
 
   function showCheckoutResultView() {
-    if (cartLayoutEl) cartLayoutEl.hidden = true;
-    if (checkoutCard) checkoutCard.hidden = false;
+    checkoutModeActive = true;
+    if (checkoutPanel) checkoutPanel.hidden = false;
+    setVisible(customerInfoSectionEl, false);
+    setVisible(checkoutBtnSectionEl, false);
     setNavTitle("Pembayaran");
     setVisible(checkoutStepMethod, false);
     setVisible(checkoutStepResult, true);
@@ -1169,6 +1184,7 @@
     startCountdown(expiryAt);
     checkoutState.justCreated = false;
     writeCheckoutState(checkoutState);
+    renderCart();
   }
 
   function pickChannel(method, channelCode, channelLabel, btnEl) {

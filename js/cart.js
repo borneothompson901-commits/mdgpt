@@ -1210,6 +1210,7 @@
     if (btnEl) btnEl.textContent = "Memproses...";
 
     var snap = checkoutState.orderSnapshot;
+    var refCode = window.MdgptRefTracker ? window.MdgptRefTracker.getRefCode() : null;
     var payload = {
       items: snap.items,
       amount: snap.total,
@@ -1218,7 +1219,8 @@
       customer: {
         name: snap.customerName || "Pelanggan",
         phone: snap.phone
-      }
+      },
+      ref_code: refCode || undefined
     };
 
     fetch(PIVOT_ENDPOINT, {

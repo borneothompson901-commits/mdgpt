@@ -1389,6 +1389,12 @@
   }
 
   function reconcileEmptyState() {
+    if (checkoutModeActive) {
+      if (isEffectivelyVisible(cartListEl)) setVisible(cartListEl, false);
+      if (isEffectivelyVisible(cartEmptyEl)) setVisible(cartEmptyEl, false);
+      return;
+    }
+
     var cart = window.CartStore.getCart();
     if (!Array.isArray(cart)) cart = [];
     var shouldBeEmpty = cart.length === 0;

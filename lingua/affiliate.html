@@ -52,10 +52,25 @@
     <main class="page affiliate-page">
       <div class="aff-wrap">
 
-        <header class="aff-head">
-          <h1 class="aff-head__title">Program Affiliate</h1>
-          <p class="aff-head__sub">Bagikan link kamu, dapat komisi tiap ada yang checkout.</p>
-        </header>
+        <div class="aff-profile-card">
+          <div class="aff-cover" id="affCover">
+            <h1 class="aff-cover__title" id="affCoverTitle">Program Affiliate</h1>
+            <p class="aff-cover__sub" id="affCoverSub">Bagikan link kamu, dapat komisi tiap ada yang checkout.</p>
+            <div class="aff-cover__avatar-wrap" id="affAvatarWrap">
+              <span class="aff-cover__avatar" id="affAvatar">A</span>
+            </div>
+          </div>
+          <div class="aff-profile-meta" id="affProfileMeta">
+            <p class="aff-profile-meta__name">
+              <span id="affWelcomeName">Affiliate</span>
+              <span class="aff-profile-meta__badge">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                Aktif
+              </span>
+            </p>
+            <p class="aff-profile-meta__handle">Kode <span id="affRefCode">—</span></p>
+          </div>
+        </div>
 
         <section class="aff-grid" id="affFormSection">
           <div class="aff-card aff-card--form">
@@ -128,34 +143,7 @@
           </div>
         </section>
 
-        <section class="aff-grid aff-grid--dashboard" id="affDashboard">
-          <div class="aff-stat-card">
-            <span class="aff-stat-card__value" id="affStatClicks">0</span>
-            <span class="aff-stat-card__label">Klik</span>
-          </div>
-          <div class="aff-stat-card">
-            <span class="aff-stat-card__value" id="affStatOrders">0</span>
-            <span class="aff-stat-card__label">Pesanan</span>
-          </div>
-          <div class="aff-stat-card">
-            <span class="aff-stat-card__value" id="affStatCommission">Rp0</span>
-            <span class="aff-stat-card__label">Komisi</span>
-          </div>
-
-          <div class="aff-card aff-card--profile">
-            <span class="aff-profile__avatar" id="affAvatar">A</span>
-            <div class="aff-profile__info">
-              <p class="aff-profile__name">
-                <span id="affWelcomeName">Affiliate</span>
-                <span class="aff-profile__badge">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                  Clingg! Aktif
-                </span>
-              </p>
-              <p class="aff-profile__code">Kode <span id="affRefCode">—</span> &middot; 10% komisi</p>
-            </div>
-          </div>
-
+        <section class="aff-dashboard" id="affDashboard">
           <div class="aff-card aff-card--link">
             <p class="aff-card__label">Link affiliate kamu</p>
             <div class="aff-link-card__panel">
@@ -170,6 +158,46 @@
               Share ke WhatsApp
             </button>
             <p class="aff-cookie-caption">Cookie tracking 14 hari, checkout belakangan tetap masuk komisi kamu.</p>
+          </div>
+
+          <div class="aff-card aff-card--info">
+            <p class="aff-card__label">Informasi akun</p>
+            <div class="aff-info-row">
+              <svg class="aff-info-row__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <div class="aff-info-row__body">
+                <span class="aff-info-row__label">Nama</span>
+                <span class="aff-info-row__value" id="affInfoName">—</span>
+              </div>
+            </div>
+            <div class="aff-info-row">
+              <svg class="aff-info-row__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+              <div class="aff-info-row__body">
+                <span class="aff-info-row__label">Email</span>
+                <span class="aff-info-row__value" id="affInfoEmail">—</span>
+              </div>
+            </div>
+            <div class="aff-info-row">
+              <svg class="aff-info-row__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
+              <div class="aff-info-row__body">
+                <span class="aff-info-row__label">WhatsApp</span>
+                <span class="aff-info-row__value" id="affInfoWa">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="aff-stats">
+            <div class="aff-stat-card">
+              <span class="aff-stat-card__value" id="affStatClicks">0</span>
+              <span class="aff-stat-card__label">Klik</span>
+            </div>
+            <div class="aff-stat-card">
+              <span class="aff-stat-card__value" id="affStatOrders">0</span>
+              <span class="aff-stat-card__label">Pesanan</span>
+            </div>
+            <div class="aff-stat-card">
+              <span class="aff-stat-card__value" id="affStatCommission">Rp0</span>
+              <span class="aff-stat-card__label">Komisi</span>
+            </div>
           </div>
         </section>
 

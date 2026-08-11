@@ -3,24 +3,22 @@
 
   /* ======================================================================
    * KONFIGURASI SUPABASE
-   * Sama seperti project yang dipakai cart.js / products-data.js. Pendaftaran
-   * TIDAK insert langsung ke tabel dari client — semua lewat edge function
-   * `affiliate-register`, yang juga otomatis membuatkan akun Supabase Auth
-   * untuk affiliate tsb (tanpa role/hak akses apapun; RLS di tabel affiliates
-   * tidak mengizinkan insert/update dari client sama sekali).
+   * Isi 2 nilai di bawah ini dari Project Settings > API di dashboard
+   * Supabase kamu. SUPABASE_ANON_KEY aman dipakai di client selama
+   * Row Level Security (RLS) sudah diaktifkan (lihat sql/affiliate_schema.sql).
    * ==================================================================== */
-  var SUPABASE_URL = "https://xjtkipgopiormwmbdtfa.supabase.co";
-  var SUPABASE_KEY = "sb_publishable_5abZti9M8zHWuHyh59q8Ew_Otn-QopO";
-  var SUPABASE_HEADERS = {
-    apikey: SUPABASE_KEY,
-    Authorization: "Bearer " + SUPABASE_KEY,
-    "Content-Type": "application/json"
-  };
-  var REGISTER_ENDPOINT = SUPABASE_URL + "/functions/v1/affiliate-register";
+  var SUPABASE_URL = "https://YOUR-PROJECT-REF.supabase.co";
+  var SUPABASE_ANON_KEY = "YOUR-SUPABASE-ANON-PUBLIC-KEY";
+  var SUPABASE_TABLE = "affiliates";
 
-  /* Halaman katalog yang dituju oleh link affiliate */
+  /* Halaman katalog yang dituju oleh link affiliate + lama cookie tracking */
   var CATALOG_URL = "https://mdgpt.id/lingua/";
+  var COOKIE_NAME = "mdgpt_ref";
+  var COOKIE_DAYS = 14;
   var LOCAL_KEY = "mdgpt_affiliate_me";
+
+  var supabaseReady = !!(window.supabase && SUPABASE_URL.indexOf("YOUR-PROJECT-REF") === -1);
+  var sb = supabaseReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
   /* ---------------------------------------------------------------------
    * Helpers
@@ -47,6 +45,35 @@
     if (d.charAt(0) === "0") d = "62" + d.slice(1);
     if (d.slice(0, 2) !== "62") d = "62" + d;
     return d;
+  }
+
+  function slugFromName(name) {
+    var base = (name || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "")
+      .slice(0, 8);
+    if (!base) base = "aff";
+    return base;
+  }
+
+  function randomSuffix(len) {
+    var chars = "abcdefghjkmnpqrstuvwxyz23456789";
+    var out = "";
+    for (var i = 0; i < len; i++) {
+      out += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return out;
+  }
+
+  function generateRefCode(name) {
+    return (slugFromName(name) + "-" + randomSuffix(5)).toUpperCase();
+  }
+
+  function setCookie(name, value, days) {
+    var expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + expires + "; path=/; SameSite=Lax";
   }
 
   function saveLocal(data) {
@@ -102,6 +129,8 @@
     var refUrl = CATALOG_URL + "?ref=" + encodeURIComponent(affiliate.ref_code);
     $("#affLinkUrl").textContent = refUrl;
     $("#affLinkUrl").dataset.url = refUrl;
+    var codeChip = $("#affRefCode");
+    if (codeChip) codeChip.textContent = affiliate.ref_code || "—";
 
     $("#affStatClicks").textContent = affiliate.total_clicks != null ? affiliate.total_clicks : "0";
     $("#affStatOrders").textContent = affiliate.total_orders != null ? affiliate.total_orders : "0";
@@ -110,46 +139,22 @@
   }
 
   /* ---------------------------------------------------------------------
-   * Daftar affiliate baru (via edge function, bukan insert langsung)
+   * Supabase: daftar affiliate baru
    * ------------------------------------------------------------------- */
   function registerAffiliate(payload) {
-    return fetch(REGISTER_ENDPOINT, {
-      method: "POST",
-      headers: SUPABASE_HEADERS,
-      body: JSON.stringify(payload)
-    })
+    if (!sb) {
+      // Supabase belum dikonfigurasi — tetap lanjutkan secara lokal
+      // supaya halaman tetap bisa didemokan sebelum backend disambungkan.
+      return Promise.resolve(payload);
+    }
+    return sb
+      .from(SUPABASE_TABLE)
+      .insert([payload])
+      .select()
+      .single()
       .then(function (res) {
-        return res.json().then(function (data) {
-          return { ok: res.ok, data: data };
-        });
-      })
-      .then(function (result) {
-        if (!result.ok) {
-          var err = new Error(result.data && result.data.error ? result.data.error : "Gagal mendaftar.");
-          err.isServerMessage = true;
-          throw err;
-        }
-        return result.data;
-      });
-  }
-
-  /* ---------------------------------------------------------------------
-   * Ambil statistik terbaru (klik/order/komisi) dari view publik, biar
-   * dashboard nggak nyangkut di angka nol/awal pas baru daftar.
-   * ------------------------------------------------------------------- */
-  function refreshStats(existing) {
-    var url = SUPABASE_URL + "/rest/v1/affiliate_public_stats?ref_code=eq." +
-      encodeURIComponent(existing.ref_code) + "&select=total_clicks,total_orders,total_commission";
-    fetch(url, { headers: SUPABASE_HEADERS })
-      .then(function (res) { return res.ok ? res.json() : null; })
-      .then(function (rows) {
-        if (!rows || !rows[0]) return;
-        var merged = Object.assign({}, existing, rows[0]);
-        saveLocal(merged);
-        renderDashboard(merged);
-      })
-      .catch(function () {
-        /* biarkan angka lama tampil kalau refresh gagal */
+        if (res.error) throw res.error;
+        return res.data || payload;
       });
   }
 
@@ -161,7 +166,6 @@
     var existing = loadLocal();
     if (existing && existing.ref_code) {
       renderDashboard(existing);
-      refreshStats(existing);
     }
 
     var form = $("#affForm");
@@ -207,7 +211,12 @@
       var payload = {
         name: name,
         whatsapp: normalizeWhatsapp(wa),
-        email: email.toLowerCase()
+        email: email.toLowerCase(),
+        ref_code: generateRefCode(name),
+        commission_rate: 10,
+        total_clicks: 0,
+        total_orders: 0,
+        total_commission: 0
       };
 
       submitBtn.disabled = true;
@@ -220,7 +229,10 @@
           showToast("Pendaftaran berhasil!");
         })
         .catch(function (err) {
-          var msg = (err && err.isServerMessage && err.message) || "Gagal mendaftar. Coba lagi sebentar lagi.";
+          var msg = "Gagal mendaftar. Coba lagi sebentar lagi.";
+          if (err && /duplicate|unique/i.test(err.message || "")) {
+            msg = "Email atau nomor WhatsApp ini sudah terdaftar sebagai affiliate.";
+          }
           submitError.textContent = msg;
           submitError.classList.add("is-visible");
         })
@@ -277,4 +289,12 @@
   } else {
     init();
   }
+
+  // Diekspos untuk dipakai ulang oleh halaman lain kalau perlu (misalnya
+  // dari catalog page untuk membaca konstanta cookie yang sama).
+  window.MdgptAffiliate = {
+    COOKIE_NAME: COOKIE_NAME,
+    COOKIE_DAYS: COOKIE_DAYS,
+    setCookie: setCookie
+  };
 })();

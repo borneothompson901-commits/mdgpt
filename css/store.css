@@ -519,6 +519,7 @@
    overflow: hidden;
    background: transparent;
    border-radius: var(--radius-md) var(--radius-md) 0 0;
+   border-bottom: 1px solid var(--border);
 }
 
 .category-card__img img {
@@ -532,7 +533,7 @@
 
 .category-card__icon {
    position: absolute;
-   inset: 0;
+   inset: 16%;
    display: flex;
    align-items: center;
    justify-content: center;

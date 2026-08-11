@@ -1852,10 +1852,19 @@ function uploadFile(file) {
         var formData = new FormData();
         formData.append("file", file);
 
-        fetch("/api/upload-file.php", {
-                method: "POST",
-                body: formData
-            })
+        var fetchOpts = { method: "POST", body: formData };
+
+        // Sisipin token login (Supabase access_token) biar upload-file.php
+        // bisa verifikasi user. Disimpan admin-core.js pas login, key: admin_session_v1.
+        try {
+            var raw = localStorage.getItem("admin_session_v1");
+            var session = raw ? JSON.parse(raw) : null;
+            if (session && session.access_token) {
+                fetchOpts.headers = { Authorization: "Bearer " + session.access_token };
+            }
+        } catch (e) { /* noop, lanjut tanpa token kalau parse gagal */ }
+
+        fetch("/api/upload-file.php", fetchOpts)
             .then(r => r.json())
             .then(data => {
                 if (data.error) reject(data.error);

@@ -35,7 +35,11 @@
     fetch(SUPABASE_URL + "/rest/v1/rpc/track_affiliate_click", {
       method: "POST",
       headers: SUPABASE_HEADERS,
-      body: JSON.stringify({ p_ref_code: refCode })
+      body: JSON.stringify({
+        p_ref_code: refCode,
+        p_user_agent: (navigator && navigator.userAgent) || null,
+        p_referrer: document.referrer || null
+      })
     }).catch(function () {
       /* best-effort; a failed click count shouldn't block browsing */
     });

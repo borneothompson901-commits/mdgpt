@@ -125,6 +125,10 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
 .data-table td { padding:11px 16px; border-bottom:1px solid var(--border); color:var(--text-1); vertical-align:middle; line-height:1.4; }
 .data-table tr:last-child td { border-bottom:none; }
 .data-table tbody tr:hover { background:#FAFBFC; }
+.jenis-xselect { width:132px; }
+.jenis-xselect .xselect__trigger { font-size:0.8rem; padding:6px 9px; }
+.jenis-xselect .xselect__menu { width:132px; min-width:132px; }
+.jenis-abbr { display:none; }
 .prod-cell { display:flex; align-items:center; gap:10px; min-width:0; max-width:220px; }
 .thumb { width:38px; height:38px; border-radius:7px; border:1px solid var(--border); background:var(--bg); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
 .thumb img { width:100%; height:100%; object-fit:cover; }
@@ -338,17 +342,22 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
   .table-wrap { overflow-x:visible; }
 
   /* Tabel tetap tabel di mobile (bukan card): kolom Produk (nama, truncate, tanpa foto),
-     Stok, Harga, dan tombol Edit/Hapus aja yang tampil. Tipe & Terjual disembunyikan. */
+     Stok, Jenis, dan tombol Edit/Hapus aja yang tampil. Harga & Terjual disembunyikan. */
   .data-table th, .data-table td { padding:8px 8px; }
   .data-table th:first-child, .data-table td:first-child { padding-left:10px; }
   .data-table th:last-child, .data-table td:last-child { padding-right:10px; }
-  .data-table .col-tipe, .data-table .col-sold { display:none; }
+  .data-table .col-harga, .data-table .col-sold { display:none; }
   .thumb { display:none; }
   .prod-cell { max-width:100%; gap:0; }
   .prod-name { max-width:34vw; font-size:0.86rem; }
   .prod-sku { display:none; }
   .data-table td.row-actions .actions { justify-content:flex-end; gap:4px; }
   .btn-icon { width:28px; height:28px; }
+  .jenis-xselect { width:52px; }
+  .jenis-xselect .xselect__trigger { padding:6px 4px; }
+  .jenis-xselect .xselect__menu { width:140px; min-width:140px; right:0; left:auto; }
+  .jenis-full { display:none; }
+  .jenis-abbr { display:inline; }
 }
 
 @media (max-width:480px) {

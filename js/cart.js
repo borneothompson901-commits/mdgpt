@@ -191,6 +191,7 @@
   var checkoutErrorEl = document.getElementById("checkoutError");
   var checkoutResultContent = document.getElementById("checkoutResultContent");
   var paymentAccordion = document.getElementById("paymentAccordion");
+  var cartPageEl = document.querySelector(".cart-page");
   var channelListEls = {
     VA: document.getElementById("channelListVA"),
     QRIS: document.getElementById("channelListQRIS"),
@@ -982,7 +983,7 @@
         return { code: ch.code, title: ch.label, desc: "" };
       });
     } else if (method === "QRIS") {
-      rows = [{ code: "", title: "QRIS", desc: METHOD_META.QRIS.rowDesc }];
+      rows = [{ code: "", title: "QRIS", desc: "" }];
     }
 
     rows.forEach(function (row) {
@@ -1035,6 +1036,7 @@
     setVisible(customerInfoSectionEl, true);
     setVisible(checkoutBtnSectionEl, true);
     setNavTitle("Keranjang Belanja");
+    if (cartPageEl) cartPageEl.classList.remove("is-checkout-view");
     stopCountdown();
     renderCart();
   }
@@ -1049,6 +1051,7 @@
     setVisible(checkoutStepResult, false);
     hideCheckoutError();
     closeAllAccordionPanels();
+    if (cartPageEl) cartPageEl.classList.add("is-checkout-view");
     stopCountdown();
     renderCart();
   }
@@ -1182,6 +1185,7 @@
     setNavTitle("Pembayaran");
     setVisible(checkoutStepMethod, false);
     setVisible(checkoutStepResult, true);
+    if (cartPageEl) cartPageEl.classList.add("is-checkout-view");
     renderResultView();
     var expiryAt = checkoutState.expiryAt || (Date.now() + COUNTDOWN_MS);
     startCountdown(expiryAt);

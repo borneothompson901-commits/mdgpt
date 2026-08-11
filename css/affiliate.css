@@ -28,7 +28,7 @@
   justify-content: center;
   background:
     linear-gradient(135deg, rgba(169, 26, 182, 0.72), rgba(46, 8, 51, 0.8)),
-    url("https://picsum.photos/seed/lingua-affiliate-partner/1600/700") center / cover no-repeat;
+    url("https://picsum.photos/id/0/1600/700") center / cover no-repeat;
 }
 
 .aff-cover__title {

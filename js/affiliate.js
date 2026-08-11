@@ -109,6 +109,11 @@
     var dash = $("#affDashboard");
     if (dash) dash.classList.add("is-visible");
 
+    var cover = $("#affCover");
+    if (cover) cover.classList.add("is-dashboard");
+    var meta = $("#affProfileMeta");
+    if (meta) meta.classList.add("is-visible");
+
     var firstName = affiliate.name ? affiliate.name.split(" ")[0] : "kamu";
     var welcome = $("#affWelcomeName");
     if (welcome) welcome.textContent = firstName;
@@ -123,6 +128,13 @@
     }
     var codeChip = $("#affRefCode");
     if (codeChip) codeChip.textContent = affiliate.ref_code || "—";
+
+    var infoName = $("#affInfoName");
+    if (infoName) infoName.textContent = affiliate.name || "—";
+    var infoEmail = $("#affInfoEmail");
+    if (infoEmail) infoEmail.textContent = affiliate.email || "—";
+    var infoWa = $("#affInfoWa");
+    if (infoWa) infoWa.textContent = affiliate.whatsapp ? "+" + affiliate.whatsapp : "—";
 
     var clicks = $("#affStatClicks");
     if (clicks) clicks.textContent = affiliate.total_clicks != null ? affiliate.total_clicks : "0";

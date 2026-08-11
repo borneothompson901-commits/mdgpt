@@ -103,30 +103,31 @@
   }
 
   function renderDashboard(affiliate) {
-    $("#affHero").classList.add("is-hidden");
-    $("#affBenefitsSection").classList.add("is-hidden");
-    $("#affStepsSection").classList.add("is-hidden");
-    $("#affTrustSection").classList.add("is-hidden");
-    $("#affFormSection").classList.add("is-hidden");
+    var formSection = $("#affFormSection");
+    if (formSection) formSection.classList.add("is-hidden");
 
     var dash = $("#affDashboard");
-    dash.classList.add("is-visible");
+    if (dash) dash.classList.add("is-visible");
 
-    var firstName = affiliate.name ? affiliate.name.split(" ")[0] : "";
-    $("#affWelcomeName").textContent = firstName;
-    var avatar = $("#affAvatar");
-    if (avatar) avatar.textContent = firstName ? firstName.charAt(0) : "A";
+    var firstName = affiliate.name ? affiliate.name.split(" ")[0] : "kamu";
+    var welcome = $("#affWelcomeName");
+    if (welcome) welcome.textContent = firstName;
 
     var refUrl = CATALOG_URL + "?ref=" + encodeURIComponent(affiliate.ref_code);
-    $("#affLinkUrl").textContent = refUrl;
-    $("#affLinkUrl").dataset.url = refUrl;
+    var linkUrl = $("#affLinkUrl");
+    if (linkUrl) {
+      linkUrl.textContent = refUrl;
+      linkUrl.dataset.url = refUrl;
+    }
     var codeChip = $("#affRefCode");
     if (codeChip) codeChip.textContent = affiliate.ref_code || "—";
 
-    $("#affStatClicks").textContent = affiliate.total_clicks != null ? affiliate.total_clicks : "0";
-    $("#affStatOrders").textContent = affiliate.total_orders != null ? affiliate.total_orders : "0";
-    $("#affStatCommission").textContent =
-      "Rp" + Number(affiliate.total_commission || 0).toLocaleString("id-ID");
+    var clicks = $("#affStatClicks");
+    if (clicks) clicks.textContent = affiliate.total_clicks != null ? affiliate.total_clicks : "0";
+    var orders = $("#affStatOrders");
+    if (orders) orders.textContent = affiliate.total_orders != null ? affiliate.total_orders : "0";
+    var commission = $("#affStatCommission");
+    if (commission) commission.textContent = "Rp" + Number(affiliate.total_commission || 0).toLocaleString("id-ID");
   }
 
   function registerAffiliate(payload) {
@@ -208,7 +209,7 @@
         .then(function (affiliate) {
           saveLocal(affiliate);
           renderDashboard(affiliate);
-          showToast("Pendaftaran berhasil!");
+          showToast("Clingg! Akun kamu berhasil terdaftar.");
         })
         .catch(function (err) {
           var msg = "Gagal mendaftar. Coba lagi sebentar lagi.";

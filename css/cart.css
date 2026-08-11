@@ -90,6 +90,21 @@
   padding: calc(var(--nav-height, 68px) + 32px) 0 80px;
 }
 
+/* Step pembayaran (pilih metode / hasil) kontennya pendek, jadi di-center
+   vertikal biar ga nyisain area kosong gede di bawah pada layar desktop. */
+.cart-page.is-checkout-view {
+  display: flex;
+  flex-direction: column;
+}
+.cart-page.is-checkout-view .cart-section {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+}
+.cart-page.is-checkout-view .cart-container {
+  width: 100%;
+}
+
 .cart-section {
   width: 100%;
 }

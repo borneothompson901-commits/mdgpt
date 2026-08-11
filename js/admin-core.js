@@ -217,6 +217,31 @@
       });
       if (!res.ok) throw new Error("Gagal hapus produk (" + res.status + ")");
       return true;
+    },
+
+    // ---------------- Transaksi (read-only, tabel: orders) ----------------
+    // Diisi oleh edge function pivot-create-payment (insert awal) lalu
+    // diupdate oleh webhook handler Pivot pas status berubah (PAID/EXPIRED/dst).
+    // RLS di tabel ini cuma boleh SELECT oleh role "authenticated" (bukan public
+    // kayak products), jadi selalu pakai writeHeaders() walau ini request baca.
+    async listTransactions() {
+      var headers = await writeHeaders();
+      var res = await fetch(
+        SUPABASE_URL + "/rest/v1/orders?select=*&order=created_at.desc&limit=200",
+        { headers: headers }
+      );
+      if (!res.ok) throw new Error("Gagal memuat transaksi (" + res.status + ")");
+      return res.json();
+    },
+    async getTransaction(id) {
+      var headers = await writeHeaders();
+      var res = await fetch(
+        SUPABASE_URL + "/rest/v1/orders?id=eq." + encodeURIComponent(id) + "&select=*",
+        { headers: headers }
+      );
+      if (!res.ok) throw new Error("Gagal memuat detail transaksi (" + res.status + ")");
+      var rows = await res.json();
+      return rows[0] || null;
     }
   };
 

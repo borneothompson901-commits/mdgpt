@@ -44,15 +44,10 @@
   max-width: 460px;
 }
 
-.aff-cover.is-dashboard .aff-cover__title,
-.aff-cover.is-dashboard .aff-cover__sub {
-  display: none;
-}
-
 .aff-cover__avatar-wrap {
   display: none;
   position: absolute;
-  left: 28px;
+  right: 28px;
   bottom: -44px;
 }
 
@@ -415,7 +410,7 @@
 .aff-info-row__label {
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--color-muted);
+  color: var(--cat-accent);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -567,11 +562,22 @@
   .aff-dashboard {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
-    align-items: start;
+    align-items: stretch;
   }
 
   .aff-dashboard.is-visible {
     display: grid;
+  }
+
+  .aff-card--link,
+  .aff-card--info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .aff-card--link .aff-cookie-caption {
+    margin-top: auto;
+    padding-top: 12px;
   }
 
   .aff-stats {

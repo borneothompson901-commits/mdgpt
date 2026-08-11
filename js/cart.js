@@ -858,18 +858,10 @@
         });
 
         if (cheapest) {
-          selectPaket(
-            cheapest.group,
-            cheapest.courier,
-            cheapest.courierName,
-            cheapest.service,
-            cheapest.cost,
-            cheapest.etd,
-            { silent: true }
-          );
-
+          // Jangan auto-pilih kurir termurah, cukup info saja.
+          // User tetap harus klik manual salah satu ekspedisi di bawah.
           showOngkirNote(
-            "Termurah: " + cheapest.courierName + " " + formatRupiah(cheapest.cost),
+            "Termurah: " + cheapest.courierName + " " + formatRupiah(cheapest.cost) + ". Silakan pilih kurir.",
             "success"
           );
         } else {
@@ -980,12 +972,14 @@
 
     var rows = [];
     if (method === "VA") {
+      // Tanpa desc: nama bank saja, biar user fokus milih, ga baca teks berulang.
       rows = VA_CHANNELS.map(function (ch) {
-        return { code: ch.code, title: ch.label, desc: METHOD_META.VA.rowDesc + ch.label };
+        return { code: ch.code, title: ch.label, desc: "" };
       });
     } else if (method === "EWALLET") {
+      // Tanpa desc: nama e-wallet saja, biar user fokus milih, ga baca teks berulang.
       rows = EWALLET_CHANNELS.map(function (ch) {
-        return { code: ch.code, title: ch.label, desc: METHOD_META.EWALLET.rowDesc + ch.label };
+        return { code: ch.code, title: ch.label, desc: "" };
       });
     } else if (method === "QRIS") {
       rows = [{ code: "", title: "QRIS", desc: METHOD_META.QRIS.rowDesc }];
@@ -999,7 +993,7 @@
       infoEl.className = "payment-channel-row__info";
       infoEl.innerHTML =
         '<span class="payment-channel-row__title">' + row.title + '</span>' +
-        '<span class="payment-channel-row__desc">' + row.desc + '</span>';
+        (row.desc ? '<span class="payment-channel-row__desc">' + row.desc + '</span>' : '');
 
       var pickBtn = document.createElement("button");
       pickBtn.type = "button";

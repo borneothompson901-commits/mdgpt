@@ -113,7 +113,7 @@
                 <span class="aff-consent__box" aria-hidden="true">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                 </span>
-                <span class="aff-consent__text">Saya setuju data ini digunakan untuk mengelola akun affiliate dan pencairan komisi.</span>
+                <span class="aff-consent__text">Saya menyetujui <button type="button" class="aff-terms-link" id="affTermsLink">ketentuan</button> yang berlaku</span>
                 <p class="aff-field__error" style="display:none"></p>
               </label>
 
@@ -201,6 +201,30 @@
           </div>
         </section>
 
+      </div>
+
+      <div class="aff-terms-overlay" id="affTermsOverlay" hidden>
+        <div class="aff-terms-sheet" role="dialog" aria-modal="true" aria-labelledby="affTermsTitle">
+          <div class="aff-terms-sheet__handle" aria-hidden="true"></div>
+          <div class="aff-terms-sheet__header">
+            <h3 id="affTermsTitle">Syarat &amp; Ketentuan</h3>
+            <button type="button" class="aff-terms-sheet__close" id="affTermsClose" aria-label="Tutup">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </div>
+          <div class="aff-terms-sheet__body">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dengan mendaftar sebagai affiliate M-DGPT Agency, kamu dianggap telah membaca dan menyetujui ketentuan berikut.</p>
+            <p><strong>1. Kelayakan</strong><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p><strong>2. Komisi</strong><br>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat, duis aute irure dolor.</p>
+            <p><strong>3. Cookie tracking</strong><br>In reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur, excepteur sint occaecat cupidatat non proident.</p>
+            <p><strong>4. Pencairan dana</strong><br>Sunt in culpa qui officia deserunt mollit anim id est laborum, sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
+            <p><strong>5. Larangan</strong><br>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione.</p>
+            <p><strong>6. Perubahan ketentuan</strong><br>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora.</p>
+          </div>
+          <div class="aff-terms-sheet__footer">
+            <button type="button" class="aff-terms-sheet__cta" id="affTermsAgree">Oke, Mengerti</button>
+          </div>
+        </div>
       </div>
     </main>
 

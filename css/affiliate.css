@@ -658,16 +658,22 @@
   margin: 0;
 }
 
-/* Link "ticket stub" — the signature element */
+/* Link card — the referral code is the personal, meaningful part, so it
+   gets its own chip; the URL sits in a code panel and is always shown in
+   full (never truncated) since people need to trust what they're sharing. */
 .aff-link-card {
   background: var(--white);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   border-radius: var(--radius-md);
-  padding: 20px 18px 18px;
-  position: relative;
+  padding: 18px;
   box-shadow: var(--shadow-nav);
-  border-top: 4px solid transparent;
-  border-image: var(--gradient);
-  border-image-slice: 1;
+}
+.aff-link-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 .aff-link-card__label {
   font-size: 0.72rem;
@@ -675,43 +681,53 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--gray-600, #888);
-  margin-bottom: 8px;
+  margin: 0;
 }
-.aff-link-card__row {
+.aff-link-card__code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--grad-1, #a91ab6);
+  background: rgba(169, 26, 182, 0.08);
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.aff-link-card__panel {
   display: flex;
-  align-items: stretch;
-  gap: 8px;
-  border: 1.5px dashed var(--border, rgba(0, 0, 0, 0.18));
+  align-items: center;
+  gap: 10px;
+  background: var(--gray-900, #16161a);
   border-radius: 10px;
-  padding: 10px 10px 10px 14px;
+  padding: 12px 10px 12px 14px;
 }
 .aff-link-card__url {
   flex: 1 1 auto;
   min-width: 0;
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: var(--gray-900, #1a1a1a);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  align-self: center;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #e7e7ec;
+  word-break: break-all;
 }
 .aff-copy-btn {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 14px;
+  padding: 8px 12px;
   border: none;
   border-radius: 8px;
-  background: var(--gray-900, #1a1a1a);
+  background: rgba(255, 255, 255, 0.12);
   color: var(--white);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 .aff-copy-btn:hover {
-  filter: brightness(1.15);
+  background: rgba(255, 255, 255, 0.22);
 }
 .aff-copy-btn.is-copied {
   background: #1a9c5c;
@@ -720,7 +736,7 @@
 .aff-link-actions {
   display: flex;
   gap: 10px;
-  margin-top: 14px;
+  margin-top: 12px;
 }
 .aff-share-btn {
   flex: 1 1 auto;

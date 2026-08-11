@@ -239,6 +239,39 @@
         });
     });
 
+    var termsLink = $("#affTermsLink");
+    var termsOverlay = $("#affTermsOverlay");
+    var termsClose = $("#affTermsClose");
+    var termsAgree = $("#affTermsAgree");
+
+    function openTerms(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (termsOverlay) termsOverlay.hidden = false;
+    }
+
+    function closeTerms(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (termsOverlay) termsOverlay.hidden = true;
+    }
+
+    if (termsLink) termsLink.addEventListener("click", openTerms);
+    if (termsClose) termsClose.addEventListener("click", closeTerms);
+    if (termsAgree) termsAgree.addEventListener("click", closeTerms);
+    if (termsOverlay) {
+      termsOverlay.addEventListener("click", function (e) {
+        if (e.target === termsOverlay) closeTerms(e);
+      });
+    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && termsOverlay && !termsOverlay.hidden) closeTerms(e);
+    });
+
     var copyBtn = $("#affCopyBtn");
     if (copyBtn) {
       copyBtn.addEventListener("click", function () {

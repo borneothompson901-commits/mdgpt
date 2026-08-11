@@ -180,7 +180,12 @@
     catalogDataLoaded = true;
     renderCategoryUI(DATA);
     bindCardInteractions();
-    applyFilters();
+    var categoryFromUrl = new URLSearchParams(window.location.search).get("category");
+    if (categoryFromUrl) {
+      selectCategoryTab(categoryFromUrl, true);
+    } else {
+      applyFilters();
+    }
     applySort();
   }
 
@@ -356,7 +361,7 @@
     window.scrollTo({ top: Math.max(target - 4, 0), behavior: "smooth" });
   }
 
-  function selectCategoryTab(value) {
+  function selectCategoryTab(value, skipScroll) {
     updateCategoryTabsUI(value);
 
     document.querySelectorAll('input[name="category"]').forEach(function (el) {
@@ -365,7 +370,7 @@
 
     state.categories = value ? [value] : [];
     applyFilters();
-    scrollCatalogToTop();
+    if (!skipScroll) scrollCatalogToTop();
   }
 
   function bindCategoryEvents() {

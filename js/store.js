@@ -26,14 +26,6 @@ function initCategorySlider() {
     tag: '<path d="M12.59 2.59a2 2 0 0 0-1.42-.59H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.41l9 9a2 2 0 0 0 2.82 0l7.17-7.17a2 2 0 0 0 0-2.82Z"/><circle cx="7.5" cy="7.5" r="1.5"/>'
   };
 
-  var CAT_COLORS = ["#2563EB", "#7C3AED", "#DB2777", "#EA580C", "#059669", "#0891B2", "#CA8A04", "#4338CA"];
-
-  function hashKey(str) {
-    var h = 0;
-    for (var i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) >>> 0; }
-    return h;
-  }
-
   function pickCategoryIcon(key, label) {
     var haystack = (String(key || "") + " " + String(label || "")).toLowerCase();
     for (var i = 0; i < CAT_ICON_RULES.length; i++) {
@@ -46,10 +38,9 @@ function initCategorySlider() {
   }
 
   function categoryIconHtml(key, label) {
-    var color = CAT_COLORS[hashKey(String(key || label || "")) % CAT_COLORS.length];
     var path = pickCategoryIcon(key, label);
-    return '<div class="category-card__icon" style="background:' + color + '">' +
-      '<svg width="40%" height="40%" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>' +
+    return '<div class="category-card__icon">' +
+      '<svg width="40%" height="40%" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>' +
     '</div>';
   }
 
@@ -76,7 +67,7 @@ function initCategorySlider() {
     if (section) section.hidden = false;
 
     track.innerHTML = cats.map(function (c) {
-      return '<a href="lingua/index.html" class="category-card">' +
+      return '<a href="lingua/index.html?category=' + encodeURIComponent(c.key) + '" class="category-card">' +
         '<div class="category-card__img">' + categoryIconHtml(c.key, c.label) + '</div>' +
         '<div class="category-card__body">' +
           '<strong class="category-card__title">' + escapeHtmlCat(c.label) + '</strong>' +

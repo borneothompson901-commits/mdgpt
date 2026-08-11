@@ -243,6 +243,27 @@
     var termsOverlay = $("#affTermsOverlay");
     var termsClose = $("#affTermsClose");
     var termsAgree = $("#affTermsAgree");
+    var termsScrollY = 0;
+
+    function lockPageScroll() {
+      termsScrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.style.position = "fixed";
+      document.body.style.top = "-" + termsScrollY + "px";
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+      document.body.classList.add("aff-scroll-lock");
+    }
+
+    function unlockPageScroll() {
+      document.body.classList.remove("aff-scroll-lock");
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      window.scrollTo(0, termsScrollY);
+    }
 
     function openTerms(e) {
       if (e) {
@@ -250,6 +271,7 @@
         e.stopPropagation();
       }
       if (termsOverlay) termsOverlay.hidden = false;
+      lockPageScroll();
     }
 
     function closeTerms(e) {
@@ -258,6 +280,7 @@
         e.stopPropagation();
       }
       if (termsOverlay) termsOverlay.hidden = true;
+      unlockPageScroll();
     }
 
     if (termsLink) termsLink.addEventListener("click", openTerms);

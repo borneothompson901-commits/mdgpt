@@ -472,13 +472,19 @@
     .map(function (h) { return "<li>" + h + "</li>"; })
     .join("");
 
+  var specSection = document.getElementById("pdTabSpesifikasi");
   var specTable = document.getElementById("pdSpecTable");
-  var specRows = Object.keys(product.specs || {})
-    .map(function (key) {
-      return "<tr><th>" + key + "</th><td>" + product.specs[key] + "</td></tr>";
-    })
-    .join("");
-  specTable.innerHTML = specRows;
+  var specKeys = Object.keys(product.specs || {});
+  if (specKeys.length === 0) {
+    if (specSection) specSection.hidden = true;
+  } else {
+    var specRows = specKeys
+      .map(function (key) {
+        return "<tr><th>" + key + "</th><td>" + product.specs[key] + "</td></tr>";
+      })
+      .join("");
+    specTable.innerHTML = specRows;
+  }
 
   var QTY_MIN = 1;
   var QTY_MAX = 99;

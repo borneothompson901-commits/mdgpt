@@ -1,57 +1,136 @@
-(function () {
-   'use strict';
-   function initCategorySlider() {
-      var slider = document.getElementById('categorySlider');
-      if (!slider) return;
+function initCategorySlider() {
+  var CAT_ICON_RULES = [
+    { match: ["ebook", "buku", "e-book"], icon: "book" },
+    { match: ["template", "desain", "design"], icon: "layout" },
+    { match: ["tools", "otomasi", "automation", "software", "aplikasi", "script"], icon: "settings" },
+    { match: ["workshop", "kelas", "course", "kursus", "training"], icon: "cap" },
+    { match: ["sosial", "social", "media"], icon: "megaphone" },
+    { match: ["branding", "brand", "logo"], icon: "palette" },
+    { match: ["marketing", "iklan", "ads", "promosi"], icon: "trending" },
+    { match: ["konten", "content", "video", "planner"], icon: "film" },
+    { match: ["fisik", "merchandise", "produk fisik"], icon: "box" },
+    { match: ["jasa", "service", "layanan", "konsultasi"], icon: "briefcase" }
+  ];
 
-      var viewport = slider.querySelector('.category-slider__viewport');
-      var track = document.getElementById('categoryTrack');
-      var prevBtn = document.getElementById('catPrev');
-      var nextBtn = document.getElementById('catNext');
-      var cards = Array.prototype.slice.call(track.children);
+  var CAT_ICON_PATHS = {
+    book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+    layout: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+    cap: '<path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/>',
+    megaphone: '<path d="M3 11v3a1 1 0 0 0 1 1h1l3.5 5v-5H13l6 4V6l-6 4H8.5V6L5 11H4a1 1 0 0 0-1 0Z"/><path d="M8.5 10v6"/>',
+    palette: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.6 2-1.4a2 2 0 0 0-.5-2.2c-.3-.3-.4-.7-.3-1.1.2-.6.7-1 1.3-1H16c3.3 0 6-2.7 6-6 0-4.4-4.5-8-10-8Z"/>',
+    trending: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+    film: '<rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M17 3v18M2 8h5M2 16h5M17 8h5M17 16h5"/>',
+    box: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/>',
+    briefcase: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+    tag: '<path d="M12.59 2.59a2 2 0 0 0-1.42-.59H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.41l9 9a2 2 0 0 0 2.82 0l7.17-7.17a2 2 0 0 0 0-2.82Z"/><circle cx="7.5" cy="7.5" r="1.5"/>'
+  };
 
-      function itemStep() {
-         var first = cards[0];
-         var second = cards[1];
-         if (!first || !second) return viewport.clientWidth;
-         return second.getBoundingClientRect().left - first.getBoundingClientRect().left;
+  var CAT_COLORS = ["#2563EB", "#7C3AED", "#DB2777", "#EA580C", "#059669", "#0891B2", "#CA8A04", "#4338CA"];
+
+  function hashKey(str) {
+    var h = 0;
+    for (var i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) >>> 0; }
+    return h;
+  }
+
+  function pickCategoryIcon(key, label) {
+    var haystack = (String(key || "") + " " + String(label || "")).toLowerCase();
+    for (var i = 0; i < CAT_ICON_RULES.length; i++) {
+      var rule = CAT_ICON_RULES[i];
+      for (var j = 0; j < rule.match.length; j++) {
+        if (haystack.indexOf(rule.match[j]) !== -1) return CAT_ICON_PATHS[rule.icon];
       }
+    }
+    return CAT_ICON_PATHS.tag;
+  }
 
-      function next() {
-         viewport.scrollBy({ left: itemStep(), behavior: 'smooth' });
-      }
+  function categoryIconHtml(key, label) {
+    var color = CAT_COLORS[hashKey(String(key || label || "")) % CAT_COLORS.length];
+    var path = pickCategoryIcon(key, label);
+    return '<div class="category-card__icon" style="background:' + color + '">' +
+      '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>' +
+    '</div>';
+  }
 
-      function prev() {
-         viewport.scrollBy({ left: -itemStep(), behavior: 'smooth' });
-      }
+  function escapeHtmlCat(s) {
+    return String(s || "").replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
 
-      nextBtn.addEventListener('click', next);
-      prevBtn.addEventListener('click', prev);
-      function updateNavState() {
-         var maxScroll = viewport.scrollWidth - viewport.clientWidth - 1;
-         prevBtn.classList.toggle('is-disabled', viewport.scrollLeft <= 0);
-         nextBtn.classList.toggle('is-disabled', viewport.scrollLeft >= maxScroll);
-      }
+  function renderCategoryCards(DATA) {
+    var track = document.getElementById("categoryTrack");
+    var section = document.getElementById("kategori");
+    if (!track) return [];
 
-      var scrollTimer;
-      viewport.addEventListener('scroll', function () {
-         clearTimeout(scrollTimer);
-         scrollTimer = setTimeout(updateNavState, 80);
-      }, { passive: true });
+    var counts = {};
+    (DATA.all || []).forEach(function (p) { if (p.category) counts[p.category] = (counts[p.category] || 0) + 1; });
 
-      window.addEventListener('resize', function () {
-         updateNavState();
-      });
+    var cats = (DATA.categories || []).filter(function (c) { return counts[c.key] > 0; });
 
-      updateNavState();
-   }
+    if (!cats.length) {
+      if (section) section.hidden = true;
+      return [];
+    }
+    if (section) section.hidden = false;
 
-   if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initCategorySlider);
-   } else {
-      initCategorySlider();
-   }
-})();
+    track.innerHTML = cats.map(function (c) {
+      return '<a href="lingua/index.html" class="category-card">' +
+        categoryIconHtml(c.key, c.label) +
+        '<div class="category-card__body">' +
+          '<strong class="category-card__title">' + escapeHtmlCat(c.label) + '</strong>' +
+          '<span class="category-card__count">' + (counts[c.key] || 0) + ' Produk</span>' +
+        '</div>' +
+      '</a>';
+    }).join("");
+
+    return Array.prototype.slice.call(track.children);
+  }
+
+  function initCategorySliderNav(cards) {
+    var slider = document.getElementById('categorySlider');
+    if (!slider || !cards.length) return;
+
+    var viewport = slider.querySelector('.category-slider__viewport');
+    var prevBtn = document.getElementById('catPrev');
+    var nextBtn = document.getElementById('catNext');
+
+    function itemStep() {
+      var first = cards[0];
+      var second = cards[1];
+      if (!first || !second) return viewport.clientWidth;
+      return second.getBoundingClientRect().left - first.getBoundingClientRect().left;
+    }
+
+    function next() { viewport.scrollBy({ left: itemStep(), behavior: 'smooth' }); }
+    function prev() { viewport.scrollBy({ left: -itemStep(), behavior: 'smooth' }); }
+
+    nextBtn.addEventListener('click', next);
+    prevBtn.addEventListener('click', prev);
+
+    function updateNavState() {
+      var maxScroll = viewport.scrollWidth - viewport.clientWidth - 1;
+      prevBtn.classList.toggle('is-disabled', viewport.scrollLeft <= 0);
+      nextBtn.classList.toggle('is-disabled', viewport.scrollLeft >= maxScroll);
+    }
+
+    var scrollTimer;
+    viewport.addEventListener('scroll', function () {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(updateNavState, 80);
+    }, { passive: true });
+
+    window.addEventListener('resize', updateNavState);
+    updateNavState();
+  }
+
+  return function (DATA) {
+    var cards = renderCategoryCards(DATA);
+    initCategorySliderNav(cards);
+  };
+}
+var renderCategorySection = initCategorySlider();
 
 function initStoreWithProductsData() {
   var DATA = window.PRODUCTS_DATA;
@@ -534,6 +613,7 @@ function initStoreWithProductsData() {
 
   renderBestsellers();
   renderExplore();
+  renderCategorySection(DATA);
 }
 
 if (window.PRODUCTS_DATA) {

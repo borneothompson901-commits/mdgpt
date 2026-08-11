@@ -352,6 +352,9 @@
 }
 
 @media (max-width: 640px) {
+  .payment-accordion__sub {
+    font-size: 0.68rem;
+  }
   .cart-page .cart-item {
     grid-template-columns: 56px 1fr auto;
     grid-template-areas:
@@ -434,6 +437,10 @@
   font-weight: 600;
   color: var(--gray-700, #444);
   margin-bottom: 6px;
+}
+.cart-page .cart-required {
+  color: #e02424;
+  font-weight: 700;
 }
 .cart-page .cart-field textarea,
 .cart-page .cart-field input[type="tel"],
@@ -1058,6 +1065,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 .payment-accordion__name {
   font-size: 0.94rem;
@@ -1067,6 +1075,10 @@
 .payment-accordion__sub {
   font-size: 0.76rem;
   color: var(--gray-500, #6b6b70);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .payment-accordion__chevron {

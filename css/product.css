@@ -243,6 +243,7 @@ body {
    border-radius: var(--radius);
    padding: 7px 8px 7px 10px;
    background: #fff;
+   cursor: pointer;
    transition: border-color var(--transition), background var(--transition);
 }
 

@@ -1,28 +1,18 @@
 (function () {
   "use strict";
 
-  /* ======================================================================
-   * KONFIGURASI SUPABASE
-   * Isi 2 nilai di bawah ini dari Project Settings > API di dashboard
-   * Supabase kamu. SUPABASE_ANON_KEY aman dipakai di client selama
-   * Row Level Security (RLS) sudah diaktifkan (lihat sql/affiliate_schema.sql).
-   * ==================================================================== */
-  var SUPABASE_URL = "https://YOUR-PROJECT-REF.supabase.co";
-  var SUPABASE_ANON_KEY = "YOUR-SUPABASE-ANON-PUBLIC-KEY";
+  var SUPABASE_URL = "https://xjtkipgopiormwmbdtfa.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_5abZti9M8zHWuHyh59q8Ew_Otn-QopO";
   var SUPABASE_TABLE = "affiliates";
 
-  /* Halaman katalog yang dituju oleh link affiliate + lama cookie tracking */
   var CATALOG_URL = "https://mdgpt.id/lingua/";
   var COOKIE_NAME = "mdgpt_ref";
   var COOKIE_DAYS = 14;
   var LOCAL_KEY = "mdgpt_affiliate_me";
 
-  var supabaseReady = !!(window.supabase && SUPABASE_URL.indexOf("YOUR-PROJECT-REF") === -1);
+  var supabaseReady = !!window.supabase;
   var sb = supabaseReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-  /* ---------------------------------------------------------------------
-   * Helpers
-   * ------------------------------------------------------------------- */
   function $(sel, ctx) {
     return (ctx || document).querySelector(sel);
   }
@@ -112,13 +102,11 @@
     fieldEl.classList.remove("has-error");
   }
 
-  /* ---------------------------------------------------------------------
-   * Dashboard render
-   * ------------------------------------------------------------------- */
   function renderDashboard(affiliate) {
     $("#affHero").classList.add("is-hidden");
     $("#affBenefitsSection").classList.add("is-hidden");
     $("#affStepsSection").classList.add("is-hidden");
+    $("#affTrustSection").classList.add("is-hidden");
     $("#affFormSection").classList.add("is-hidden");
 
     var dash = $("#affDashboard");
@@ -138,13 +126,8 @@
       "Rp" + Number(affiliate.total_commission || 0).toLocaleString("id-ID");
   }
 
-  /* ---------------------------------------------------------------------
-   * Supabase: daftar affiliate baru
-   * ------------------------------------------------------------------- */
   function registerAffiliate(payload) {
     if (!sb) {
-      // Supabase belum dikonfigurasi — tetap lanjutkan secara lokal
-      // supaya halaman tetap bisa didemokan sebelum backend disambungkan.
       return Promise.resolve(payload);
     }
     return sb
@@ -158,11 +141,7 @@
       });
   }
 
-  /* ---------------------------------------------------------------------
-   * Init
-   * ------------------------------------------------------------------- */
   function init() {
-    // Kalau sudah pernah daftar di browser ini, langsung tampilkan dashboard
     var existing = loadLocal();
     if (existing && existing.ref_code) {
       renderDashboard(existing);
@@ -242,7 +221,6 @@
         });
     });
 
-    // Copy link
     var copyBtn = $("#affCopyBtn");
     if (copyBtn) {
       copyBtn.addEventListener("click", function () {
@@ -271,7 +249,6 @@
       });
     }
 
-    // Share via WhatsApp
     var shareBtn = $("#affShareBtn");
     if (shareBtn) {
       shareBtn.addEventListener("click", function () {
@@ -290,8 +267,6 @@
     init();
   }
 
-  // Diekspos untuk dipakai ulang oleh halaman lain kalau perlu (misalnya
-  // dari catalog page untuk membaca konstanta cookie yang sama).
   window.MdgptAffiliate = {
     COOKIE_NAME: COOKIE_NAME,
     COOKIE_DAYS: COOKIE_DAYS,

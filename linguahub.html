@@ -41,6 +41,13 @@
           <span class="nav-count" id="navProdukCount">0</span>
         </a>
       </li>
+      <li>
+        <a href="#" class="nav-item" data-page="transaksi">
+          <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3" width="13" height="10" rx="1.4" stroke="currentColor" stroke-width="1.35"/><path d="M1.5 6.2h13" stroke="currentColor" stroke-width="1.35"/><path d="M4 9.3h3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg>
+          <span class="nav-text">Transaksi</span>
+          <span class="nav-count" id="navTransaksiCount">0</span>
+        </a>
+      </li>
     </ul>
   </nav>
 
@@ -168,6 +175,91 @@
         </div>
       </section>
 
+      <!-- ========== PAGE: Transaksi ========== -->
+      <section class="page-section" id="pageTransaksi" data-page-section="transaksi" hidden>
+        <div class="page-head">
+          <div class="page-head-left">
+            <div class="page-title">Transaksi</div>
+            <div class="page-sub">Monitoring pembayaran masuk dari Pivot Payment.</div>
+          </div>
+          <div class="page-head-actions">
+            <button class="btn btn-ghost" id="btnRefreshTransaksi">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3.4h-3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="stat-grid" id="txStatGrid">
+          <div class="stat-card"><div class="stat-card__label">Total Transaksi</div><div class="stat-card__value" id="txStatTotal">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Berhasil (Paid)</div><div class="stat-card__value" id="txStatPaid">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Menunggu</div><div class="stat-card__value" id="txStatPending">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Gagal / Kadaluarsa</div><div class="stat-card__value" id="txStatFailed">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Omzet Terbayar</div><div class="stat-card__value" id="txStatRevenue">Rp0</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-toolbar">
+            <div class="search-wrap">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="m14 14-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <input type="text" class="search-input" id="txSearchInput" placeholder="Cari reference ID, nama, email..." />
+            </div>
+            <div class="xselect filter-xselect" id="xselect_filterTxStatus">
+              <button type="button" class="xselect__trigger" id="xselect_filterTxStatus_trigger">
+                <span class="xselect__value is-placeholder">Semua Status</span>
+                <svg class="xselect__chev" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="xselect__menu" id="xselect_filterTxStatus_menu" hidden></div>
+            </div>
+            <div class="xselect filter-xselect" id="xselect_filterTxMethod">
+              <button type="button" class="xselect__trigger" id="xselect_filterTxMethod_trigger">
+                <span class="xselect__value is-placeholder">Semua Metode</span>
+                <svg class="xselect__chev" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="xselect__menu" id="xselect_filterTxMethod_menu" hidden></div>
+            </div>
+            <div class="toolbar-spacer"></div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Reference ID</th>
+                  <th>Customer</th>
+                  <th>Metode</th>
+                  <th>Jumlah</th>
+                  <th>Affiliate</th>
+                  <th>Status</th>
+                  <th>Waktu</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="txTbody">
+                <!-- rows injected -->
+              </tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="txEmptyState" hidden>
+            <p>Belum ada transaksi masuk.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- Transaksi detail modal -->
+<div class="modal-backdrop" id="txDetailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Detail Transaksi</h3>
+      <button class="modal-close" id="txDetailCloseBtn">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 4L4 11M4 4l7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="txDetailBody">
+      <!-- injected -->
     </div>
   </div>
 </div>
@@ -244,5 +336,6 @@
 
 <script src="js/admin-core.js"></script>
 <script src="js/admin-page.js"></script>
+<script src="js/admin-transaksi.js"></script>
 </body>
 </html>

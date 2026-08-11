@@ -120,8 +120,8 @@
 
   var searchInput = document.getElementById("catalogSearchInput");
   var grid = document.getElementById("catalogGrid");
-  var cards = []; // diisi oleh renderCatalogFromData() setelah data Supabase siap
-  var catalogDataLoaded = false; // biar "Tidak ada produk" gak kedip pas data masih loading
+  var cards = [];
+  var catalogDataLoaded = false;
   var resultCount = document.getElementById("resultCount");
   var catalogEmpty = document.getElementById("catalogEmpty");
   var catalogEnd = document.getElementById("catalogEnd");
@@ -138,9 +138,6 @@
     return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
   }
 
-  // Bikin markup satu kartu produk dari row Supabase (lewat PRODUCTS_DATA.mapRow),
-  // strukturnya sengaja disamain persis sama kartu statis versi lama supaya
-  // CSS (.explore-card dst) & logic filter/sort/cart di bawah tetap jalan tanpa ubahan.
   function buildCardHTML(p, rupiah) {
     var img = (p.images && p.images[0]) || "../assets/icons/logo.png";
     var catLabel = p.categoryLabel || p.category || "";
@@ -175,15 +172,13 @@
     );
   }
 
-  // Render seluruh grid dari window.PRODUCTS_DATA (Supabase), lalu (re)bind
-  // event yang butuh elemen kartu (klik buka detail, tombol tambah keranjang)
-  // dan refresh filter/sort supaya kartu baru langsung kepakai.
   function renderCatalogFromData(DATA) {
     if (!grid) return;
     var products = DATA.all || [];
     grid.innerHTML = products.map(function (p) { return buildCardHTML(p, DATA.rupiah); }).join("");
     cards = Array.prototype.slice.call(grid.querySelectorAll(".explore-card"));
     catalogDataLoaded = true;
+    renderCategoryUI(DATA);
     bindCardInteractions();
     applyFilters();
     applySort();
@@ -238,6 +233,12 @@
   var catalogSort = document.getElementById("catalogSort");
   var sortArrowButtons = catalogSort ? Array.prototype.slice.call(catalogSort.querySelectorAll(".sort-item__arrow[data-sort]")) : [];
 
+  var SORT_GROUPS = [
+    { id: "sortTerbaruItem", states: ["terbaru", "terlama"] },
+    { id: "sortTerlarisItem", states: ["terlaris-asc", "terlaris-desc"] },
+    { id: "sortHargaItem", states: ["termurah", "termahal"] }
+  ];
+
   var currentSort = "terbaru";
 
   var SORT_COMPARATORS = {
@@ -288,22 +289,36 @@
     applySort();
   }
 
-  sortArrowButtons.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      setSort(btn.getAttribute("data-sort"));
+  SORT_GROUPS.forEach(function (group) {
+    var itemEl = document.getElementById(group.id);
+    if (!itemEl) return;
+    itemEl.addEventListener("click", function (e) {
+      var arrowBtn = e.target.closest(".sort-item__arrow[data-sort]");
+      var next;
+      if (arrowBtn) {
+        next = arrowBtn.getAttribute("data-sort");
+      } else {
+        var idx = group.states.indexOf(currentSort);
+        next = idx === -1 ? group.states[0] : group.states[(idx + 1) % group.states.length];
+      }
+      setSort(next);
     });
   });
 
   updateSortUI();
 
   var catBar = document.getElementById("catalogCategories");
-  var catButtons = catBar ? Array.prototype.slice.call(catBar.querySelectorAll(".catalog-cat[data-cat]")) : [];
+  var catScroll = catBar ? catBar.querySelector(".catalog-categories__scroll") : null;
   var catMoreWrap = document.getElementById("catalogCatMore");
   var catMoreToggle = document.getElementById("catalogCatMoreToggle");
   var catMoreMenu = document.getElementById("catalogCatMoreMenu");
   var catMoreLabel = document.getElementById("catalogCatMoreLabel");
-  var catMoreItems = catMoreMenu ? Array.prototype.slice.call(catMoreMenu.querySelectorAll(".catalog-cat-more__item")) : [];
   var catMoreDefaultLabel = catMoreLabel ? catMoreLabel.textContent : "Lainnya";
+  var filterCategoryOptions = document.getElementById("filterCategoryOptions");
+
+  var catButtons = [];
+  var catMoreItems = [];
+  var CAT_INLINE_LIMIT = 4;
 
   function openCatMoreMenu() {
     if (!catMoreMenu || !catMoreWrap || !catMoreToggle) return;
@@ -353,7 +368,7 @@
     scrollCatalogToTop();
   }
 
-  if (catBar) {
+  function bindCategoryEvents() {
     catButtons.forEach(function (btn) {
       btn.addEventListener("click", function () {
         var val = btn.getAttribute("data-cat");
@@ -368,7 +383,67 @@
         closeCatMoreMenu();
       });
     });
+  }
 
+  function getCmsCategories(DATA) {
+    var seen = {};
+    var list = [];
+    (DATA.all || []).forEach(function (p) {
+      if (p.category && !seen[p.category]) {
+        seen[p.category] = true;
+        list.push({ key: p.category, label: DATA.categoryLabels[p.category] || p.category });
+      }
+    });
+    return list;
+  }
+
+  function renderCategoryUI(DATA) {
+    var cmsCategories = getCmsCategories(DATA);
+    var inlineCategories = cmsCategories.slice(0, CAT_INLINE_LIMIT);
+    var overflowCategories = cmsCategories.slice(CAT_INLINE_LIMIT);
+
+    if (catScroll) {
+      var allBtn = catScroll.querySelector('[data-cat="all"]');
+      catScroll.innerHTML = "";
+      if (allBtn) catScroll.appendChild(allBtn);
+      inlineCategories.forEach(function (c) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "catalog-cat";
+        btn.setAttribute("data-cat", c.key);
+        btn.textContent = c.label;
+        catScroll.appendChild(btn);
+      });
+    }
+
+    if (catMoreMenu) {
+      catMoreMenu.innerHTML = "";
+      overflowCategories.forEach(function (c) {
+        var item = document.createElement("button");
+        item.type = "button";
+        item.className = "catalog-cat-more__item";
+        item.setAttribute("role", "menuitem");
+        item.setAttribute("data-cat", c.key);
+        item.textContent = c.label;
+        catMoreMenu.appendChild(item);
+      });
+    }
+    if (catMoreWrap) catMoreWrap.hidden = overflowCategories.length === 0;
+
+    if (filterCategoryOptions) {
+      filterCategoryOptions.innerHTML = cmsCategories.map(function (c) {
+        return '<label class="filter-check"><input type="checkbox" name="category" value="' +
+          escapeHtmlCard(c.key) + '" /><span>' + escapeHtmlCard(c.label) + '</span></label>';
+      }).join("");
+    }
+
+    catButtons = catBar ? Array.prototype.slice.call(catBar.querySelectorAll(".catalog-cat[data-cat]")) : [];
+    catMoreItems = catMoreMenu ? Array.prototype.slice.call(catMoreMenu.querySelectorAll(".catalog-cat-more__item")) : [];
+    bindCategoryEvents();
+    updateCategoryTabsUI(state.categories.length === 1 ? state.categories[0] : (state.categories.length === 0 ? "" : null));
+  }
+
+  if (catBar) {
     if (catMoreToggle) {
       catMoreToggle.addEventListener("click", function (e) {
         e.stopPropagation();
@@ -450,10 +525,6 @@
 
   applyFilters();
 
-  // Bind klik-buka-detail & tombol tambah-keranjang ke kartu yang sedang ada
-  // di grid. Dipanggil sekali di awal (buat kondisi cards masih kosong,
-  // no-op) dan dipanggil ulang tiap kali renderCatalogFromData() ngegambar
-  // ulang grid dari data Supabase.
   function bindCardInteractions() {
     cards.forEach(function (card) {
       var id = card.getAttribute("data-id");
@@ -678,9 +749,6 @@
     }
   })();
 
-  // Baru trigger render katalog di titik paling akhir, supaya semua setup
-  // di atas (state, event binding, dst) udah pasti kelar duluan sebelum
-  // renderCatalogFromData() manggil applyFilters()/applySort().
   if (window.PRODUCTS_DATA) {
     initCatalogFromProductsData();
   } else {

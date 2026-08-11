@@ -658,6 +658,26 @@
   margin: 0;
 }
 
+/* Flat meta chips — replaces the gradient trust banner inside the
+   logged-in dashboard so the post-registration screen reads as one
+   consistent, non-promotional surface instead of marketing chrome
+   bleeding into an account view. */
+.aff-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.aff-meta-chip {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--gray-700, #444);
+  background: var(--gray-100, #f4f4f5);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+  border-radius: var(--radius-pill, 999px);
+  padding: 6px 12px;
+}
+
 /* Link card — the referral code is the personal, meaningful part, so it
    gets its own chip; the URL sits in a code panel and is always shown in
    full (never truncated) since people need to trust what they're sharing. */

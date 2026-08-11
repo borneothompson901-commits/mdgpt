@@ -50,99 +50,114 @@
     </nav>
 
     <main class="page affiliate-page">
-      <div class="aff-shell">
+      <div class="aff-wrap">
 
-        <section class="aff-panel" id="affFormSection">
-          <div class="aff-mark">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M10 13a5 5 0 0 0 7.07 0l1.94-1.94a5 5 0 0 0-7.07-7.07L10.5 5.5" />
-              <path d="M14 11a5 5 0 0 0-7.07 0L4.99 12.94a5 5 0 0 0 7.07 7.07L13.5 18.5" />
-            </svg>
+        <header class="aff-head">
+          <h1 class="aff-head__title">Program Affiliate</h1>
+          <p class="aff-head__sub">Bagikan link kamu, dapat komisi tiap ada yang checkout.</p>
+        </header>
+
+        <section class="aff-grid" id="affFormSection">
+          <div class="aff-card aff-card--form">
+            <p class="aff-card__label">Buat akun</p>
+            <h2 class="aff-card__title">Daftar Jadi Affiliate</h2>
+
+            <p class="aff-submit-error" id="affSubmitError"></p>
+
+            <form id="affForm" novalidate>
+              <div class="aff-field" id="affFieldName">
+                <label for="affName">Nama Lengkap</label>
+                <div class="aff-input">
+                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <input type="text" id="affName" name="name" placeholder="Nama kamu" autocomplete="name" />
+                </div>
+                <p class="aff-field__error">Nama minimal 3 karakter.</p>
+              </div>
+
+              <div class="aff-field" id="affFieldWa">
+                <label for="affWa">Nomor WhatsApp</label>
+                <div class="aff-input aff-input--prefixed">
+                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
+                  <span class="aff-input__prefix">+62</span>
+                  <input type="tel" id="affWa" name="whatsapp" inputmode="numeric" placeholder="8xxxxxxxxxx" autocomplete="tel" />
+                </div>
+                <p class="aff-field__error">Nomor WhatsApp tidak valid.</p>
+              </div>
+
+              <div class="aff-field" id="affFieldEmail">
+                <label for="affEmail">Email</label>
+                <div class="aff-input">
+                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                  <input type="email" id="affEmail" name="email" placeholder="nama@email.com" autocomplete="email" />
+                </div>
+                <p class="aff-field__error">Format email tidak valid.</p>
+              </div>
+
+              <label class="aff-consent" id="affFieldConsent" for="affConsent">
+                <input type="checkbox" id="affConsent" name="consent" />
+                <span class="aff-consent__box" aria-hidden="true">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </span>
+                <span class="aff-consent__text">Saya setuju data ini digunakan untuk mengelola akun affiliate dan pencairan komisi.</span>
+                <p class="aff-field__error" style="display:none"></p>
+              </label>
+
+              <button type="submit" class="aff-submit-btn" id="affSubmitBtn">
+                <span>Daftar Jadi Affiliate</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+              </button>
+            </form>
           </div>
 
-          <h1 class="aff-title">Daftar Jadi Affiliate</h1>
-          <p class="aff-sub">Bagikan link kamu, dapat komisi tiap ada checkout.</p>
-
-          <div class="aff-chips">
-            <span class="aff-chip">10% komisi</span>
-            <span class="aff-chip">14 hari cookie</span>
-            <span class="aff-chip">Gratis daftar</span>
+          <div class="aff-side">
+            <div class="aff-info-card">
+              <span class="aff-info-card__num">10%</span>
+              <p class="aff-info-card__title">Komisi tiap transaksi</p>
+              <p class="aff-info-card__desc">Berlaku untuk checkout produk apapun di katalog.</p>
+            </div>
+            <div class="aff-info-card">
+              <span class="aff-info-card__num">14 hari</span>
+              <p class="aff-info-card__title">Cookie tracking</p>
+              <p class="aff-info-card__desc">Klik link kamu tetap terhitung sampai 14 hari ke depan.</p>
+            </div>
+            <div class="aff-info-card">
+              <span class="aff-info-card__num">Rp0</span>
+              <p class="aff-info-card__title">Biaya pendaftaran</p>
+              <p class="aff-info-card__desc">Aktif dalam kurang dari 1 menit, cair via WhatsApp.</p>
+            </div>
           </div>
-
-          <p class="aff-submit-error" id="affSubmitError"></p>
-
-          <form id="affForm" novalidate>
-            <div class="aff-field" id="affFieldName">
-              <label for="affName">Nama Lengkap</label>
-              <div class="aff-input">
-                <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <input type="text" id="affName" name="name" placeholder="Nama kamu" autocomplete="name" />
-              </div>
-              <p class="aff-field__error">Nama minimal 3 karakter.</p>
-            </div>
-
-            <div class="aff-field" id="affFieldWa">
-              <label for="affWa">Nomor WhatsApp</label>
-              <div class="aff-input aff-input--prefixed">
-                <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
-                <span class="aff-input__prefix">+62</span>
-                <input type="tel" id="affWa" name="whatsapp" inputmode="numeric" placeholder="8xxxxxxxxxx" autocomplete="tel" />
-              </div>
-              <p class="aff-field__error">Nomor WhatsApp tidak valid.</p>
-            </div>
-
-            <div class="aff-field" id="affFieldEmail">
-              <label for="affEmail">Email</label>
-              <div class="aff-input">
-                <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
-                <input type="email" id="affEmail" name="email" placeholder="nama@email.com" autocomplete="email" />
-              </div>
-              <p class="aff-field__error">Format email tidak valid.</p>
-            </div>
-
-            <label class="aff-consent" id="affFieldConsent" for="affConsent">
-              <input type="checkbox" id="affConsent" name="consent" />
-              <span class="aff-consent__box" aria-hidden="true">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-              </span>
-              <span class="aff-consent__text">Saya setuju data ini digunakan untuk mengelola akun affiliate dan pencairan komisi.</span>
-              <p class="aff-field__error" style="display:none"></p>
-            </label>
-
-            <button type="submit" class="aff-submit-btn" id="affSubmitBtn">
-              <span>Daftar Jadi Affiliate</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
-            </button>
-          </form>
-
-          <p class="aff-foot-note">Data aman &amp; tidak disebar &middot; aktif dalam &lt; 1 menit</p>
         </section>
 
-        <section class="aff-panel aff-panel--success" id="affDashboard">
-          <div class="aff-mark aff-mark--success">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+        <section class="aff-grid aff-grid--dashboard" id="affDashboard">
+          <div class="aff-stat-card">
+            <span class="aff-stat-card__value" id="affStatClicks">0</span>
+            <span class="aff-stat-card__label">Klik</span>
+          </div>
+          <div class="aff-stat-card">
+            <span class="aff-stat-card__value" id="affStatOrders">0</span>
+            <span class="aff-stat-card__label">Pesanan</span>
+          </div>
+          <div class="aff-stat-card">
+            <span class="aff-stat-card__value" id="affStatCommission">Rp0</span>
+            <span class="aff-stat-card__label">Komisi</span>
           </div>
 
-          <h1 class="aff-title">Clingg!</h1>
-          <p class="aff-sub">Akun affiliate <span id="affWelcomeName">kamu</span> berhasil terdaftar.</p>
-
-          <div class="aff-stats-row">
-            <div class="aff-stats-row__item">
-              <span class="aff-stats-row__value" id="affStatClicks">0</span>
-              <span class="aff-stats-row__label">Klik</span>
-            </div>
-            <div class="aff-stats-row__item">
-              <span class="aff-stats-row__value" id="affStatOrders">0</span>
-              <span class="aff-stats-row__label">Pesanan</span>
-            </div>
-            <div class="aff-stats-row__item">
-              <span class="aff-stats-row__value" id="affStatCommission">Rp0</span>
-              <span class="aff-stats-row__label">Komisi</span>
+          <div class="aff-card aff-card--profile">
+            <span class="aff-profile__avatar" id="affAvatar">A</span>
+            <div class="aff-profile__info">
+              <p class="aff-profile__name">
+                <span id="affWelcomeName">Affiliate</span>
+                <span class="aff-profile__badge">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  Clingg! Aktif
+                </span>
+              </p>
+              <p class="aff-profile__code">Kode <span id="affRefCode">—</span> &middot; 10% komisi</p>
             </div>
           </div>
 
-          <div class="aff-link-card">
-            <span class="aff-link-card__label">Kode <span id="affRefCode">—</span> &middot; 10% komisi</span>
+          <div class="aff-card aff-card--link">
+            <p class="aff-card__label">Link affiliate kamu</p>
             <div class="aff-link-card__panel">
               <code class="aff-link-card__url" id="affLinkUrl">https://mdgpt.id/lingua/?ref=...</code>
               <button type="button" class="aff-copy-btn" id="affCopyBtn" aria-label="Salin link">
@@ -150,14 +165,12 @@
                 <span>Salin</span>
               </button>
             </div>
+            <button type="button" class="aff-share-btn" id="affShareBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+              Share ke WhatsApp
+            </button>
+            <p class="aff-cookie-caption">Cookie tracking 14 hari, checkout belakangan tetap masuk komisi kamu.</p>
           </div>
-
-          <button type="button" class="aff-share-btn" id="affShareBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
-            Share ke WhatsApp
-          </button>
-
-          <p class="aff-foot-note">Cookie tracking 14 hari, checkout belakangan tetap masuk komisi kamu.</p>
         </section>
 
       </div>

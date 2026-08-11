@@ -538,17 +538,6 @@
    justify-content: center;
 }
 
-.category-card__icon-badge {
-   width: 52px;
-   height: 52px;
-   border-radius: 50%;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   flex-shrink: 0;
-   box-shadow: 0 6px 14px rgba(0, 0, 0, .1);
-}
-
 .category-card__body {
    padding: 16px 14px 20px;
    text-align: center;
@@ -628,11 +617,6 @@
       background: var(--gray-100, #f5f5f7);
       margin: 0 auto;
    }
-   .category-card__icon-badge {
-      width: 40px;
-      height: 40px;
-      box-shadow: none;
-   }
    .category-card__body {
       padding: 8px 2px 0;
       text-align: center;
@@ -672,10 +656,6 @@
    .category-card__img {
       width: 52px;
       height: 52px;
-   }
-   .category-card__icon-badge {
-      width: 34px;
-      height: 34px;
    }
    .category-card__body {
       padding: 7px 2px 0;

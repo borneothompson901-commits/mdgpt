@@ -369,6 +369,10 @@
   text-decoration-thickness: 2px;
 }
 
+body.aff-scroll-lock {
+  overflow: hidden;
+}
+
 .aff-terms-overlay {
   position: fixed;
   inset: 0;

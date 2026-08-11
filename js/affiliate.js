@@ -108,12 +108,15 @@
     fieldEl.classList.remove("has-error");
   }
 
-  function renderDashboard(affiliate) {
+  function renderDashboard(affiliate, viaSession) {
     var formSection = $("#affFormSection");
     if (formSection) formSection.classList.add("is-hidden");
 
     var dash = $("#affDashboard");
     if (dash) dash.classList.add("is-visible");
+
+    var logoutBtn = $("#affLogoutBtn");
+    if (logoutBtn) logoutBtn.hidden = !viaSession;
 
     var cover = $("#affCover");
     if (cover) cover.classList.add("is-dashboard");
@@ -148,6 +151,141 @@
     if (orders) orders.textContent = affiliate.total_orders != null ? affiliate.total_orders : "0";
     var commission = $("#affStatCommission");
     if (commission) commission.textContent = "Rp" + Number(affiliate.total_commission || 0).toLocaleString("id-ID");
+  }
+
+  // ---- Cross-device login (email OTP via Supabase Auth) --------------------
+  // The affiliate-register edge function already creates a real Supabase Auth
+  // user per affiliate. Logging in with that email/OTP gives a real session
+  // (auth.uid() = affiliates.user_id), so the existing "affiliates_select_own"
+  // RLS policy lets us read the row directly — no device/browser lock-in.
+  function fetchOwnAffiliateRow() {
+    if (!sb) return Promise.resolve(null);
+    return sb
+      .from(SUPABASE_TABLE)
+      .select("*")
+      .single()
+      .then(function (res) {
+        return res.error ? null : res.data;
+      });
+  }
+
+  function loadSessionDashboard() {
+    if (!sb) return Promise.resolve(false);
+    return sb.auth.getSession().then(function (res) {
+      var session = res.data && res.data.session;
+      if (!session) return false;
+      return fetchOwnAffiliateRow().then(function (row) {
+        if (!row) return false;
+        saveLocal(row);
+        renderDashboard(row, true);
+        return true;
+      });
+    });
+  }
+
+  function sendLoginOtp(email) {
+    if (!sb) return Promise.reject(new Error("Layanan login belum siap."));
+    return sb.auth
+      .signInWithOtp({ email: email, options: { shouldCreateUser: false } })
+      .then(function (res) {
+        if (res.error) throw res.error;
+      });
+  }
+
+  function verifyLoginOtp(email, token) {
+    if (!sb) return Promise.reject(new Error("Layanan login belum siap."));
+    return sb.auth.verifyOtp({ email: email, token: token, type: "email" }).then(function (res) {
+      if (res.error) throw res.error;
+      return loadSessionDashboard();
+    });
+  }
+
+  function initLoginPanel() {
+    var toggle = $("#affLoginToggle");
+    var panel = $("#affLoginPanel");
+    var emailField = $("#affLoginEmailField");
+    var emailInput = $("#affLoginEmail");
+    var sendBtn = $("#affLoginSendBtn");
+    var codeField = $("#affLoginCodeField");
+    var codeInput = $("#affLoginCode");
+    var verifyBtn = $("#affLoginVerifyBtn");
+    var errorEl = $("#affLoginError");
+    if (!toggle || !panel) return;
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add("is-visible");
+    }
+    function clearError() {
+      errorEl.classList.remove("is-visible");
+    }
+
+    toggle.addEventListener("click", function () {
+      panel.hidden = !panel.hidden;
+      toggle.textContent = panel.hidden
+        ? "Sudah punya akun? Masuk pakai email →"
+        : "Balik ke form pendaftaran";
+    });
+
+    sendBtn.addEventListener("click", function () {
+      clearError();
+      var email = (emailInput.value || "").trim().toLowerCase();
+      if (!isValidEmail(email)) {
+        fieldError(emailField, "Format email tidak valid.");
+        return;
+      }
+      clearFieldError(emailField);
+      sendBtn.disabled = true;
+      sendBtn.querySelector("span").textContent = "Mengirim...";
+      sendLoginOtp(email)
+        .then(function () {
+          codeField.hidden = false;
+          verifyBtn.hidden = false;
+          showToast("Kode login dikirim ke " + email);
+        })
+        .catch(function (err) {
+          showError((err && err.message) || "Gagal mengirim kode, coba lagi.");
+        })
+        .finally(function () {
+          sendBtn.disabled = false;
+          sendBtn.querySelector("span").textContent = "Kirim Kode ke Email";
+        });
+    });
+
+    verifyBtn.addEventListener("click", function () {
+      clearError();
+      var email = (emailInput.value || "").trim().toLowerCase();
+      var code = (codeInput.value || "").trim();
+      if (!code) {
+        fieldError(codeField, "Kode salah atau sudah kedaluwarsa.");
+        return;
+      }
+      clearFieldError(codeField);
+      verifyBtn.disabled = true;
+      verifyBtn.querySelector("span").textContent = "Memeriksa...";
+      verifyLoginOtp(email, code)
+        .then(function (ok) {
+          if (!ok) showError("Akun affiliate untuk email ini tidak ditemukan.");
+        })
+        .catch(function (err) {
+          showError((err && err.message) || "Kode salah atau sudah kedaluwarsa.");
+        })
+        .finally(function () {
+          verifyBtn.disabled = false;
+          verifyBtn.querySelector("span").textContent = "Masuk";
+        });
+    });
+
+    var logoutBtn = $("#affLogoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", function () {
+        if (sb) sb.auth.signOut();
+        try {
+          localStorage.removeItem(LOCAL_KEY);
+        } catch (e) {}
+        window.location.reload();
+      });
+    }
   }
 
   function registerAffiliate(payload) {
@@ -194,11 +332,16 @@
   }
 
   function init() {
-    var existing = loadLocal();
-    if (existing && existing.ref_code) {
-      renderDashboard(existing);
-      refreshStats(existing);
-    }
+    initLoginPanel();
+
+    loadSessionDashboard().then(function (loggedIn) {
+      if (loggedIn) return;
+      var existing = loadLocal();
+      if (existing && existing.ref_code) {
+        renderDashboard(existing, false);
+        refreshStats(existing);
+      }
+    });
 
     var form = $("#affForm");
     if (!form) return;

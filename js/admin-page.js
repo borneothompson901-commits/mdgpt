@@ -12,7 +12,7 @@
     var filterKategoriXSelect, filterTipeXSelect;
     var searchInput = document.getElementById("searchInput");
 
-    var PAGE_TITLES = { overview: "Overview", produk: "Produk" };
+    var PAGE_TITLES = { overview: "Overview", produk: "Produk", transaksi: "Transaksi" };
     document.querySelectorAll(".nav-item[data-page]").forEach(function (link) {
       link.addEventListener("click", function (e) {
         e.preventDefault();

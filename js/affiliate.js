@@ -112,7 +112,10 @@
     var dash = $("#affDashboard");
     dash.classList.add("is-visible");
 
-    $("#affWelcomeName").textContent = affiliate.name ? affiliate.name.split(" ")[0] : "";
+    var firstName = affiliate.name ? affiliate.name.split(" ")[0] : "";
+    $("#affWelcomeName").textContent = firstName;
+    var avatar = $("#affAvatar");
+    if (avatar) avatar.textContent = firstName ? firstName.charAt(0) : "A";
 
     var refUrl = CATALOG_URL + "?ref=" + encodeURIComponent(affiliate.ref_code);
     $("#affLinkUrl").textContent = refUrl;

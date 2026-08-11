@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="../css/cart.css" />
     <link rel="stylesheet" href="../css/affiliate.css" />
     <link rel="preload" as="image" href="../assets/icons/logo.png">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   </head>
   <body>
     <nav class="navbar navbar--solid" id="navbar">
@@ -224,16 +225,22 @@
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             </span>
             <div>
-              <p class="aff-welcome__title">Halo, <span id="affWelcomeName">Affiliate</span> 👋</p>
+              <p class="aff-welcome__title">Halo, <span id="affWelcomeName">Affiliate</span></p>
               <p class="aff-welcome__sub">Akun affiliate kamu sudah aktif.</p>
             </div>
           </div>
 
           <div class="aff-link-card">
-            <p class="aff-link-card__label">Link affiliate kamu</p>
-            <div class="aff-link-card__row">
-              <span class="aff-link-card__url" id="affLinkUrl">https://mdgpt.id/lingua/?ref=...</span>
-              <button type="button" class="aff-copy-btn" id="affCopyBtn">Salin</button>
+            <div class="aff-link-card__head">
+              <p class="aff-link-card__label">Link referral kamu</p>
+              <span class="aff-link-card__code" id="affRefCode">—</span>
+            </div>
+            <div class="aff-link-card__panel">
+              <code class="aff-link-card__url" id="affLinkUrl">https://mdgpt.id/lingua/?ref=...</code>
+              <button type="button" class="aff-copy-btn" id="affCopyBtn" aria-label="Salin link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+                <span>Salin</span>
+              </button>
             </div>
             <div class="aff-link-actions">
               <button type="button" class="aff-share-btn" id="affShareBtn">
@@ -269,7 +276,6 @@
 
     <div class="aff-toast" id="affToast"></div>
 
-    <script src="../js/affiliate-tracker.js" defer></script>
     <script src="../js/global.js" defer></script>
     <script src="../js/affiliate.js" defer></script>
   </body>

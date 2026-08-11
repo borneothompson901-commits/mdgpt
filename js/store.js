@@ -48,8 +48,10 @@ function initCategorySlider() {
   function categoryIconHtml(key, label) {
     var color = CAT_COLORS[hashKey(String(key || label || "")) % CAT_COLORS.length];
     var path = pickCategoryIcon(key, label);
-    return '<div class="category-card__icon" style="background:' + color + '">' +
-      '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>' +
+    return '<div class="category-card__icon">' +
+      '<div class="category-card__icon-badge" style="background:' + color + '">' +
+        '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>' +
+      '</div>' +
     '</div>';
   }
 

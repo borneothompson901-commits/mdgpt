@@ -77,7 +77,7 @@ function initCategorySlider() {
 
     track.innerHTML = cats.map(function (c) {
       return '<a href="lingua/index.html" class="category-card">' +
-        categoryIconHtml(c.key, c.label) +
+        '<div class="category-card__img">' + categoryIconHtml(c.key, c.label) + '</div>' +
         '<div class="category-card__body">' +
           '<strong class="category-card__title">' + escapeHtmlCat(c.label) + '</strong>' +
           '<span class="category-card__count">' + (counts[c.key] || 0) + ' Produk</span>' +

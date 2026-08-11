@@ -4,6 +4,12 @@
   var SUPABASE_URL = "https://xjtkipgopiormwmbdtfa.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_5abZti9M8zHWuHyh59q8Ew_Otn-QopO";
   var SUPABASE_TABLE = "affiliates";
+  var REGISTER_ENDPOINT = SUPABASE_URL + "/functions/v1/affiliate-register";
+  var STATS_ENDPOINT = SUPABASE_URL + "/rest/v1/rpc/get_affiliate_stats";
+  var SUPABASE_FN_HEADERS = {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: "Bearer " + SUPABASE_ANON_KEY
+  };
 
   var CATALOG_URL = "https://mdgpt.id/lingua/";
   var COOKIE_NAME = "mdgpt_ref";
@@ -145,17 +151,45 @@
   }
 
   function registerAffiliate(payload) {
-    if (!sb) {
-      return Promise.resolve(payload);
-    }
-    return sb
-      .from(SUPABASE_TABLE)
-      .insert([payload])
-      .select()
-      .single()
+    return fetch(REGISTER_ENDPOINT, {
+      method: "POST",
+      headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
+      body: JSON.stringify({
+        name: payload.name,
+        whatsapp: payload.whatsapp,
+        email: payload.email
+      })
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok) throw new Error(data && data.error ? data.error : "Gagal mendaftar.");
+        return data;
+      });
+    });
+  }
+
+  // Re-fetches live click/order/commission counts for the affiliate stored
+  // locally, so the dashboard doesn't stay frozen at whatever it looked like
+  // right after registration. Uses a SECURITY DEFINER RPC scoped to just
+  // these three numbers (no PII), so it's safe to call with the anon key.
+  function refreshStats(affiliate) {
+    if (!affiliate || !affiliate.id) return;
+    fetch(STATS_ENDPOINT, {
+      method: "POST",
+      headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
+      body: JSON.stringify({ p_affiliate_id: affiliate.id })
+    })
       .then(function (res) {
-        if (res.error) throw res.error;
-        return res.data || payload;
+        return res.ok ? res.json() : null;
+      })
+      .then(function (rows) {
+        var stats = rows && rows[0];
+        if (!stats) return;
+        var updated = Object.assign({}, affiliate, stats);
+        saveLocal(updated);
+        renderDashboard(updated);
+      })
+      .catch(function () {
+        /* best-effort; keep showing the last known snapshot on failure */
       });
   }
 
@@ -163,6 +197,7 @@
     var existing = loadLocal();
     if (existing && existing.ref_code) {
       renderDashboard(existing);
+      refreshStats(existing);
     }
 
     var form = $("#affForm");

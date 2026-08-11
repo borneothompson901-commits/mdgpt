@@ -223,10 +223,21 @@
         var valueEl = xs.querySelector(".xselect__value");
 
         function closeMenu() { menu.hidden = true; xs.classList.remove("open"); }
+        function positionMenu() {
+          var rect = trigger.getBoundingClientRect();
+          var menuWidth = menu.offsetWidth || 132;
+          var left = rect.right - menuWidth;
+          var maxLeft = window.innerWidth - menuWidth - 8;
+          if (left > maxLeft) left = maxLeft;
+          if (left < 8) left = 8;
+          menu.style.top = (rect.bottom + 6) + "px";
+          menu.style.left = left + "px";
+        }
         function openMenu() {
           tbody.querySelectorAll(".jenis-xselect.open").forEach(function (o) { if (o !== xs) { o.classList.remove("open"); o.querySelector(".xselect__menu").hidden = true; } });
           menu.hidden = false;
           xs.classList.add("open");
+          positionMenu();
         }
 
         trigger.addEventListener("click", function (e) {
@@ -272,6 +283,12 @@
         xs.querySelector(".xselect__menu").hidden = true;
       });
     });
+    window.addEventListener("scroll", function () {
+      tbody.querySelectorAll(".jenis-xselect.open").forEach(function (xs) {
+        xs.classList.remove("open");
+        xs.querySelector(".xselect__menu").hidden = true;
+      });
+    }, true);
 
     // ---------------- Filters ----------------
     function escAttr(s) {

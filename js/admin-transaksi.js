@@ -207,6 +207,7 @@
       (c.email ? '<div class="review-row"><span class="review-row__label">Email</span><span class="review-row__value">' + escapeHtml(c.email) + "</span></div>" : "") +
       (c.phone ? '<div class="review-row"><span class="review-row__label">Telepon</span><span class="review-row__value">' + escapeHtml(c.phone) + "</span></div>" : "") +
       '<div class="review-row"><span class="review-row__label">Dibuat</span><span class="review-row__value">' + fmtDate(tx.created_at) + "</span></div>" +
+      (tx.paid_at ? '<div class="review-row"><span class="review-row__label">Dibayar</span><span class="review-row__value">' + fmtDate(tx.paid_at) + "</span></div>" : "") +
       '<div class="review-row"><span class="review-row__label">Kadaluarsa</span><span class="review-row__value">' + fmtDate(tx.expiry_at) + "</span></div>" +
       itemsHtml(tx) +
       affiliateHtml(tx) +

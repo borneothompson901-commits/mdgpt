@@ -112,6 +112,8 @@
     var firstName = affiliate.name ? affiliate.name.split(" ")[0] : "kamu";
     var welcome = $("#affWelcomeName");
     if (welcome) welcome.textContent = firstName;
+    var avatar = $("#affAvatar");
+    if (avatar) avatar.textContent = firstName ? firstName.charAt(0) : "A";
 
     var refUrl = CATALOG_URL + "?ref=" + encodeURIComponent(affiliate.ref_code);
     var linkUrl = $("#affLinkUrl");

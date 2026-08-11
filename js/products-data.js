@@ -38,6 +38,7 @@
 
   var PRODUCTS = [];
   var CATEGORY_LABELS = {};
+  var CATEGORIES = [];
 
   try {
     var results = await Promise.all([
@@ -50,6 +51,7 @@
 
     PRODUCTS = prodRows.map(mapRow);
     catRows.forEach(function (c) { CATEGORY_LABELS[c.key] = c.label; });
+    CATEGORIES = catRows.map(function (c) { return { key: c.key, label: c.label }; });
   } catch (e) {
     console.error("Gagal memuat produk dari Supabase:", e);
   }
@@ -94,6 +96,7 @@
   global.PRODUCTS_DATA = {
     all: PRODUCTS,
     categoryLabels: CATEGORY_LABELS,
+    categories: CATEGORIES,
     getById: getById,
     getRelated: getRelated,
     getBestSellers: getBestSellers,

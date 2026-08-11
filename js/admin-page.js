@@ -111,10 +111,10 @@
             '<div><div class="prod-name" title="' + escapeHtml(p.title || "(Tanpa nama)") + '">' + escapeHtml(p.title || "(Tanpa nama)") + '</div>' +
             '<div class="prod-sku">#' + p.id + (hasVariant ? ' &middot; ' + p.variantGroups.length + ' grup varian' : '') + '</div></div>' +
           '</div></td>' +
-          '<td class="col-tipe">' + (p.type === "fisik" ? '<span class="badge badge-orange">Fisik</span>' : '<span class="badge badge-blue">Digital</span>') + '</td>' +
           '<td>' + (p.type === "fisik" || hasVariant ? renderStockBadge(stock) : '<span class="badge badge-gray">&mdash;</span>') + '</td>' +
-          '<td>' + priceLabel + (hasVariant ? '<div class="prod-sku">mulai dari</div>' : '') + '</td>' +
+          '<td class="col-harga">' + priceLabel + (hasVariant ? '<div class="prod-sku">mulai dari</div>' : '') + '</td>' +
           '<td class="col-sold">' + (parseInt(p.sold, 10) || 0) + '</td>' +
+          '<td class="col-jenis">' + tplJenisXSelect(p) + '</td>' +
           '<td class="row-actions"><div class="actions">' +
             '<button class="btn-icon edit" data-edit="' + p.id + '" title="Edit">' +
               '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M11.3 2.3a1.4 1.4 0 0 1 2 2L6 11.6l-2.7.7.7-2.7 7.3-7.3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>' +
@@ -132,6 +132,7 @@
       tbody.querySelectorAll("[data-del]").forEach(function (btn) {
         btn.addEventListener("click", function () { openDeleteModal(btn.dataset.del, btn.dataset.name); });
       });
+      bindJenisXSelects();
     }
 
     function renderStockBadge(stock) {
@@ -175,9 +176,102 @@
         price: row.price, stock: row.stock, title: row.title, sold: row.sold,
         rating: Number(row.rating || 0), images: row.images || [],
         variantGroups: row.variant_groups || [], variantPricing: row.variant_pricing || {},
-        isBest: row.is_best === true
+        isBest: row.is_best === true,
+        isRekomendasi: row.is_rekomendasi === true
       };
     }
+
+    var JENIS_LABELS = {
+      best_seller: { full: "Best Seller", abbr: "BR" },
+      rekomendasi: { full: "Rekomendasi", abbr: "Rk" },
+      basic: { full: "Basic", abbr: "Bs" }
+    };
+    var JENIS_ORDER = ["best_seller", "rekomendasi", "basic"];
+
+    function jenisOf(p) {
+      if (p.isBest) return "best_seller";
+      if (p.isRekomendasi) return "rekomendasi";
+      return "basic";
+    }
+
+    function jenisValueHtml(val) {
+      var l = JENIS_LABELS[val];
+      return '<span class="jenis-full">' + l.full + '</span><span class="jenis-abbr">' + l.abbr + '</span>';
+    }
+
+    function tplJenisXSelect(p) {
+      var current = jenisOf(p);
+      return '' +
+        '<div class="xselect jenis-xselect" data-jenis-id="' + p.id + '">' +
+          '<button type="button" class="xselect__trigger">' +
+            '<span class="xselect__value">' + jenisValueHtml(current) + '</span>' +
+            '<svg class="xselect__chev" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '</button>' +
+          '<div class="xselect__menu" hidden>' +
+            JENIS_ORDER.map(function (val) {
+              return '<button type="button" class="xselect__option' + (val === current ? " selected" : "") + '" data-jenis-val="' + val + '">' + JENIS_LABELS[val].full + '</button>';
+            }).join("") +
+          '</div>' +
+        '</div>';
+    }
+
+    function bindJenisXSelects() {
+      tbody.querySelectorAll(".jenis-xselect").forEach(function (xs) {
+        var id = xs.dataset.jenisId;
+        var trigger = xs.querySelector(".xselect__trigger");
+        var menu = xs.querySelector(".xselect__menu");
+        var valueEl = xs.querySelector(".xselect__value");
+
+        function closeMenu() { menu.hidden = true; xs.classList.remove("open"); }
+        function openMenu() {
+          tbody.querySelectorAll(".jenis-xselect.open").forEach(function (o) { if (o !== xs) { o.classList.remove("open"); o.querySelector(".xselect__menu").hidden = true; } });
+          menu.hidden = false;
+          xs.classList.add("open");
+        }
+
+        trigger.addEventListener("click", function (e) {
+          e.stopPropagation();
+          if (menu.hidden) openMenu(); else closeMenu();
+        });
+
+        menu.querySelectorAll("[data-jenis-val]").forEach(function (opt) {
+          opt.addEventListener("click", async function (e) {
+            e.stopPropagation();
+            var val = opt.dataset.jenisVal;
+            var product = state.products.find(function (p) { return String(p.id) === String(id); });
+            if (!product) return;
+            var prevBest = product.isBest, prevRek = product.isRekomendasi;
+            if (jenisOf(product) === val) { closeMenu(); return; }
+
+            valueEl.innerHTML = jenisValueHtml(val);
+            menu.querySelectorAll(".xselect__option").forEach(function (o) { o.classList.toggle("selected", o === opt); });
+            closeMenu();
+
+            product.isBest = val === "best_seller";
+            product.isRekomendasi = val === "rekomendasi";
+
+            try {
+              await db.updateProduct(id, { is_best: product.isBest, is_rekomendasi: product.isRekomendasi });
+              AdminShared.toast("Jenis produk diperbarui", "success");
+            } catch (err) {
+              console.error(err);
+              product.isBest = prevBest;
+              product.isRekomendasi = prevRek;
+              valueEl.innerHTML = jenisValueHtml(jenisOf(product));
+              menu.querySelectorAll(".xselect__option").forEach(function (o) { o.classList.toggle("selected", o.dataset.jenisVal === jenisOf(product)); });
+              AdminShared.toast(err.message || "Gagal memperbarui jenis produk", "error");
+            }
+          });
+        });
+      });
+    }
+
+    document.addEventListener("click", function () {
+      tbody.querySelectorAll(".jenis-xselect.open").forEach(function (xs) {
+        xs.classList.remove("open");
+        xs.querySelector(".xselect__menu").hidden = true;
+      });
+    });
 
     // ---------------- Filters ----------------
     function escAttr(s) {
@@ -1523,7 +1617,6 @@
     async function save(publish) {
       if (!validateStep(1) || !validateStep(2)) { goStep(!validateStep(1) ? 1 : 2); return; }
       var payload = buildPayload();
-      payload.is_best = false;
       try {
         if (wstate.id) {
           await wdb.updateProduct(wstate.id, payload);

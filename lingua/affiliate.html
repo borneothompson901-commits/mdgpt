@@ -220,26 +220,38 @@
 
         <!-- ============ DASHBOARD (shown after registration) ============ -->
         <section class="aff-dashboard" id="affDashboard">
-          <div class="aff-welcome">
-            <span class="aff-welcome__check">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            </span>
-            <div>
-              <p class="aff-welcome__title">Halo, <span id="affWelcomeName">Affiliate</span></p>
-              <p class="aff-welcome__sub">Akun affiliate kamu sudah aktif.</p>
+          <div class="aff-profile">
+            <span class="aff-profile__avatar" id="affAvatar">A</span>
+            <div class="aff-profile__info">
+              <p class="aff-profile__name">
+                <span id="affWelcomeName">Affiliate</span>
+                <span class="aff-profile__badge">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  Aktif
+                </span>
+              </p>
+              <p class="aff-profile__code">Kode <span id="affRefCode">—</span> &middot; 10% komisi</p>
             </div>
           </div>
 
-          <div class="aff-meta-row">
-            <span class="aff-meta-chip">10% komisi / transaksi</span>
-            <span class="aff-meta-chip">Cookie 14 hari</span>
+          <div class="aff-stats-row">
+            <div class="aff-stats-row__item">
+              <span class="aff-stats-row__value" id="affStatClicks">0</span>
+              <span class="aff-stats-row__label">Klik</span>
+            </div>
+            <div class="aff-stats-row__divider" aria-hidden="true"></div>
+            <div class="aff-stats-row__item">
+              <span class="aff-stats-row__value" id="affStatOrders">0</span>
+              <span class="aff-stats-row__label">Pesanan</span>
+            </div>
+            <div class="aff-stats-row__divider" aria-hidden="true"></div>
+            <div class="aff-stats-row__item">
+              <span class="aff-stats-row__value" id="affStatCommission">Rp0</span>
+              <span class="aff-stats-row__label">Komisi</span>
+            </div>
           </div>
 
           <div class="aff-link-card">
-            <div class="aff-link-card__head">
-              <p class="aff-link-card__label">Link referral kamu</p>
-              <span class="aff-link-card__code" id="affRefCode">—</span>
-            </div>
             <div class="aff-link-card__panel">
               <code class="aff-link-card__url" id="affLinkUrl">https://mdgpt.id/lingua/?ref=...</code>
               <button type="button" class="aff-copy-btn" id="affCopyBtn" aria-label="Salin link">
@@ -247,33 +259,16 @@
                 <span>Salin</span>
               </button>
             </div>
-            <div class="aff-link-actions">
-              <button type="button" class="aff-share-btn" id="affShareBtn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
-                Share ke WhatsApp
-              </button>
-            </div>
-            <div class="aff-cookie-note">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-              <p>Setiap orang yang klik link ini akan "diingat" sebagai referral kamu selama 14 hari — jadi kalau mereka checkout beberapa hari kemudian pun, komisinya tetap masuk ke kamu.</p>
-            </div>
+            <button type="button" class="aff-share-btn" id="affShareBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+              Share ke WhatsApp
+            </button>
           </div>
 
-          <div class="aff-stats">
-            <div class="aff-stat-card">
-              <div class="aff-stat-card__value" id="affStatClicks">0</div>
-              <div class="aff-stat-card__label">Klik</div>
-            </div>
-            <div class="aff-stat-card">
-              <div class="aff-stat-card__value" id="affStatOrders">0</div>
-              <div class="aff-stat-card__label">Pesanan</div>
-            </div>
-            <div class="aff-stat-card">
-              <div class="aff-stat-card__value" id="affStatCommission">Rp0</div>
-              <div class="aff-stat-card__label">Komisi</div>
-            </div>
-          </div>
-          <p class="aff-stats-note">Statistik diperbarui otomatis setelah ada aktivitas dari link kamu.</p>
+          <p class="aff-cookie-caption">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Cookie tracking 14 hari — checkout belakangan tetap masuk komisi kamu.
+          </p>
         </section>
 
       </div>

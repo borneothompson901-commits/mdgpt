@@ -127,7 +127,7 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
 .data-table tbody tr:hover { background:#FAFBFC; }
 .jenis-xselect { width:132px; }
 .jenis-xselect .xselect__trigger { font-size:0.8rem; padding:6px 9px; }
-.jenis-xselect .xselect__menu { width:132px; min-width:132px; }
+.jenis-xselect .xselect__menu { position:fixed; top:auto; left:auto; right:auto; width:132px; min-width:132px; }
 .jenis-abbr { display:none; }
 .prod-cell { display:flex; align-items:center; gap:10px; min-width:0; max-width:220px; }
 .thumb { width:38px; height:38px; border-radius:7px; border:1px solid var(--border); background:var(--bg); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
@@ -355,7 +355,7 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
   .btn-icon { width:28px; height:28px; }
   .jenis-xselect { width:52px; }
   .jenis-xselect .xselect__trigger { padding:6px 4px; }
-  .jenis-xselect .xselect__menu { width:140px; min-width:140px; right:0; left:auto; }
+  .jenis-xselect .xselect__menu { width:140px; min-width:140px; }
   .jenis-full { display:none; }
   .jenis-abbr { display:inline; }
 }

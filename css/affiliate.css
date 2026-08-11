@@ -618,7 +618,7 @@
 /* ---------- Dashboard (after registration) ---------- */
 .aff-dashboard {
   display: none;
-  max-width: 560px;
+  max-width: 480px;
   margin: 0 auto;
 }
 .aff-dashboard.is-visible {
@@ -629,90 +629,100 @@
   display: none;
 }
 
-.aff-welcome {
+/* Profile header — avatar + name + code, styled like a "your account is
+   ready" screen rather than a settings panel. */
+.aff-profile {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 22px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
-.aff-welcome__check {
-  width: 40px;
-  height: 40px;
+.aff-profile__avatar {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
   border-radius: 50%;
-  background: rgba(26, 156, 92, 0.12);
-  color: #1a9c5c;
+  background: var(--gradient);
+  color: var(--white);
+  font-size: 1.2rem;
+  font-weight: 800;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 auto;
+  text-transform: uppercase;
 }
-.aff-welcome__title {
-  font-size: 1.02rem;
-  font-weight: 700;
+.aff-profile__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.08rem;
+  font-weight: 800;
   color: var(--gray-900, #1a1a1a);
-  margin: 0 0 2px;
+  margin: 0 0 3px;
 }
-.aff-welcome__sub {
+.aff-profile__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #1a9c5c;
+  background: rgba(26, 156, 92, 0.12);
+  padding: 3px 8px 3px 6px;
+  border-radius: var(--radius-pill, 999px);
+}
+.aff-profile__code {
   font-size: 0.8rem;
   color: var(--gray-600, #666);
   margin: 0;
 }
+.aff-profile__code span {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-weight: 700;
+  color: var(--grad-1, #a91ab6);
+}
 
-/* Flat meta chips — replaces the gradient trust banner inside the
-   logged-in dashboard so the post-registration screen reads as one
-   consistent, non-promotional surface instead of marketing chrome
-   bleeding into an account view. */
-.aff-meta-row {
+/* Stats row — inline like a social profile's post/follower count, not
+   three separate bordered cards. */
+.aff-stats-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-.aff-meta-chip {
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: var(--gray-700, #444);
-  background: var(--gray-100, #f4f4f5);
+  align-items: center;
+  background: var(--white);
   border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
-  border-radius: var(--radius-pill, 999px);
-  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  padding: 12px 6px;
+  margin-bottom: 14px;
+}
+.aff-stats-row__item {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.aff-stats-row__value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--gray-900, #1a1a1a);
+}
+.aff-stats-row__label {
+  font-size: 0.68rem;
+  color: var(--gray-600, #888);
+}
+.aff-stats-row__divider {
+  width: 1px;
+  height: 26px;
+  background: var(--border, rgba(0, 0, 0, 0.1));
+  flex: 0 0 auto;
 }
 
-/* Link card — the referral code is the personal, meaningful part, so it
-   gets its own chip; the URL sits in a code panel and is always shown in
-   full (never truncated) since people need to trust what they're sharing. */
+/* Link card */
 .aff-link-card {
   background: var(--white);
   border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   border-radius: var(--radius-md);
-  padding: 18px;
+  padding: 14px;
   box-shadow: var(--shadow-nav);
-}
-.aff-link-card__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-.aff-link-card__label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--gray-600, #888);
-  margin: 0;
-}
-.aff-link-card__code {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--grad-1, #a91ab6);
-  background: rgba(169, 26, 182, 0.08);
-  padding: 3px 9px;
-  border-radius: 999px;
-  white-space: nowrap;
 }
 .aff-link-card__panel {
   display: flex;
@@ -721,6 +731,7 @@
   background: var(--gray-900, #16161a);
   border-radius: 10px;
   padding: 12px 10px 12px 14px;
+  margin-bottom: 10px;
 }
 .aff-link-card__url {
   flex: 1 1 auto;
@@ -753,13 +764,8 @@
   background: #1a9c5c;
 }
 
-.aff-link-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 12px;
-}
 .aff-share-btn {
-  flex: 1 1 auto;
+  width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -777,57 +783,18 @@
   filter: brightness(0.96);
 }
 
-.aff-cookie-note {
+.aff-cookie-caption {
   display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  margin-top: 16px;
-  padding: 12px 14px;
-  background: rgba(4, 123, 254, 0.06);
-  border: 1px solid rgba(4, 123, 254, 0.15);
-  border-radius: 10px;
-}
-.aff-cookie-note svg {
-  flex: 0 0 auto;
-  color: var(--grad-4);
-  margin-top: 1px;
-}
-.aff-cookie-note p {
-  font-size: 0.78rem;
-  line-height: 1.5;
-  color: var(--gray-700, #444);
-  margin: 0;
-}
-
-/* Stats */
-.aff-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 22px;
-}
-.aff-stat-card {
-  background: var(--white);
-  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
-  border-radius: var(--radius-md);
-  padding: 14px 10px;
-  text-align: center;
-}
-.aff-stat-card__value {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--gray-900, #1a1a1a);
-}
-.aff-stat-card__label {
-  font-size: 0.72rem;
-  color: var(--gray-600, #888);
-  margin-top: 2px;
-}
-.aff-stats-note {
+  align-items: center;
+  gap: 6px;
   font-size: 0.74rem;
+  line-height: 1.4;
+  color: var(--gray-600, #888);
+  margin: 10px 4px 0;
+}
+.aff-cookie-caption svg {
+  flex: 0 0 auto;
   color: var(--gray-600, #999);
-  text-align: center;
-  margin-top: 10px;
 }
 
 /* Toast */

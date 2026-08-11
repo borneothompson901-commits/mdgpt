@@ -150,7 +150,7 @@
                   <h2 class="cart-summary__title">Detail Pengiriman</h2>
 
                   <div class="cart-field">
-                    <label id="provinceLabel">Provinsi</label>
+                    <label id="provinceLabel">Provinsi <span class="cart-required" title="Wajib diisi">*</span></label>
                     <div class="custom-select" id="provinceSelect" data-placeholder="Pilih provinsi...">
                       <button type="button" class="custom-select__trigger" id="provinceTrigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="provinceLabel">
                         <span class="custom-select__value" id="provinceValue">Pilih provinsi...</span>
@@ -162,7 +162,7 @@
                   </div>
 
                   <div class="cart-field">
-                    <label id="cityLabel">Kota / Kabupaten</label>
+                    <label id="cityLabel">Kota / Kabupaten <span class="cart-required" title="Wajib diisi">*</span></label>
                     <div class="custom-select is-disabled" id="citySelect" data-placeholder="Pilih kota/kabupaten...">
                       <button type="button" class="custom-select__trigger" id="cityTrigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cityLabel" disabled>
                         <span class="custom-select__value" id="cityValue">Pilih kota/kabupaten...</span>
@@ -174,7 +174,7 @@
                   </div>
 
                   <div class="cart-field">
-                    <label id="districtLabel">Kecamatan</label>
+                    <label id="districtLabel">Kecamatan <span class="cart-required" title="Wajib diisi">*</span></label>
                     <div class="custom-select is-disabled" id="districtSelect" data-placeholder="Pilih kecamatan...">
                       <button type="button" class="custom-select__trigger" id="districtTrigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="districtLabel" disabled>
                         <span class="custom-select__value" id="districtValue">Pilih kecamatan...</span>
@@ -186,7 +186,7 @@
                   </div>
 
                   <div class="cart-field">
-                    <label id="subdistrictLabel">Kelurahan / Desa</label>
+                    <label id="subdistrictLabel">Kelurahan / Desa <span class="cart-required" title="Wajib diisi">*</span></label>
                     <div class="custom-select is-disabled" id="subdistrictSelect" data-placeholder="Pilih kelurahan/desa...">
                       <button type="button" class="custom-select__trigger" id="subdistrictTrigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="subdistrictLabel" disabled>
                         <span class="custom-select__value" id="subdistrictValue">Pilih kelurahan/desa...</span>
@@ -200,12 +200,12 @@
                   <input type="hidden" id="cartDestinationId" value="" />
 
                   <div class="cart-field">
-                    <label for="cartAddressDetail">Detail Alamat</label>
+                    <label for="cartAddressDetail">Detail Alamat <span class="cart-required" title="Wajib diisi">*</span></label>
                     <textarea id="cartAddressDetail" rows="3" placeholder="Nama jalan, nomor rumah, RT/RW, patokan..."></textarea>
                   </div>
 
                   <div class="cart-field">
-                    <label>Kurir</label>
+                    <label>Kurir <span class="cart-required" title="Wajib diisi">*</span></label>
                     <button type="button" class="cart-btn-cekongkir" id="cekOngkirBtn">Cek Ongkir</button>
                     <p class="cart-ongkir-hint" id="cartOngkirHint" hidden>Lengkapi alamat dulu ya!</p>
                     <div class="cart-kurir-list" id="kurirResultList" hidden>
@@ -285,12 +285,12 @@
 
                 <div id="customerInfoSection">
                   <div class="cart-field">
-                    <label for="cartCustomerName">Nama Lengkap</label>
+                    <label for="cartCustomerName">Nama Lengkap <span class="cart-required" title="Wajib diisi">*</span></label>
                     <input type="text" id="cartCustomerName" placeholder="Nama kamu" />
                   </div>
 
                   <div class="cart-field">
-                    <label for="cartWhatsapp">Nomor WhatsApp</label>
+                    <label for="cartWhatsapp">Nomor WhatsApp <span class="cart-required" title="Wajib diisi">*</span></label>
                     <input type="tel" id="cartWhatsapp" inputmode="numeric" placeholder="08xxxxxxxxxx" />
                   </div>
 

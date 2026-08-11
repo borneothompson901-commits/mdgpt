@@ -69,6 +69,7 @@
               </span>
             </p>
             <p class="aff-profile-meta__handle">Kode <span id="affRefCode">—</span></p>
+            <button type="button" class="aff-terms-link" id="affLogoutBtn" hidden>Keluar</button>
           </div>
         </div>
 
@@ -76,6 +77,36 @@
           <div class="aff-card aff-card--form">
             <p class="aff-card__label">Buat akun</p>
             <h2 class="aff-card__title">Daftar Jadi Affiliate</h2>
+
+            <p class="aff-login-toggle-wrap">
+              <button type="button" class="aff-terms-link" id="affLoginToggle">Sudah punya akun? Masuk pakai email →</button>
+            </p>
+
+            <div class="aff-login-panel" id="affLoginPanel" hidden>
+              <p class="aff-submit-error" id="affLoginError"></p>
+              <div class="aff-field" id="affLoginEmailField">
+                <label for="affLoginEmail">Email affiliate kamu</label>
+                <div class="aff-input">
+                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                  <input type="email" id="affLoginEmail" placeholder="nama@email.com" autocomplete="email" />
+                </div>
+                <p class="aff-field__error">Format email tidak valid.</p>
+              </div>
+              <button type="button" class="aff-submit-btn" id="affLoginSendBtn">
+                <span>Kirim Kode ke Email</span>
+              </button>
+
+              <div class="aff-field" id="affLoginCodeField" hidden>
+                <label for="affLoginCode">Kode dari email (6 digit)</label>
+                <div class="aff-input">
+                  <input type="text" id="affLoginCode" inputmode="numeric" maxlength="6" placeholder="123456" autocomplete="one-time-code" />
+                </div>
+                <p class="aff-field__error">Kode salah atau sudah kedaluwarsa.</p>
+              </div>
+              <button type="button" class="aff-submit-btn" id="affLoginVerifyBtn" hidden>
+                <span>Masuk</span>
+              </button>
+            </div>
 
             <p class="aff-submit-error" id="affSubmitError"></p>
 

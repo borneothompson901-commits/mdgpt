@@ -109,10 +109,42 @@
     });
   }
 
+  function renderOverviewStats() {
+    var totalEl = document.getElementById("affStatTotal");
+    var clicksEl = document.getElementById("affStatClicks");
+    var feeEl = document.getElementById("affStatFee");
+    var topList = document.getElementById("topClickList");
+    var topEmpty = document.getElementById("topClickEmpty");
+    if (!totalEl || !clicksEl || !feeEl || !topList || !topEmpty) return;
+
+    var list = state.affiliates;
+    var totalClicks = list.reduce(function (sum, a) { return sum + (parseInt(a.total_clicks, 10) || 0); }, 0);
+    var totalFee = list.reduce(function (sum, a) { return sum + (Number(a.total_commission) || 0); }, 0);
+
+    totalEl.textContent = list.length;
+    clicksEl.textContent = totalClicks;
+    feeEl.textContent = rupiah(totalFee);
+
+    var top = list
+      .filter(function (a) { return (parseInt(a.total_clicks, 10) || 0) > 0; })
+      .sort(function (a, b) { return (parseInt(b.total_clicks, 10) || 0) - (parseInt(a.total_clicks, 10) || 0); })
+      .slice(0, 5);
+
+    topList.innerHTML = top.map(function (a) {
+      var label = a.name || a.email || "(Tanpa nama)";
+      return '<div class="overview-item">' +
+        '<span class="overview-item__name" title="' + escapeHtml(label) + '">' + escapeHtml(label) + '</span>' +
+        '<span class="badge badge-purple">' + (parseInt(a.total_clicks, 10) || 0) + ' klik</span>' +
+      '</div>';
+    }).join("");
+    topEmpty.hidden = top.length !== 0;
+  }
+
   async function loadAll() {
     try {
       state.affiliates = await db.listAffiliates();
       render();
+      renderOverviewStats();
     } catch (e) {
       console.error(e);
       AdminShared.toast(e.message || "Gagal memuat affiliate", "error");
@@ -267,13 +299,5 @@
     }
   });
 
-  var loaded = false;
-  document.querySelectorAll('.nav-item[data-page="affiliate"]').forEach(function (link) {
-    link.addEventListener("click", function () {
-      if (!loaded) {
-        loaded = true;
-        loadAll();
-      }
-    });
-  });
+  loadAll();
 })();

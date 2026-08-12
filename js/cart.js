@@ -75,6 +75,7 @@
 
   var kurirHiddenEl = document.getElementById("cartKurir");
   var kurirListEl = document.getElementById("kurirResultList");
+  var kurirFieldEl = document.getElementById("kurirField");
 
   var cekOngkirBtn = document.getElementById("cekOngkirBtn");
   var ongkirNoteEl = document.getElementById("cartOngkirNote");
@@ -87,6 +88,10 @@
     sicepat: "SiCepat",
     anteraja: "AnterAja"
   };
+
+  function clearFieldInvalid(el) {
+    if (el) el.classList.remove("is-field-invalid");
+  }
 
   function makeDropdown(rootId) {
     var root = document.getElementById(rootId);
@@ -139,6 +144,7 @@
         o.classList.toggle("is-selected", match);
         o.setAttribute("aria-selected", match ? "true" : "false");
       });
+      if (val) clearFieldInvalid(root);
     }
 
     function setItems(items) {
@@ -194,6 +200,7 @@
   var sumPajakEl = document.getElementById("sumPajak");
   var sumTotalEl = document.getElementById("sumTotal");
   var checkoutBtn = document.getElementById("checkoutBtn");
+  var checkoutValidationHintEl = document.getElementById("checkoutValidationHint");
   var customerNameEl = document.getElementById("cartCustomerName");
 
   var CHECKOUT_STORAGE_KEY = "mdgpt_lingua_checkout";
@@ -619,6 +626,7 @@
     state.ongkirChecked = true;
     state.ongkirService = courierName + (serviceCode ? " - " + serviceCode : "");
     state.ongkirEtd = etd || "";
+    clearFieldInvalid(kurirFieldEl);
 
     if (!opts.silent) {
       showOngkirNote(
@@ -892,28 +900,19 @@
   }
 
   if (addressDetailEl) {
-    addressDetailEl.addEventListener("input", updateCheckoutState);
+    addressDetailEl.addEventListener("input", function () {
+      clearFieldInvalid(addressDetailEl);
+      updateCheckoutState();
+    });
   }
 
-  function updateCheckoutState() {
-    var cart = window.CartStore.getCart();
-    var hasItems = cart.length > 0;
-    var hasWa = waEl.value.trim().length >= 9;
-    var needsShipping = window.CartStore.needsShipping();
-
-    var shippingOk = true;
-    if (needsShipping) {
-      shippingOk =
-        hasValidDestination() &&
-        addressDetailEl.value.trim().length > 0 &&
-        state.ongkirChecked;
-    }
-
-    checkoutBtn.disabled = !(hasItems && hasWa && shippingOk);
-  }
+  function updateCheckoutState() {}
 
   if (waEl) {
-    waEl.addEventListener("input", updateCheckoutState);
+    waEl.addEventListener("input", function () {
+      clearFieldInvalid(waEl);
+      updateCheckoutState();
+    });
   }
 
   function getOrderTotal() {
@@ -1319,10 +1318,65 @@
       });
   }
 
+  function findFirstInvalidField() {
+    var needsShipping = window.CartStore.needsShipping();
+    if (needsShipping) {
+      var geoSteps = [provinceDd, cityDd, districtDd, subdistrictDd];
+      for (var i = 0; i < geoSteps.length; i++) {
+        if (geoSteps[i] && !geoSteps[i].value) {
+          return {
+            outlineEl: geoSteps[i].root,
+            focusEl: geoSteps[i].root.querySelector(".custom-select__trigger"),
+            msg: "Lengkapi alamat pengiriman dulu ya."
+          };
+        }
+      }
+      if (!addressDetailEl.value.trim()) {
+        return { outlineEl: addressDetailEl, focusEl: addressDetailEl, msg: "Isi detail alamat pengiriman dulu ya." };
+      }
+      if (!kurirHiddenEl.value || !state.ongkirChecked) {
+        return { outlineEl: kurirFieldEl, focusEl: cekOngkirBtn, msg: "Pilih kurir pengiriman dulu ya." };
+      }
+    }
+    if (waEl.value.trim().length < 9) {
+      return { outlineEl: waEl, focusEl: waEl, msg: "Isi nomor WhatsApp yang valid dulu ya." };
+    }
+    return null;
+  }
+
+  function showFieldError(invalid) {
+    document.querySelectorAll(".is-field-invalid").forEach(function (el) {
+      el.classList.remove("is-field-invalid");
+    });
+    if (invalid.outlineEl) invalid.outlineEl.classList.add("is-field-invalid");
+    if (invalid.outlineEl) invalid.outlineEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (invalid.focusEl && typeof invalid.focusEl.focus === "function") {
+      invalid.focusEl.focus({ preventScroll: true });
+    }
+    if (checkoutValidationHintEl) {
+      checkoutValidationHintEl.textContent = invalid.msg;
+      checkoutValidationHintEl.hidden = false;
+    }
+  }
+
+  function hideFieldError() {
+    if (checkoutValidationHintEl) {
+      checkoutValidationHintEl.hidden = true;
+      checkoutValidationHintEl.textContent = "";
+    }
+  }
+
   if (checkoutBtn) {
     checkoutBtn.addEventListener("click", function () {
       var cart = window.CartStore.getCart();
       if (cart.length === 0) return;
+
+      var invalid = findFirstInvalidField();
+      if (invalid) {
+        showFieldError(invalid);
+        return;
+      }
+      hideFieldError();
 
       var total = getOrderTotal();
       var phone = waEl ? waEl.value.trim() : "";

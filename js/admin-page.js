@@ -309,7 +309,6 @@
       });
     }, true);
 
-    // ---------------- Filters ----------------
     function escAttr(s) {
       return String(s).replace(/[&<>"']/g, function (c) {
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -379,7 +378,6 @@
       { value: "fisik", label: "Fisik" }
     ]);
 
-    // ---------------- Gate modal (Digital/Fisik -> Jumlah Varian) ----------------
     var gateModal = document.getElementById("gateModal");
     var gateTitle = document.getElementById("gateTitle");
     var gatePanel1 = gateModal.querySelector('[data-gate-panel="1"]');
@@ -422,7 +420,6 @@
       });
     });
 
-    // ---------------- Delete modal ----------------
     var deleteModal = document.getElementById("deleteModal");
     var deleteTargetId = null;
     function openDeleteModal(id, name) {
@@ -477,11 +474,10 @@
 
     var qs = new URLSearchParams(location.search);
     var editId = qs.get("id");
-    var gateType = qs.get("type");       // "digital" | "fisik"
-    var gateVariant = qs.get("variant"); // "single" | "multi"
+    var gateType = qs.get("type");
+    var gateVariant = qs.get("variant");
 
     if (!editId && (!gateType || !gateVariant)) {
-      // Tidak ada konteks lengkap (bukan tambah baru dari gate, bukan edit) -> balik ke daftar produk
       location.replace("linguahub.html");
       return;
     }
@@ -493,14 +489,14 @@
     var wstate = {
       id: editId || null,
       type: gateType || "digital",
-      mode: gateVariant || "single",   // "single" | "multi"
+      mode: gateVariant || "single",
       category: "",
       categories: [],
       usedCategoryKeys: {},
-      specs: [],              // [{key,value}]
-      vgroups: [],             // [{id,name,options:[{id,value,stock,price,oldPrice,image}]}]
+      specs: [],
+      vgroups: [],
       mainImage: "",
-      galleryImages: []        // foto galeri tambahan (utama + galeri, unlimited, dipakai mode single & multi)
+      galleryImages: []
     };
 
     var currentStep = 1;
@@ -511,10 +507,8 @@
       if (bar) bar.style.width = Math.round((n / TOTAL_STEPS) * 100) + "%";
     }
 
-    // ---------------- State lokal khusus interaksi Live Preview (index galeri aktif, qty demo) ----------------
     var previewState = { imgIndex: 0, qty: 1 };
 
-    // ---------------- Keluar form: modal konfirmasi custom (bukan confirm() bawaan) ----------------
     var exitModal = document.getElementById("exitConfirmModal");
     document.getElementById("wizardBackBtn").addEventListener("click", function () { exitModal.classList.add("open"); });
     document.getElementById("exitCloseBtn").addEventListener("click", function () { exitModal.classList.remove("open"); });
@@ -522,7 +516,6 @@
     exitModal.addEventListener("click", function (e) { if (e.target === exitModal) exitModal.classList.remove("open"); });
     document.getElementById("exitConfirmBtn").addEventListener("click", function () { location.href = "linguahub.html"; });
 
-    // ---------------- Toggle preview handphone (layar sempit) ----------------
     var previewToggleBtn = document.getElementById("previewToggleBtn");
     var previewCloseBtn = document.getElementById("previewCloseBtn");
     var previewCol = document.getElementById("wizardPreviewCol");
@@ -530,7 +523,6 @@
     if (previewCloseBtn) previewCloseBtn.addEventListener("click", function () { document.body.classList.remove("preview-open"); });
     if (previewCol) previewCol.addEventListener("click", function (e) { if (e.target === previewCol) document.body.classList.remove("preview-open"); });
 
-    // Tutup dropdown custom nama grup varian kalau klik di luar area dropdown-nya
     document.addEventListener("click", function (e) {
       if (e.target.closest(".vgroup-xselect")) return;
       document.querySelectorAll(".vgroup-xselect.open").forEach(function (xs) {
@@ -548,7 +540,6 @@
       });
     });
 
-    // ---------------- Template tiap field (dipakai ulang, dirakit beda urutan sesuai mode) ----------------
     function tplTitle() {
       return '' +
         '<div class="field">' +
@@ -571,8 +562,6 @@
         '</div>';
     }
     function tplWeightStockRow() {
-      // Berat & Stok sebelahan (mode tanpa varian) — Berat cuma muncul utk produk fisik,
-      // kalau disembunyikan, Stok otomatis lebar penuh (lihat CSS :has()).
       return '' +
         '<div class="field-row" id="weightStockRow">' +
           '<div class="field" id="fisikOnlyRow" hidden>' +
@@ -601,7 +590,6 @@
         '</div>';
     }
     function tplCategoryWeightRow() {
-      // Kategori & Berat sebelahan (mode varian) — Berat cuma muncul utk produk fisik.
       return '' +
         '<div class="field-row" id="categoryWeightRow">' +
           '<div class="field" id="categoryField">' +
@@ -661,9 +649,6 @@
           'Tambah Grup Varian' +
         '</button>';
     }
-    // Kombinasi Varian (Foto/Stok/Harga/Harga Coret) — dirender nempel di tiap card
-    // grup varian, persis di bawah dropdown nama grup. Baris kombinasi diisi langsung
-    // lewat kolom "Kombinasi", nggak ada chip opsi terpisah lagi.
     function tplComboSection(gi) {
       return '' +
         '<div class="vgroup-combo" style="margin:10px 0 12px;">' +
@@ -680,8 +665,6 @@
         '</div>';
     }
     function tplPhotosSingle() {
-      // Foto Utama cuma 1 slot, di bawahnya Galeri Foto Tambahan tanpa batas jumlah.
-      // Dipakai sama persis untuk mode tanpa varian maupun mode varian (lihat STEP_DEFS).
       return '' +
         '<div class="field">' +
           '<label>Foto Utama</label>' +
@@ -705,7 +688,6 @@
       return '<svg width="22" height="22" viewBox="0 0 16 16" fill="none"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h1.2l.8-1.2h5l.8 1.2h1.2A1.5 1.5 0 0 1 14 5.5v6A1.5 1.5 0 0 1 12.5 13h-9A1.5 1.5 0 0 1 2 11.5v-6z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="8" cy="8.2" r="2.1" stroke="currentColor" stroke-width="1.2"/></svg>';
     }
 
-    // ---------------- Konfigurasi step per mode ----------------
     var STEP_DEFS = {
       single: [
         { label: "Info & Harga", sub: "Nama, kategori, dan harga jual produk.", tpl: function () { return tplTitle() + tplCategory() + tplWeightStockRow() + tplPriceRow(); } },
@@ -738,7 +720,7 @@
       stepsWrap.innerHTML = stepsHtml;
 
       var panelsHtml = "";
-      for (var i = 0; i < steps.length - 1; i++) { // panel terakhir (Review) statis di HTML, dilewati di sini
+      for (var i = 0; i < steps.length - 1; i++) {
         var s = steps[i];
         var n = i + 1;
         panelsHtml +=
@@ -755,7 +737,6 @@
       panelsWrap.innerHTML = panelsHtml;
       updateProgressBar(currentStep);
 
-      // Tombol navigasi step (delegasi karena panel dirakit dinamis)
       panelsWrap.addEventListener("click", function (e) {
         var nextBtn = e.target.closest("[data-next]");
         if (nextBtn) { goStep(Number(nextBtn.dataset.next)); return; }
@@ -765,8 +746,6 @@
         if (gotoBtn) { goStep(Number(gotoBtn.dataset.gotoStep)); return; }
       });
 
-      // Live preview: update tiap kali field teks/angka di panel manapun diketik/berubah
-      // (delegasi di panelsWrap supaya tetap jalan walau panel dirakit ulang tiap ganti mode)
       panelsWrap.addEventListener("input", function (e) {
         if (e.target.matches("input, textarea")) renderPreview();
       });
@@ -777,7 +756,6 @@
       renderPreview();
     }
 
-    // ---------------- Init ----------------
     async function init() {
       buildWizardShell();
       bindDynamicFieldEvents();
@@ -802,7 +780,7 @@
           AdminShared.toast("Gagal memuat produk", "error");
         }
       } else {
-        addSpecRow(); // baris kosong pertama
+        addSpecRow();
       }
 
       applyTypeUI();
@@ -828,7 +806,6 @@
         };
       });
       wstate.mode = wstate.vgroups.length > 0 ? "multi" : "single";
-      // mode berubah dari default -> rakit ulang shell sesuai mode produk yang di-edit
       buildWizardShell();
       bindDynamicFieldEvents();
       buildCategoryXSelect();
@@ -870,10 +847,6 @@
       renderPreview();
     }
 
-    // ---------------- Custom select kategori (ganti <select> native) ----------------
-    // Dropdown cuma nampilin kategori yang beneran masih dipakai produk (biar kategori
-    // yang udah nggak dipakai produk manapun otomatis hilang dari pilihan), ditambah
-    // kategori yang baru dibuat di sesi ini biar langsung bisa dipilih.
     function visibleCategories() {
       return wstate.categories.filter(function (c) {
         return wstate.usedCategoryKeys[c.key] || c.key === wstate.category || c._sessionAdded;
@@ -981,7 +954,6 @@
       renderPreview();
     }
 
-    // ---------------- Step navigation ----------------
     function goStep(n) {
       if (n > currentStep && !validateStep(currentStep)) return;
       currentStep = n;
@@ -1051,7 +1023,6 @@
       return true;
     }
 
-    // ---------------- Event binding untuk field yang dirakit dinamis ----------------
     function bindDynamicFieldEvents() {
       var btnAddSpec = document.getElementById("btnAddSpec");
       if (btnAddSpec) btnAddSpec.addEventListener("click", function () { addSpecRow(); });
@@ -1080,7 +1051,7 @@
       var galleryPhotoInput = document.getElementById("galleryPhotoInput");
       if (galleryPhotoInput) galleryPhotoInput.addEventListener("change", async function () {
         var files = Array.prototype.slice.call(this.files || []);
-        this.value = ""; // reset supaya file yang sama bisa dipilih ulang
+        this.value = "";
         if (!files.length) return;
         for (var i = 0; i < files.length; i++) {
           (function (file) {
@@ -1101,7 +1072,6 @@
       });
     }
 
-    // ---------------- Spesifikasi ----------------
     function addSpecRow(key, value) {
       wstate.specs.push({ key: key || "", value: value || "" });
       renderSpecs();
@@ -1133,9 +1103,6 @@
       renderPreview();
     }
 
-    // ---------------- Varian: grup & baris kombinasi (foto/stok/harga/harga coret) ----------------
-    // Tiap opsi varian sekarang objek { id, value, stock, price, oldPrice, image } —
-    // diisi langsung lewat kolom "Kombinasi" di tabel, nggak ada chip opsi terpisah lagi.
     var vgroupSeq = 0;
     var voptSeq = 0;
     var VGROUP_NAME_PRESETS = ["Warna", "Ukuran", "Model", "Rasa", "Varian"];
@@ -1177,7 +1144,6 @@
         renderVariantRows(gi);
       });
 
-      // Custom dropdown nama grup varian (ganti input polos jadi trigger+menu kayak xselect kategori)
       wrap.querySelectorAll("[data-vg-trigger]").forEach(function (btn) {
         btn.addEventListener("click", function (e) {
           e.stopPropagation();
@@ -1228,7 +1194,6 @@
       renderPreview();
     }
 
-    // Render baris kombinasi (foto/stok/harga/harga coret) satu grup varian tertentu.
     function renderVariantRows(gi) {
       var tbody = document.getElementById("vcomboTbody-" + gi);
       if (!tbody) return;
@@ -1295,10 +1260,8 @@
       renderPreview();
     }
 
-    // ---------------- Foto utama (mode single & multi, tampilannya sama persis) ----------------
     function renderMainPhoto() { renderSinglePhotoSlot("mainPhotoSlot", "mainPhotoPlaceholder", wstate.mainImage, function () { wstate.mainImage = ""; renderMainPhoto(); }); }
 
-    // ---------------- Galeri foto tambahan (mode single & multi) — nggak dibatasi jumlahnya ----------------
     function renderGalleryPhotos() {
       var grid = document.getElementById("galleryPhotoGrid");
       if (!grid) return;
@@ -1361,7 +1324,6 @@
       renderPreview();
     }
 
-    // ---------------- Live Preview (handphone) ----------------
     function renderPreview() {
       var scr = document.getElementById("previewScreen");
       if (!scr) return;
@@ -1409,8 +1371,6 @@
 
       var discount = (oldPrice > price && price > 0) ? Math.round((1 - price / oldPrice) * 100) : 0;
 
-      // Galeri foto — foto utama + galeri tambahan (unlimited, mode single & multi),
-      // ditambah foto tiap kombinasi varian kalau mode multi.
       var galleryImages = [];
       function pushImg(u) { if (u && galleryImages.indexOf(u) === -1) galleryImages.push(u); }
       pushImg(wstate.mainImage);
@@ -1421,7 +1381,6 @@
         allVOptions().forEach(function (c) { pushImg(c.image); });
       }
 
-      // Index foto aktif di preview (state lokal, tetap "nyambung" antar render selama masih valid)
       if (previewState.imgIndex >= galleryImages.length) previewState.imgIndex = 0;
       if (previewState.imgIndex < 0) previewState.imgIndex = 0;
       var activeImg = galleryImages[previewState.imgIndex] || "";
@@ -1449,7 +1408,6 @@
           }).join("") + '</div>'
         : "";
 
-      // Breadcrumb — replika pd-breadcrumb__inner di produk.html
       var breadcrumbHtml =
         '<div class="ppd-breadcrumb"><div class="ppd-breadcrumb__inner">' +
           '<span class="ppd-breadcrumb__link">Beranda</span>' +
@@ -1458,7 +1416,6 @@
           '<span class="ppd-breadcrumb__current">' + (title ? escAttr(title) : "Produk") + '</span>' +
         '</div></div>';
 
-      // Qty stepper — replika pd-qty
       var qtyHtml =
         '<div class="ppd-qty-row">' +
           '<span class="ppd-qty-label">Jumlah</span>' +
@@ -1515,9 +1472,6 @@
       bindPreviewInteractions(galleryImages.length);
     }
 
-    // Event untuk elemen di dalam Live Preview: qty +/-, panah galeri, klik thumbnail.
-    // Tombol yang bisa "keluar" dari halaman preview (kembali, keranjang, tambah keranjang,
-    // beli sekarang) sengaja dibiarkan disabled supaya preview nggak pernah nyasar ke halaman lain.
     function bindPreviewInteractions(galleryCount) {
       var qtyMinusBtn = document.getElementById("ppdQtyMinus");
       var qtyPlusBtn = document.getElementById("ppdQtyPlus");
@@ -1546,7 +1500,6 @@
       });
     }
 
-    // ---------------- Review ----------------
     function buildReview() {
       var title = document.getElementById("f_title").value.trim() || "(Tanpa nama)";
       var catLabel = (wstate.categories.find(function (c) { return c.key === wstate.category; }) || {}).label || "—";
@@ -1600,7 +1553,6 @@
       photoBody.innerHTML = photoRows;
     }
 
-    // ---------------- Simpan ----------------
     function buildPayload() {
       var specs = {};
       wstate.specs.forEach(function (s) { if (s.key) specs[s.key] = s.value; });
@@ -1671,7 +1623,6 @@
     document.getElementById("btnSaveDraft").addEventListener("click", function () { save(false); });
     document.getElementById("btnSaveDraftTop").addEventListener("click", function () { save(false); });
 
-    // Tombol "Kembali" statis di panel Review (data-prev="4")
     document.querySelectorAll("[data-prev]").forEach(function (b) {
       if (!b.closest("#wizardPanels")) b.addEventListener("click", function () { goStep(Number(b.dataset.prev)); });
     });

@@ -73,109 +73,159 @@
           </div>
         </div>
 
-        <section class="aff-grid" id="affFormSection">
-          <div class="aff-card aff-card--form">
-            <p class="aff-card__label">Buat akun</p>
-            <h2 class="aff-card__title">Daftar Jadi Affiliate</h2>
-
-            <p class="aff-login-toggle-wrap">
-              <button type="button" class="aff-terms-link" id="affLoginToggle">Sudah punya akun? Masuk pakai email →</button>
-            </p>
-
-            <div class="aff-login-panel" id="affLoginPanel" hidden>
-              <p class="aff-submit-error" id="affLoginError"></p>
-              <div class="aff-field" id="affLoginEmailField">
-                <label for="affLoginEmail">Email</label>
-                <div class="aff-input">
-                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
-                  <input type="email" id="affLoginEmail" placeholder="nama@email.com" autocomplete="email" />
-                </div>
-                <p class="aff-field__error">Format email tidak valid.</p>
-              </div>
-              <div class="aff-field" id="affLoginPasswordField">
-                <label for="affLoginPassword">Password</label>
-                <div class="aff-input">
-                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  <input type="password" id="affLoginPassword" placeholder="Password kamu" autocomplete="current-password" />
-                </div>
-                <p class="aff-field__error">Password salah.</p>
-              </div>
-              <button type="button" class="aff-submit-btn" id="affLoginSubmitBtn">
-                <span>Masuk</span>
-              </button>
-            </div>
-
-            <p class="aff-submit-error" id="affSubmitError"></p>
-
-            <form id="affForm" novalidate>
-              <div class="aff-field" id="affFieldName">
-                <label for="affName">Nama Lengkap</label>
-                <div class="aff-input">
-                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  <input type="text" id="affName" name="name" placeholder="Nama kamu" autocomplete="name" />
-                </div>
-                <p class="aff-field__error">Nama minimal 3 karakter.</p>
-              </div>
-
-              <div class="aff-field" id="affFieldWa">
-                <label for="affWa">Nomor WhatsApp</label>
-                <div class="aff-input aff-input--prefixed">
-                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
-                  <span class="aff-input__prefix">+62</span>
-                  <input type="tel" id="affWa" name="whatsapp" inputmode="numeric" placeholder="8xxxxxxxxxx" autocomplete="tel" />
-                </div>
-                <p class="aff-field__error">Nomor WhatsApp tidak valid.</p>
-              </div>
-
-              <div class="aff-field" id="affFieldEmail">
-                <label for="affEmail">Email</label>
-                <div class="aff-input">
-                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
-                  <input type="email" id="affEmail" name="email" placeholder="nama@email.com" autocomplete="email" />
-                </div>
-                <p class="aff-field__error">Format email tidak valid.</p>
-              </div>
-
-              <div class="aff-field" id="affFieldPassword">
-                <label for="affPassword">Buat Password</label>
-                <div class="aff-input">
-                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  <input type="password" id="affPassword" name="password" placeholder="Minimal 6 karakter" autocomplete="new-password" />
-                </div>
-                <p class="aff-field__error">Password minimal 6 karakter.</p>
-              </div>
-
-              <label class="aff-consent" id="affFieldConsent" for="affConsent">
-                <input type="checkbox" id="affConsent" name="consent" />
-                <span class="aff-consent__box" aria-hidden="true">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                </span>
-                <span class="aff-consent__text">Saya menyetujui <button type="button" class="aff-terms-link" id="affTermsLink">ketentuan</button> yang berlaku</span>
-                <p class="aff-field__error" style="display:none"></p>
-              </label>
-
-              <button type="submit" class="aff-submit-btn" id="affSubmitBtn">
-                <span>Daftar Jadi Affiliate</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
-              </button>
-            </form>
+        <section class="aff-benefits" id="affBenefits">
+          <div class="aff-benefit-card">
+            <span class="aff-benefit-card__num">10%</span>
+            <p class="aff-benefit-card__title">Komisi tiap transaksi</p>
+            <p class="aff-benefit-card__desc">Berlaku untuk checkout produk apapun di katalog.</p>
           </div>
+          <div class="aff-benefit-card">
+            <span class="aff-benefit-card__num">14 hari</span>
+            <p class="aff-benefit-card__title">Cookie tracking</p>
+            <p class="aff-benefit-card__desc">Klik link kamu tetap terhitung sampai 14 hari ke depan.</p>
+          </div>
+          <div class="aff-benefit-card">
+            <span class="aff-benefit-card__num">Rp0</span>
+            <p class="aff-benefit-card__title">Biaya pendaftaran</p>
+            <p class="aff-benefit-card__desc">Aktif dalam kurang dari 1 menit, cair via WhatsApp.</p>
+          </div>
+        </section>
 
-          <div class="aff-side">
-            <div class="aff-info-card">
-              <span class="aff-info-card__num">10%</span>
-              <p class="aff-info-card__title">Komisi tiap transaksi</p>
-              <p class="aff-info-card__desc">Berlaku untuk checkout produk apapun di katalog.</p>
+        <section class="aff-auth" id="affFormSection">
+          <div class="aff-auth-card">
+
+            <div class="aff-auth-brand">
+              <div class="aff-auth-brand__mark" aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v6c0 5 4 8.5 9 9 5-.5 9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <p class="aff-auth-brand__eyebrow">Lingua Affiliate</p>
+              <h2 class="aff-auth-brand__title" id="affAuthBrandTitle">Bagikan link, tiap checkout jadi komisi</h2>
+              <p class="aff-auth-brand__sub" id="affAuthBrandSub">Masuk atau daftar buat mulai bagikan link kamu sendiri dan pantau komisinya di sini.</p>
+              <ul class="aff-auth-brand__list">
+                <li><span>Aktif dalam kurang dari 1 menit</span></li>
+                <li><span>Cookie tracking 14 hari</span></li>
+                <li><span>Cair kapan aja via WhatsApp</span></li>
+              </ul>
             </div>
-            <div class="aff-info-card">
-              <span class="aff-info-card__num">14 hari</span>
-              <p class="aff-info-card__title">Cookie tracking</p>
-              <p class="aff-info-card__desc">Klik link kamu tetap terhitung sampai 14 hari ke depan.</p>
-            </div>
-            <div class="aff-info-card">
-              <span class="aff-info-card__num">Rp0</span>
-              <p class="aff-info-card__title">Biaya pendaftaran</p>
-              <p class="aff-info-card__desc">Aktif dalam kurang dari 1 menit, cair via WhatsApp.</p>
+
+            <div class="aff-auth-panel">
+
+              <div class="aff-auth-view is-active" id="affLoginView">
+                <p class="aff-auth-view__label">Masuk</p>
+                <h3 class="aff-auth-view__title">Masuk ke akun kamu</h3>
+                <p class="aff-auth-view__sub">Masuk kalau kamu udah pernah daftar jadi affiliate.</p>
+
+                <p class="aff-submit-error" id="affLoginError"></p>
+
+                <div class="aff-field" id="affLoginEmailField">
+                  <label for="affLoginEmail">Email</label>
+                  <div class="aff-input">
+                    <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                    <input type="email" id="affLoginEmail" placeholder="nama@email.com" autocomplete="email" />
+                  </div>
+                  <p class="aff-field__error">Format email tidak valid.</p>
+                </div>
+
+                <div class="aff-field" id="affLoginPasswordField">
+                  <label for="affLoginPassword">Password</label>
+                  <div class="aff-input aff-input--has-toggle">
+                    <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <input type="password" id="affLoginPassword" placeholder="Password kamu" autocomplete="current-password" />
+                    <button type="button" class="aff-eye-toggle" data-target="affLoginPassword" aria-label="Tampilkan password">
+                      <svg class="aff-eye-toggle__icon aff-eye-toggle__icon--show" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg class="aff-eye-toggle__icon aff-eye-toggle__icon--hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c7 0 11 7 11 7a13.2 13.2 0 0 1-1.67 2.68M6.6 6.6A13.5 13.5 0 0 0 1 11s4 7 11 7a9.3 9.3 0 0 0 5.39-1.61M1 1l22 22"/><path d="M14.12 14.12A3 3 0 1 1 9.88 9.88"/></svg>
+                    </button>
+                  </div>
+                  <p class="aff-field__error">Password salah.</p>
+                </div>
+
+                <button type="button" class="aff-submit-btn" id="affLoginSubmitBtn">
+                  <span>Masuk</span>
+                </button>
+
+                <p class="aff-auth-switch">Belum punya akun? <button type="button" class="aff-terms-link" id="affLoginToggle">Daftar jadi affiliate</button></p>
+              </div>
+
+              <div class="aff-auth-view" id="affSignupView" hidden>
+                <p class="aff-auth-view__label">Buat akun</p>
+                <h3 class="aff-auth-view__title">Daftar jadi affiliate</h3>
+                <p class="aff-auth-view__sub">Isi data di bawah, akun kamu langsung aktif.</p>
+
+                <p class="aff-submit-error" id="affSubmitError"></p>
+
+                <form id="affForm" novalidate>
+                  <div class="aff-field" id="affFieldName">
+                    <label for="affName">Nama Lengkap</label>
+                    <div class="aff-input">
+                      <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      <input type="text" id="affName" name="name" placeholder="Nama kamu" autocomplete="name" />
+                    </div>
+                    <p class="aff-field__error">Nama minimal 3 karakter.</p>
+                  </div>
+
+                  <div class="aff-field" id="affFieldWa">
+                    <label for="affWa">Nomor WhatsApp</label>
+                    <div class="aff-input aff-input--prefixed">
+                      <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
+                      <span class="aff-input__prefix">+62</span>
+                      <input type="tel" id="affWa" name="whatsapp" inputmode="numeric" placeholder="8xxxxxxxxxx" autocomplete="tel" />
+                    </div>
+                    <p class="aff-field__error">Nomor WhatsApp tidak valid.</p>
+                  </div>
+
+                  <div class="aff-field" id="affFieldEmail">
+                    <label for="affEmail">Email</label>
+                    <div class="aff-input">
+                      <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                      <input type="email" id="affEmail" name="email" placeholder="nama@email.com" autocomplete="email" />
+                    </div>
+                    <p class="aff-field__error">Format email tidak valid.</p>
+                  </div>
+
+                  <div class="aff-field" id="affFieldPassword">
+                    <label for="affPassword">Buat Password</label>
+                    <div class="aff-input aff-input--has-toggle">
+                      <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <input type="password" id="affPassword" name="password" placeholder="Minimal 6 karakter" autocomplete="new-password" />
+                      <button type="button" class="aff-eye-toggle" data-target="affPassword" aria-label="Tampilkan password">
+                        <svg class="aff-eye-toggle__icon aff-eye-toggle__icon--show" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="aff-eye-toggle__icon aff-eye-toggle__icon--hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c7 0 11 7 11 7a13.2 13.2 0 0 1-1.67 2.68M6.6 6.6A13.5 13.5 0 0 0 1 11s4 7 11 7a9.3 9.3 0 0 0 5.39-1.61M1 1l22 22"/><path d="M14.12 14.12A3 3 0 1 1 9.88 9.88"/></svg>
+                      </button>
+                    </div>
+                    <p class="aff-field__error">Password minimal 6 karakter.</p>
+                  </div>
+
+                  <div class="aff-field" id="affFieldPasswordConfirm">
+                    <label for="affPasswordConfirm">Ulangi Password</label>
+                    <div class="aff-input aff-input--has-toggle">
+                      <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <input type="password" id="affPasswordConfirm" name="password_confirm" placeholder="Ulangi password kamu" autocomplete="new-password" />
+                      <button type="button" class="aff-eye-toggle" data-target="affPasswordConfirm" aria-label="Tampilkan password">
+                        <svg class="aff-eye-toggle__icon aff-eye-toggle__icon--show" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="aff-eye-toggle__icon aff-eye-toggle__icon--hide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c7 0 11 7 11 7a13.2 13.2 0 0 1-1.67 2.68M6.6 6.6A13.5 13.5 0 0 0 1 11s4 7 11 7a9.3 9.3 0 0 0 5.39-1.61M1 1l22 22"/><path d="M14.12 14.12A3 3 0 1 1 9.88 9.88"/></svg>
+                      </button>
+                    </div>
+                    <p class="aff-field__error">Konfirmasi password tidak sama.</p>
+                  </div>
+
+                  <label class="aff-consent" id="affFieldConsent" for="affConsent">
+                    <input type="checkbox" id="affConsent" name="consent" />
+                    <span class="aff-consent__box" aria-hidden="true">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    </span>
+                    <span class="aff-consent__text">Saya menyetujui <button type="button" class="aff-terms-link" id="affTermsLink">ketentuan</button> yang berlaku</span>
+                    <p class="aff-field__error" style="display:none"></p>
+                  </label>
+
+                  <button type="submit" class="aff-submit-btn" id="affSubmitBtn">
+                    <span>Daftar Jadi Affiliate</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                  </button>
+                </form>
+
+                <p class="aff-auth-switch">Sudah punya akun? <button type="button" class="aff-terms-link" id="affSignupToggle">Masuk di sini</button></p>
+              </div>
+
             </div>
           </div>
         </section>

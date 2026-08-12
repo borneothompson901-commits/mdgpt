@@ -51,6 +51,19 @@
         <div class="cart-container">
           <div class="cart-layout">
             <div class="cart-items">
+              <div class="cart-loading" id="cartLoading" role="status" aria-live="polite">
+                <span class="cart-loading__icon">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                  </svg>
+                </span>
+                <span class="cart-loading__dots">
+                  <span></span><span></span><span></span>
+                </span>
+                <span class="sr-only">Memuat keranjang...</span>
+              </div>
               <div class="cart-empty" id="cartEmpty" hidden>
                 <div class="cart-empty__icon">
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
@@ -60,7 +73,7 @@
                 <a href="../lingua/index.html" class="cart-empty__cta">Jelajahi Produk</a>
               </div>
 
-              <ul class="cart-list" id="cartList" aria-label="Daftar produk di keranjang"></ul>
+              <ul class="cart-list" id="cartList" aria-label="Daftar produk di keranjang" hidden></ul>
 
               <template id="cartItemTemplate">
                 <li class="cart-item" data-id="">

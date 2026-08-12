@@ -214,6 +214,25 @@
       return rows[0];
     },
 
+    async getAffiliateConfig() {
+      var res = await fetch(SUPABASE_URL + "/rest/v1/affiliate_config?select=*&limit=1", { headers: SUPABASE_HEADERS });
+      if (!res.ok) throw new Error("Gagal memuat pengaturan affiliate (" + res.status + ")");
+      var rows = await res.json();
+      return rows[0] || { komisi_persen: 10 };
+    },
+    async updateAffiliateConfig(payload) {
+      var headers = await writeHeaders({ Prefer: "return=representation" });
+      payload = Object.assign({}, payload, { updated_at: new Date().toISOString() });
+      var res = await fetch(SUPABASE_URL + "/rest/v1/affiliate_config?id=eq.true", {
+        method: "PATCH",
+        headers: headers,
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("Gagal simpan pengaturan affiliate (" + res.status + "): " + (await res.text()));
+      var rows = await res.json();
+      return rows[0];
+    },
+
     async listTransactions() {
       var headers = await writeHeaders();
       var res = await fetch(

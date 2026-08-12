@@ -886,10 +886,12 @@ body.aff-scroll-lock {
   flex: 1 1 auto;
   min-width: 0;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  font-size: 0.78rem;
-  line-height: 1.5;
+  font-size: 0.7rem;
+  line-height: 1.4;
   color: var(--white);
-  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .aff-copy-btn {
@@ -1045,6 +1047,10 @@ body.aff-scroll-lock {
 }
 
 @media (min-width: 860px) {
+  .aff-link-card__url {
+    font-size: 0.78rem;
+  }
+
   .aff-wrap {
     padding: 48px 32px 0;
   }

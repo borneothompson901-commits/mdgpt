@@ -122,6 +122,261 @@
   color: var(--cat-accent);
 }
 
+/* ---- Full-wide benefit strip ------------------------------------------- */
+
+.aff-benefits {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.aff-benefits.is-hidden {
+  display: none;
+}
+
+.aff-benefit-card {
+  background: var(--white);
+  border: 1px solid rgba(169, 26, 182, 0.14);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.aff-benefit-card__num {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--cat-accent);
+  margin-bottom: 4px;
+}
+
+.aff-benefit-card__title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--color-headline);
+  margin: 0 0 4px;
+}
+
+.aff-benefit-card__desc {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+/* ---- Auth card: gradient brand panel + login/signup panel -------------- */
+
+.aff-auth {
+  margin-bottom: 24px;
+}
+
+.aff-auth.is-hidden {
+  display: none;
+}
+
+.aff-auth-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(169, 26, 182, 0.14);
+  box-shadow: 0 20px 50px -30px rgba(74, 4, 92, 0.45);
+}
+
+.aff-auth-brand {
+  position: relative;
+  padding: 32px 28px;
+  background: linear-gradient(135deg, var(--grad-1, #a91ab6), var(--grad-2, #b104ff));
+  color: var(--white);
+  overflow: hidden;
+}
+
+.aff-auth-brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(255, 255, 255, 0.18), transparent 60%),
+    radial-gradient(90% 70% at 0% 100%, rgba(4, 123, 254, 0.35), transparent 60%);
+  pointer-events: none;
+}
+
+.aff-auth-brand__mark {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.aff-auth-brand__eyebrow {
+  position: relative;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 10px;
+}
+
+.aff-auth-brand__title {
+  position: relative;
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+}
+
+.aff-auth-brand__sub {
+  position: relative;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0 0 20px;
+  max-width: 380px;
+}
+
+.aff-auth-brand__list {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 16px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aff-auth-brand__list li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.aff-auth-brand__list li::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--white);
+}
+
+.aff-auth-panel {
+  background: var(--white);
+  padding: 28px 24px;
+}
+
+.aff-auth-view {
+  display: none;
+  animation: affViewIn 0.22s ease-out;
+}
+
+.aff-auth-view.is-active {
+  display: block;
+}
+
+@keyframes affViewIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.aff-auth-view__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--cat-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 6px;
+}
+
+.aff-auth-view__title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-headline);
+  margin: 0 0 6px;
+}
+
+.aff-auth-view__sub {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+  margin: 0 0 20px;
+}
+
+.aff-auth-switch {
+  margin: 16px 0 0;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* ---- Password reveal toggle --------------------------------------------- */
+
+.aff-input--has-toggle input {
+  padding-right: 40px;
+}
+
+.aff-eye-toggle {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 4px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.aff-eye-toggle:hover {
+  color: var(--cat-accent);
+  background: rgba(169, 26, 182, 0.08);
+}
+
+.aff-eye-toggle__icon--hide {
+  display: none;
+}
+
+.aff-eye-toggle.is-visible .aff-eye-toggle__icon--show {
+  display: none;
+}
+
+.aff-eye-toggle.is-visible .aff-eye-toggle__icon--hide {
+  display: block;
+}
+
+@media (min-width: 860px) {
+  .aff-benefits {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .aff-auth-card {
+    grid-template-columns: 0.9fr 1.1fr;
+  }
+
+  .aff-auth-brand {
+    padding: 44px 40px;
+  }
+
+  .aff-auth-panel {
+    padding: 44px 48px;
+  }
+}
+
 .aff-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -722,10 +977,6 @@ body.aff-scroll-lock {
   .aff-grid {
     grid-template-columns: 1.4fr 1fr;
     align-items: start;
-  }
-
-  .aff-card--form {
-    padding: 32px;
   }
 
   .aff-dashboard {

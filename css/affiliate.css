@@ -257,7 +257,7 @@
 .aff-auth-panel {
   background: var(--white);
   padding: 32px 24px;
-  min-height: 720px;
+  min-height: 480px;
   display: flex;
   flex-direction: column;
 }
@@ -370,7 +370,7 @@
   }
 
   .aff-auth-visual {
-    min-height: 660px;
+    min-height: 520px;
     padding: 40px;
   }
 
@@ -380,7 +380,7 @@
 
   .aff-auth-panel {
     padding: 44px 56px;
-    min-height: 740px;
+    min-height: 520px;
     justify-content: center;
   }
 }

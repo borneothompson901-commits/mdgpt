@@ -56,6 +56,48 @@
     return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>';
   }
 
+  function iconCopy() {
+    return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="5.5" y="5.5" width="8" height="8" rx="1.4" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 5.5V3.9A1.4 1.4 0 0 0 9.1 2.5H3.9A1.4 1.4 0 0 0 2.5 3.9v5.2a1.4 1.4 0 0 0 1.4 1.4h1.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+  }
+
+  function formatWaLocal(waDigits) {
+    var d = String(waDigits || "");
+    if (d.slice(0, 2) === "62") d = "0" + d.slice(2);
+    return d;
+  }
+
+  function copyWaToClipboard(btn, waDigits) {
+    var text = formatWaLocal(waDigits);
+    function showCopiedHint() {
+      var hint = document.createElement("span");
+      hint.className = "copy-hint";
+      hint.textContent = "Tersalin!";
+      btn.style.position = "relative";
+      btn.appendChild(hint);
+      requestAnimationFrame(function () { hint.classList.add("show"); });
+      setTimeout(function () {
+        hint.classList.remove("show");
+        setTimeout(function () { hint.remove(); }, 160);
+      }, 1100);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(showCopiedHint).catch(function () {
+        AdminShared.toast("Gagal menyalin nomor.", "error");
+      });
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); showCopiedHint(); } catch (e) {
+        AdminShared.toast("Gagal menyalin nomor.", "error");
+      }
+      ta.remove();
+    }
+  }
+
   function matchesFilter(a) {
     if (!state.search) return true;
     var q = state.search.toLowerCase();
@@ -83,7 +125,7 @@
         '<td>' + (parseInt(a.total_orders, 10) || 0) + '</td>' +
         '<td class="col-fee">' + rupiah(a.total_commission) + '</td>' +
         '<td><div class="wa-cell">' +
-          (a.whatsapp ? '<button type="button" class="btn-icon wa-action" data-wa="' + escapeHtml(a.whatsapp) + '" title="Chat WhatsApp">' + iconWa() + '</button>' : '<span>—</span>') +
+          (a.whatsapp ? '<button type="button" class="btn-icon wa-action" data-wa="' + escapeHtml(a.whatsapp) + '" title="Salin nomor WhatsApp">' + iconCopy() + '</button>' : '<span>—</span>') +
         '</div></td>' +
         '<td class="row-actions"><div class="actions">' +
           '<button class="btn-icon edit" data-edit="' + a.id + '" title="Edit">' +
@@ -98,7 +140,7 @@
 
     tbody.querySelectorAll("[data-wa]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        window.open("https://wa.me/" + btn.dataset.wa, "_blank", "noopener");
+        copyWaToClipboard(btn, btn.dataset.wa);
       });
     });
     tbody.querySelectorAll("[data-edit]").forEach(function (btn) {

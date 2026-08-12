@@ -536,6 +536,11 @@
     </div>
     <div class="modal-body">
       <div class="field">
+        <label>Penyesuaian Ongkir (%)</label>
+        <input type="number" inputmode="decimal" min="0" max="100" step="0.1" id="biayaOngkirRate" placeholder="0" />
+        <div class="hint">Persentase penyesuaian dari harga ongkir asli kurir, otomatis masuk ke ongkir yang tampil ke pembeli.</div>
+      </div>
+      <div class="field">
         <label>Biaya Layanan</label>
         <input type="number" inputmode="numeric" min="0" id="biayaLayanan" placeholder="0" />
         <div class="hint">Biaya layanan tambahan per transaksi, dalam Rupiah.</div>
@@ -543,12 +548,7 @@
       <div class="field">
         <label>Pajak (%)</label>
         <input type="number" inputmode="decimal" min="0" max="100" step="0.1" id="biayaPajak" placeholder="0" />
-        <div class="hint">Persentase pajak yang dikenakan ke total transaksi.</div>
-      </div>
-      <div class="field">
-        <label>Biaya Ekspedisi</label>
-        <input type="number" inputmode="numeric" min="0" id="biayaEkspedisi" placeholder="0" />
-        <div class="hint">Biaya ekspedisi default untuk produk fisik, dalam Rupiah.</div>
+        <div class="hint">Persentase pajak yang dikenakan ke total transaksi (produk + ongkir + biaya layanan).</div>
       </div>
     </div>
     <div class="modal-footer">

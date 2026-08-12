@@ -85,25 +85,22 @@
             <div class="aff-login-panel" id="affLoginPanel" hidden>
               <p class="aff-submit-error" id="affLoginError"></p>
               <div class="aff-field" id="affLoginEmailField">
-                <label for="affLoginEmail">Email affiliate kamu</label>
+                <label for="affLoginEmail">Email</label>
                 <div class="aff-input">
                   <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
                   <input type="email" id="affLoginEmail" placeholder="nama@email.com" autocomplete="email" />
                 </div>
                 <p class="aff-field__error">Format email tidak valid.</p>
               </div>
-              <button type="button" class="aff-submit-btn" id="affLoginSendBtn">
-                <span>Kirim Kode ke Email</span>
-              </button>
-
-              <div class="aff-field" id="affLoginCodeField" hidden>
-                <label for="affLoginCode">Kode dari email (6 digit)</label>
+              <div class="aff-field" id="affLoginPasswordField">
+                <label for="affLoginPassword">Password</label>
                 <div class="aff-input">
-                  <input type="text" id="affLoginCode" inputmode="numeric" maxlength="6" placeholder="123456" autocomplete="one-time-code" />
+                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <input type="password" id="affLoginPassword" placeholder="Password kamu" autocomplete="current-password" />
                 </div>
-                <p class="aff-field__error">Kode salah atau sudah kedaluwarsa.</p>
+                <p class="aff-field__error">Password salah.</p>
               </div>
-              <button type="button" class="aff-submit-btn" id="affLoginVerifyBtn" hidden>
+              <button type="button" class="aff-submit-btn" id="affLoginSubmitBtn">
                 <span>Masuk</span>
               </button>
             </div>
@@ -137,6 +134,15 @@
                   <input type="email" id="affEmail" name="email" placeholder="nama@email.com" autocomplete="email" />
                 </div>
                 <p class="aff-field__error">Format email tidak valid.</p>
+              </div>
+
+              <div class="aff-field" id="affFieldPassword">
+                <label for="affPassword">Buat Password</label>
+                <div class="aff-input">
+                  <svg class="aff-input__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <input type="password" id="affPassword" name="password" placeholder="Minimal 6 karakter" autocomplete="new-password" />
+                </div>
+                <p class="aff-field__error">Password minimal 6 karakter.</p>
               </div>
 
               <label class="aff-consent" id="affFieldConsent" for="affConsent">

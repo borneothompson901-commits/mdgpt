@@ -104,8 +104,8 @@
   gap: 3px;
   font-size: 0.68rem;
   font-weight: 700;
-  color: var(--cat-accent);
-  background: rgba(169, 26, 182, 0.1);
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.12);
   padding: 3px 8px 3px 6px;
   border-radius: var(--radius-pill, 999px);
 }
@@ -121,8 +121,6 @@
   font-weight: 700;
   color: var(--cat-accent);
 }
-
-/* ---- Full-wide benefit strip ------------------------------------------- */
 
 .aff-benefits {
   display: grid;
@@ -164,8 +162,6 @@
   margin: 0;
 }
 
-/* ---- Auth card: purple visual panel + login/signup panel --------------- */
-
 .aff-auth {
   margin-bottom: 24px;
   padding: 20px 14px;
@@ -187,8 +183,6 @@
   overflow: hidden;
   box-shadow: 0 24px 60px -28px rgba(43, 3, 54, 0.45);
 }
-
-/* Left visual panel: solid brand purple + soft transparent shapes -------- */
 
 .aff-auth-visual {
   position: relative;
@@ -252,12 +246,10 @@
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* Right form panel --------------------------------------------------------- */
-
 .aff-auth-panel {
   background: var(--white);
-  padding: 32px 24px;
-  min-height: 480px;
+  padding: 24px 24px;
+  min-height: 448px;
   display: flex;
   flex-direction: column;
 }
@@ -317,8 +309,6 @@
   text-align: center;
 }
 
-/* ---- Password reveal toggle --------------------------------------------- */
-
 .aff-input--has-toggle input {
   padding-right: 40px;
 }
@@ -370,7 +360,7 @@
   }
 
   .aff-auth-visual {
-    min-height: 520px;
+    min-height: 476px;
     padding: 40px;
   }
 
@@ -379,8 +369,8 @@
   }
 
   .aff-auth-panel {
-    padding: 44px 56px;
-    min-height: 520px;
+    padding: 36px 56px;
+    min-height: 476px;
     justify-content: center;
   }
 }
@@ -954,6 +944,83 @@ body.aff-scroll-lock {
   margin: 12px 0 0;
 }
 
+.aff-logout-btn {
+  width: 100%;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: 1.5px solid var(--cat-accent);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--cat-accent);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.aff-logout-btn[hidden] {
+  display: none;
+}
+
+.aff-logout-btn:hover {
+  background: rgba(169, 26, 182, 0.06);
+}
+
+.aff-chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.aff-chart-head .aff-card__label {
+  margin: 0;
+}
+
+.aff-chart-head__total {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-headline);
+}
+
+.aff-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 130px;
+  padding-top: 8px;
+}
+
+.aff-chart-bar {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  height: 100%;
+}
+
+.aff-chart-bar__col {
+  width: 100%;
+  max-width: 26px;
+  border-radius: 6px 6px 3px 3px;
+  background: linear-gradient(180deg, var(--grad-2, #b104ff), var(--grad-1, #a91ab6));
+  min-height: 4px;
+}
+
+.aff-chart-bar__day {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
 .aff-toast {
   position: fixed;
   left: 50%;
@@ -1007,7 +1074,8 @@ body.aff-scroll-lock {
     padding-top: 12px;
   }
 
-  .aff-stats {
+  .aff-stats,
+  .aff-card--chart {
     grid-column: 1 / -1;
   }
 }

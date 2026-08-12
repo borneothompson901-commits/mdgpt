@@ -63,8 +63,15 @@
     return out;
   }
 
-  function generateRefCode(name) {
-    return (slugFromName(name) + "-" + randomSuffix(5)).toUpperCase();
+  function generateRefCode() {
+    return randomSuffix(8).toUpperCase();
+  }
+
+  function nameFromEmail(email) {
+    var local = (email || "").split("@")[0] || "";
+    local = local.replace(/[^a-zA-Z0-9]+/g, " ").trim();
+    if (!local) return "Affiliate";
+    return local.charAt(0).toUpperCase() + local.slice(1);
   }
 
   function setCookie(name, value, days) {
@@ -360,11 +367,9 @@
     var form = $("#affForm");
     if (!form) return;
 
-    var nameField = $("#affFieldName");
     var waField = $("#affFieldWa");
     var emailField = $("#affFieldEmail");
     var passwordField = $("#affFieldPassword");
-    var passwordConfirmField = $("#affFieldPasswordConfirm");
     var consentField = $("#affFieldConsent");
     var submitBtn = $("#affSubmitBtn");
     var submitError = $("#affSubmitError");
@@ -373,20 +378,14 @@
       e.preventDefault();
       submitError.classList.remove("is-visible");
 
-      var name = $("#affName").value.trim();
       var wa = $("#affWa").value.trim();
       var email = $("#affEmail").value.trim();
       var password = $("#affPassword").value;
-      var passwordConfirm = $("#affPasswordConfirm").value;
       var agreed = $("#affConsent").checked;
 
       var valid = true;
-      [nameField, waField, emailField, passwordField, passwordConfirmField, consentField].forEach(clearFieldError);
+      [waField, emailField, passwordField, consentField].forEach(clearFieldError);
 
-      if (name.length < 3) {
-        fieldError(nameField, "Nama minimal 3 karakter.");
-        valid = false;
-      }
       if (!isValidWhatsapp(wa)) {
         fieldError(waField, "Nomor WhatsApp tidak valid.");
         valid = false;
@@ -399,10 +398,6 @@
         fieldError(passwordField, "Password minimal 6 karakter.");
         valid = false;
       }
-      if (password.length >= 6 && passwordConfirm !== password) {
-        fieldError(passwordConfirmField, "Konfirmasi password tidak sama.");
-        valid = false;
-      }
       if (!agreed) {
         fieldError(consentField, "Kamu harus menyetujui ketentuan affiliate.");
         valid = false;
@@ -410,11 +405,11 @@
       if (!valid) return;
 
       var payload = {
-        name: name,
+        name: nameFromEmail(email),
         whatsapp: normalizeWhatsapp(wa),
         email: email.toLowerCase(),
         password: password,
-        ref_code: generateRefCode(name),
+        ref_code: generateRefCode(),
         commission_rate: 10,
         total_clicks: 0,
         total_orders: 0,

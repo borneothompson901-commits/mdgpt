@@ -89,7 +89,7 @@
       tr.innerHTML =
         '<td><div class="prod-cell">' +
           '<div class="thumb">' + escapeHtml(initial) + '</div>' +
-          '<div><div class="prod-name" title="' + escapeHtml(a.name || "(Tanpa nama)") + '">' + escapeHtml(a.name || "(Tanpa nama)") + '</div>' +
+          '<div><div class="prod-name" title="' + escapeHtml(a.name || "(Tanpa nama)") + '">' + escapeHtml(a.name || "(Tanpa nama)") + (a.status === "suspended" ? ' <span class="badge badge-red">Suspended</span>' : '') + '</div>' +
           '<div class="prod-sku">' + escapeHtml(a.ref_code || "-") + '</div></div>' +
         '</div></td>' +
         '<td title="' + escapeHtml(a.email || "") + '">' + escapeHtml(truncateEmail(a.email)) + '</td>' +
@@ -263,11 +263,21 @@
     deleteConfirmBtn.disabled = true;
     deleteConfirmBtn.textContent = "Menghapus...";
     try {
-      await db.deleteAffiliate(deletingId);
-      state.affiliates = state.affiliates.filter(function (x) { return String(x.id) !== String(deletingId); });
-      render();
-      closeDeleteModal();
-      AdminShared.toast("Affiliate berhasil dihapus");
+      var result = await db.deleteAffiliate(deletingId);
+      if (result && result.suspended) {
+        // Punya riwayat order -> tidak dihapus, cuma di-suspend (biar histori
+        // order/komisi lama tetap aman). Update status di baris, jangan hilangkan.
+        var idx = state.affiliates.findIndex(function (x) { return String(x.id) === String(deletingId); });
+        if (idx !== -1) state.affiliates[idx].status = "suspended";
+        render();
+        closeDeleteModal();
+        AdminShared.toast(result.message || "Affiliate punya riwayat transaksi, jadi di-nonaktifkan (bukan dihapus).", "error");
+      } else {
+        state.affiliates = state.affiliates.filter(function (x) { return String(x.id) !== String(deletingId); });
+        render();
+        closeDeleteModal();
+        AdminShared.toast("Affiliate berhasil dihapus");
+      }
     } catch (e) {
       console.error(e);
       AdminShared.toast(e.message || "Gagal menghapus affiliate", "error");
@@ -277,6 +287,8 @@
     }
   });
 
+  // Muat data begitu tab Affiliate pertama kali dibuka (bukan langsung saat
+  // load halaman), sama seperti pola tab lain di dashboard ini.
   var loaded = false;
   document.querySelectorAll('.nav-item[data-page="affiliate"]').forEach(function (link) {
     link.addEventListener("click", function () {

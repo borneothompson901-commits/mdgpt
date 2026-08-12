@@ -126,7 +126,7 @@
     if (dash) dash.classList.add("is-visible");
 
     var logoutBtn = $("#affLogoutBtn");
-    if (logoutBtn) logoutBtn.hidden = !viaSession;
+    if (logoutBtn) logoutBtn.hidden = false;
 
     var cover = $("#affCover");
     if (cover) cover.classList.add("is-dashboard");
@@ -425,8 +425,17 @@
       registerAffiliate(payload)
         .then(function (affiliate) {
           saveLocal(affiliate);
-          renderDashboard(affiliate);
+          renderDashboard(affiliate, true);
           showToast("Clingg! Akun kamu berhasil terdaftar.");
+          // Langsung bikin session Supabase Auth beneran (bukan cuma cache
+          // lokal) pakai password yang baru saja dibuat, supaya dashboard
+          // selalu narik data terbaru (mis. kalau admin ubah email/whatsapp
+          // dari CMS) tiap kali affiliate buka halaman ini lagi.
+          if (sb) {
+            sb.auth.signInWithPassword({ email: payload.email, password: payload.password }).catch(function () {
+              /* best-effort; affiliate masih bisa login manual lewat form Login */
+            });
+          }
         })
         .catch(function (err) {
           var msg = "Gagal mendaftar. Coba lagi sebentar lagi.";

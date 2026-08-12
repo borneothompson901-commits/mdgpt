@@ -62,6 +62,7 @@
 
   var cartListEl = document.getElementById("cartList");
   var cartEmptyEl = document.getElementById("cartEmpty");
+  var cartLoadingEl = document.getElementById("cartLoading");
   var itemTemplate = document.getElementById("cartItemTemplate");
 
   var digitalOnlyNoteEl = document.getElementById("digitalOnlyNote");
@@ -356,6 +357,7 @@
   function renderCart() {
     var cart = window.CartStore.getCart();
     if (!Array.isArray(cart)) cart = [];
+    if (cartLoadingEl) cartLoadingEl.hidden = true;
     cartListEl.innerHTML = "";
 
     if (cart.length === 0) {

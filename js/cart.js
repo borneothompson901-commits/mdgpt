@@ -14,7 +14,7 @@
   var PIVOT_ENDPOINT = SUPABASE_URL + "/functions/v1/pivot-create-payment";
 
   var VA_CHANNELS = [
-    { code: "BCA", label: "BCA" },
+    { code: "BCA", label: "BCA", disabled: true },
     { code: "PERMATA", label: "Permata" },
     { code: "BNI", label: "BNI" },
     { code: "BRI", label: "BRI" },
@@ -31,6 +31,23 @@
     { code: "LINKAJA", label: "LinkAja" },
     { code: "ASTRAPAY", label: "AstraPay" }
   ];
+  var CHANNEL_ICON = {
+    BCA: { file: "bca", initials: "BCA", bg: "#003876" },
+    PERMATA: { file: "permata", initials: "PR", bg: "#003876" },
+    BNI: { file: "bni", initials: "BNI", bg: "#f37021" },
+    BRI: { file: "bri", initials: "BRI", bg: "#00529c" },
+    MANDIRI: { file: "mandiri", initials: "MD", bg: "#003a70" },
+    CIMB: { file: "cimb", initials: "CB", bg: "#7a1f2b" },
+    DANAMON: { file: "danamon", initials: "DM", bg: "#e2231a" },
+    MAYBANK: { file: "maybank", initials: "MB", bg: "#ffc72c" },
+    SAHABAT_SAMPOERNA: { file: "sahabat_sampoerna", initials: "BSS", bg: "#0f9d58" },
+    QRIS: { file: "qris", initials: "QR", bg: "#4b2d83" },
+    SHOPEEPAY: { file: "shopeepay", initials: "SP", bg: "#ee4d2d" },
+    DANA: { file: "dana", initials: "DN", bg: "#118eea" },
+    OVO: { file: "ovo", initials: "OVO", bg: "#4c2a86" },
+    LINKAJA: { file: "linkaja", initials: "LA", bg: "#e6231e" },
+    ASTRAPAY: { file: "astrapay", initials: "AP", bg: "#005ca9" }
+  };
 
   var SERVICE_FEE = 0;
   var TAX_RATE = 0;
@@ -180,7 +197,7 @@
   var customerNameEl = document.getElementById("cartCustomerName");
 
   var CHECKOUT_STORAGE_KEY = "mdgpt_lingua_checkout";
-  var COUNTDOWN_MS = 6 * 60 * 60 * 1000; // 6 jam
+  var COUNTDOWN_MS = 6 * 60 * 60 * 1000;
 
   var navTitleMain = document.getElementById("navTitleMain");
   var navTitleMobile = document.getElementById("navTitleMobile");
@@ -396,8 +413,6 @@
       return;
     }
 
-    // Saat sedang di step pembayaran, sembunyikan form alamat/kurir & catatan digital,
-    // kolom kanan cukup nampilin Ringkasan Pesanan aja.
     if (checkoutModeActive) {
       setVisible(digitalOnlyNoteEl, false);
       setVisible(shippingSectionEl, false);
@@ -746,7 +761,6 @@
       togglePaketPanel(headerGroup);
     });
 
-    // Aksesibilitas: bisa expand/pilih paket pakai keyboard (Enter/Space)
     kurirListEl.addEventListener("keydown", function (e) {
       if (e.key !== "Enter" && e.key !== " ") return;
       var paketRow = e.target.closest(".cart-kurir-paket-item");
@@ -799,7 +813,7 @@
       var payload = {
         destination_id: destinationIdEl.value,
         weight: weight,
-        couriers: couriers // single request covers all couriers at once (RajaOngkir supports courier=a:b:c)
+        couriers: couriers
       };
 
       var ongkirRequest = fetch(ONGKIR_ENDPOINT, {
@@ -843,7 +857,7 @@
 
           renderPaketList(group, result.courier, courierName, services);
 
-          var courierCheapest = services[0]; // sudah diurutkan termurah dari backend
+          var courierCheapest = services[0];
           if (costEl) costEl.textContent = "mulai " + formatRupiah(courierCheapest.cost);
 
           if (!cheapest || courierCheapest.cost < cheapest.cost) {
@@ -859,8 +873,6 @@
         });
 
         if (cheapest) {
-          // Jangan auto-pilih kurir termurah, cukup info saja.
-          // User tetap harus klik manual salah satu ekspedisi di bawah.
           showOngkirNote(
             "Termurah: " + cheapest.courierName + " " + formatRupiah(cheapest.cost) + ". Silakan pilih kurir.",
             "success"
@@ -967,45 +979,85 @@
     });
   }
 
+  function buildChannelIconEl(code) {
+    var iconWrap = document.createElement("span");
+    iconWrap.className = "payment-channel-row__icon";
+    var meta = CHANNEL_ICON[code];
+    var initialsEl = document.createElement("span");
+    initialsEl.className = "payment-channel-row__icon-fallback";
+    initialsEl.textContent = meta ? meta.initials : "";
+    iconWrap.style.background = meta ? meta.bg : "#a91ab6";
+    iconWrap.appendChild(initialsEl);
+    if (meta && meta.file) {
+      var imgEl = document.createElement("img");
+      imgEl.alt = code;
+      imgEl.loading = "lazy";
+      imgEl.addEventListener("error", function () {
+        imgEl.remove();
+        iconWrap.style.background = meta.bg;
+        initialsEl.hidden = false;
+      });
+      imgEl.addEventListener("load", function () {
+        initialsEl.hidden = true;
+        iconWrap.style.background = "transparent";
+      });
+      initialsEl.hidden = true;
+      imgEl.src = "../assets/icons/" + meta.file + ".png";
+      iconWrap.appendChild(imgEl);
+    }
+    return iconWrap;
+  }
+
   function renderChannelRows(method) {
     var listEl = channelListEls[method];
-    if (!listEl || listEl.childElementCount > 0) return; // render once
+    if (!listEl || listEl.childElementCount > 0) return;
 
     var rows = [];
     if (method === "VA") {
-      // Tanpa desc: nama bank saja, biar user fokus milih, ga baca teks berulang.
       rows = VA_CHANNELS.map(function (ch) {
-        return { code: ch.code, title: ch.label, desc: "" };
+        return { code: ch.code, title: ch.label, desc: "", disabled: !!ch.disabled };
       });
     } else if (method === "EWALLET") {
-      // Tanpa desc: nama e-wallet saja, biar user fokus milih, ga baca teks berulang.
       rows = EWALLET_CHANNELS.map(function (ch) {
-        return { code: ch.code, title: ch.label, desc: "" };
+        return { code: ch.code, title: ch.label, desc: "", disabled: false };
       });
     } else if (method === "QRIS") {
-      rows = [{ code: "", title: "QRIS", desc: "" }];
+      rows = [{ code: "QRIS", title: "QRIS", desc: "", disabled: false }];
     }
 
     rows.forEach(function (row) {
       var rowEl = document.createElement("div");
-      rowEl.className = "payment-channel-row";
+      rowEl.className = "payment-channel-row" + (row.disabled ? " payment-channel-row--disabled" : "");
+
+      var mainEl = document.createElement("div");
+      mainEl.className = "payment-channel-row__main";
+      mainEl.appendChild(buildChannelIconEl(row.code));
 
       var infoEl = document.createElement("div");
       infoEl.className = "payment-channel-row__info";
       infoEl.innerHTML =
         '<span class="payment-channel-row__title">' + row.title + '</span>' +
         (row.desc ? '<span class="payment-channel-row__desc">' + row.desc + '</span>' : '');
+      mainEl.appendChild(infoEl);
 
-      var pickBtn = document.createElement("button");
-      pickBtn.type = "button";
-      pickBtn.className = "payment-pick-btn";
-      pickBtn.textContent = "Pilih";
-      pickBtn.addEventListener("click", function () {
-        pickChannel(method, row.code, row.title, pickBtn);
-      });
+      rowEl.appendChild(mainEl);
 
-      rowEl.appendChild(infoEl);
-      rowEl.appendChild(pickBtn);
+      if (row.disabled) {
+        var badgeEl = document.createElement("span");
+        badgeEl.className = "payment-channel-row__badge";
+        badgeEl.textContent = "Belum tersedia";
+        rowEl.appendChild(badgeEl);
+      } else {
+        var pickBtn = document.createElement("button");
+        pickBtn.type = "button";
+        pickBtn.className = "payment-pick-btn";
+        pickBtn.textContent = "Pilih";
+        pickBtn.addEventListener("click", function () {
+          pickChannel(method, row.code === "QRIS" ? "" : row.code, row.title, pickBtn);
+        });
+        rowEl.appendChild(pickBtn);
+      }
+
       listEl.appendChild(rowEl);
     });
   }
@@ -1017,6 +1069,7 @@
       var header = e.target.closest(".payment-accordion__header");
       if (!header) return;
       var item = header.closest(".payment-accordion__item");
+      if (item.dataset.methodDisabled === "true") return;
       var panel = item.querySelector(".payment-accordion__panel");
       var isOpen = item.classList.contains("is-open");
 
@@ -1319,7 +1372,6 @@
     checkoutDoneBtn.addEventListener("click", cancelCheckoutAndReturnToCart);
   }
 
-  // Restore last checkout step on load / reload / back navigation
   function applyPersistedCheckoutState() {
     checkoutState = readCheckoutState();
     if (!checkoutState) {
@@ -1338,7 +1390,6 @@
   applyPersistedCheckoutState();
 
   window.addEventListener("pageshow", function (e) {
-    // Handles bfcache back/forward navigation so the last checkout step is kept
     if (e.persisted) applyPersistedCheckoutState();
   });
 

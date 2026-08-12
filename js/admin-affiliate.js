@@ -52,21 +52,8 @@
     return d;
   }
 
-  function iconCopy() {
-    return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>';
-  }
-
-  function copyToClipboard(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).catch(function () {});
-    } else {
-      var ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      try { document.execCommand("copy"); } catch (e) {}
-      document.body.removeChild(ta);
-    }
+  function iconWa() {
+    return '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-1.5-.7-2.4-1.3-3.4-2.9-.3-.4.3-.4.7-1.3.1-.2 0-.4 0-.5-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>';
   }
 
   function matchesFilter(a) {
@@ -83,7 +70,6 @@
 
     list.forEach(function (a) {
       var initial = (a.name || "A").charAt(0).toUpperCase();
-      var waDisplay = a.whatsapp ? "+" + a.whatsapp : "—";
 
       var tr = document.createElement("tr");
       tr.innerHTML =
@@ -92,13 +78,12 @@
           '<div><div class="prod-name" title="' + escapeHtml(a.name || "(Tanpa nama)") + '">' + escapeHtml(a.name || "(Tanpa nama)") + (a.status === "suspended" ? ' <span class="badge badge-red">Suspended</span>' : '') + '</div>' +
           '<div class="prod-sku">' + escapeHtml(a.ref_code || "-") + '</div></div>' +
         '</div></td>' +
-        '<td title="' + escapeHtml(a.email || "") + '">' + escapeHtml(truncateEmail(a.email)) + '</td>' +
+        '<td class="col-email" title="' + escapeHtml(a.email || "") + '">' + escapeHtml(truncateEmail(a.email)) + '</td>' +
         '<td>' + (parseInt(a.total_clicks, 10) || 0) + '</td>' +
         '<td>' + (parseInt(a.total_orders, 10) || 0) + '</td>' +
-        '<td>' + rupiah(a.total_commission) + '</td>' +
+        '<td class="col-fee">' + rupiah(a.total_commission) + '</td>' +
         '<td><div class="wa-cell">' +
-          '<span title="' + escapeHtml(waDisplay) + '">' + escapeHtml(waDisplay) + '</span>' +
-          (a.whatsapp ? '<button type="button" class="btn-icon wa-copy" data-copy-wa="' + escapeHtml(waDisplay) + '" title="Salin nomor">' + iconCopy() + '</button>' : '') +
+          (a.whatsapp ? '<button type="button" class="btn-icon wa-action" data-wa="' + escapeHtml(a.whatsapp) + '" title="Chat WhatsApp">' + iconWa() + '</button>' : '<span>—</span>') +
         '</div></td>' +
         '<td class="row-actions"><div class="actions">' +
           '<button class="btn-icon edit" data-edit="' + a.id + '" title="Edit">' +
@@ -111,10 +96,9 @@
       tbody.appendChild(tr);
     });
 
-    tbody.querySelectorAll("[data-copy-wa]").forEach(function (btn) {
+    tbody.querySelectorAll("[data-wa]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        copyToClipboard(btn.dataset.copyWa.replace(/^\+/, ""));
-        AdminShared.toast("Nomor WhatsApp disalin");
+        window.open("https://wa.me/" + btn.dataset.wa, "_blank", "noopener");
       });
     });
     tbody.querySelectorAll("[data-edit]").forEach(function (btn) {
@@ -142,7 +126,6 @@
     });
   }
 
-  // ---------------- Edit modal ----------------
   var editModal = document.getElementById("affEditModal");
   var editEmailInput = document.getElementById("affEditEmail");
   var editWaInput = document.getElementById("affEditWa");
@@ -238,7 +221,6 @@
     }
   });
 
-  // ---------------- Delete modal ----------------
   var deleteModal = document.getElementById("affDeleteModal");
   var deleteNameEl = document.getElementById("affDeleteName");
   var deleteConfirmBtn = document.getElementById("affDeleteConfirmBtn");
@@ -265,8 +247,6 @@
     try {
       var result = await db.deleteAffiliate(deletingId);
       if (result && result.suspended) {
-        // Punya riwayat order -> tidak dihapus, cuma di-suspend (biar histori
-        // order/komisi lama tetap aman). Update status di baris, jangan hilangkan.
         var idx = state.affiliates.findIndex(function (x) { return String(x.id) === String(deletingId); });
         if (idx !== -1) state.affiliates[idx].status = "suspended";
         render();
@@ -287,8 +267,6 @@
     }
   });
 
-  // Muat data begitu tab Affiliate pertama kali dibuka (bukan langsung saat
-  // load halaman), sama seperti pola tab lain di dashboard ini.
   var loaded = false;
   document.querySelectorAll('.nav-item[data-page="affiliate"]').forEach(function (link) {
     link.addEventListener("click", function () {

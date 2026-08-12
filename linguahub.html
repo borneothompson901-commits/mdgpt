@@ -86,7 +86,6 @@
   <div class="content">
     <div class="content-inner">
 
-      <!-- ========== PAGE: Overview ========== -->
       <section class="page-section active" id="pageOverview" data-page-section="overview">
         <div class="page-head">
           <div class="page-head-left">
@@ -120,9 +119,22 @@
             <div class="overview-empty" id="outStockEmpty" hidden>Tidak ada produk dengan stok habis.</div>
           </div>
         </div>
+
+        <div class="page-head" style="margin-top:26px;">
+          <div class="page-head-left">
+            <div class="page-title" style="font-size:1rem;">Overview Transaksi</div>
+            <div class="page-sub">Ringkasan pembayaran masuk dari Pivot Payment.</div>
+          </div>
+        </div>
+        <div class="stat-grid" id="txStatGrid">
+          <div class="stat-card"><div class="stat-card__label">Total Transaksi</div><div class="stat-card__value" id="txStatTotal">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Berhasil (Paid)</div><div class="stat-card__value" id="txStatPaid">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Menunggu</div><div class="stat-card__value" id="txStatPending">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Gagal / Kadaluarsa</div><div class="stat-card__value" id="txStatFailed">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Omzet Terbayar</div><div class="stat-card__value" id="txStatRevenue">Rp0</div></div>
+        </div>
       </section>
 
-      <!-- ========== PAGE: Produk ========== -->
       <section class="page-section" id="pageProduk" data-page-section="produk" hidden>
         <div class="page-head">
           <div class="page-head-left">
@@ -172,7 +184,6 @@
                 </tr>
               </thead>
               <tbody id="productTbody">
-                <!-- rows injected -->
               </tbody>
             </table>
           </div>
@@ -182,7 +193,6 @@
         </div>
       </section>
 
-      <!-- ========== PAGE: Transaksi ========== -->
       <section class="page-section" id="pageTransaksi" data-page-section="transaksi" hidden>
         <div class="page-head">
           <div class="page-head-left">
@@ -195,14 +205,6 @@
               Refresh
             </button>
           </div>
-        </div>
-
-        <div class="stat-grid" id="txStatGrid">
-          <div class="stat-card"><div class="stat-card__label">Total Transaksi</div><div class="stat-card__value" id="txStatTotal">0</div></div>
-          <div class="stat-card"><div class="stat-card__label">Berhasil (Paid)</div><div class="stat-card__value" id="txStatPaid">0</div></div>
-          <div class="stat-card"><div class="stat-card__label">Menunggu</div><div class="stat-card__value" id="txStatPending">0</div></div>
-          <div class="stat-card"><div class="stat-card__label">Gagal / Kadaluarsa</div><div class="stat-card__value" id="txStatFailed">0</div></div>
-          <div class="stat-card"><div class="stat-card__label">Omzet Terbayar</div><div class="stat-card__value" id="txStatRevenue">Rp0</div></div>
         </div>
 
         <div class="card">
@@ -231,19 +233,17 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Reference ID</th>
+                  <th class="col-refid">Reference ID</th>
                   <th>Customer</th>
-                  <th>Metode</th>
+                  <th class="col-metode">Metode</th>
                   <th>Jumlah</th>
-                  <th>Affiliate</th>
+                  <th class="col-affiliate">Affiliate</th>
                   <th>Status</th>
                   <th>Waktu</th>
                   <th></th>
                 </tr>
               </thead>
-              <tbody id="txTbody">
-                <!-- rows injected -->
-              </tbody>
+              <tbody id="txTbody"></tbody>
             </table>
           </div>
           <div class="empty-state" id="txEmptyState" hidden>
@@ -252,7 +252,6 @@
         </div>
       </section>
 
-      <!-- ========== PAGE: Affiliate ========== -->
       <section class="page-section" id="pageAffiliate" data-page-section="affiliate" hidden>
         <div class="page-head">
           <div class="page-head-left">
@@ -274,17 +273,15 @@
               <thead>
                 <tr>
                   <th>Affiliate</th>
-                  <th>Email</th>
+                  <th class="col-email">Email</th>
                   <th>Klik</th>
                   <th>Terjual</th>
-                  <th>Fee</th>
+                  <th class="col-fee">Fee</th>
                   <th>WhatsApp</th>
                   <th></th>
                 </tr>
               </thead>
-              <tbody id="affiliateTbody">
-                <!-- rows injected -->
-              </tbody>
+              <tbody id="affiliateTbody"></tbody>
             </table>
           </div>
           <div class="empty-state" id="affiliateEmptyState" hidden>
@@ -297,7 +294,6 @@
   </div>
 </div>
 
-<!-- Edit affiliate modal -->
 <div class="modal-backdrop" id="affEditModal">
   <div class="modal">
     <div class="modal-header">
@@ -331,7 +327,6 @@
   </div>
 </div>
 
-<!-- Delete affiliate confirm modal -->
 <div class="modal-backdrop" id="affDeleteModal">
   <div class="modal">
     <div class="modal-header">
@@ -350,7 +345,6 @@
   </div>
 </div>
 
-<!-- Transaksi detail modal -->
 <div class="modal-backdrop" id="txDetailModal">
   <div class="modal">
     <div class="modal-header">
@@ -360,12 +354,10 @@
       </button>
     </div>
     <div class="modal-body" id="txDetailBody">
-      <!-- injected -->
     </div>
   </div>
 </div>
 
-<!-- Gate modal: pilih jenis produk, lalu jumlah varian, sebelum masuk wizard -->
 <div class="modal-backdrop" id="gateModal">
   <div class="modal">
     <div class="modal-header">
@@ -376,7 +368,6 @@
     </div>
     <div class="modal-body">
 
-      <!-- Langkah 1: jenis produk -->
       <div class="gate-panel" data-gate-panel="1">
         <div class="gate-options">
           <button type="button" class="gate-opt" data-type="digital">
@@ -392,7 +383,6 @@
         </div>
       </div>
 
-      <!-- Langkah 2: jumlah varian -->
       <div class="gate-panel" data-gate-panel="2" hidden>
         <button type="button" class="gate-back" id="gateBackBtn">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
@@ -416,7 +406,6 @@
   </div>
 </div>
 
-<!-- Delete confirm modal -->
 <div class="modal-backdrop" id="deleteModal">
   <div class="modal">
     <div class="modal-header">

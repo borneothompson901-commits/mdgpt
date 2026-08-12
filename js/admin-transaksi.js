@@ -13,9 +13,6 @@
   var searchInput = document.getElementById("txSearchInput");
   var refreshBtn = document.getElementById("btnRefreshTransaksi");
 
-  // Status yang dipakai edge function: "PENDING" (insert awal, sebelum call Pivot),
-  // lalu ditimpa dengan session.status dari Pivot (mis. "REQUIRE_ACTION"), lalu
-  // diupdate lagi oleh webhook handler jadi status final Pivot: PAID/EXPIRED/FAILED/CANCELLED.
   var STATUS_BADGE = {
     PAID: "badge-green",
     SUCCEEDED: "badge-green",
@@ -133,12 +130,12 @@
     list.forEach(function (t) {
       var tr = document.createElement("tr");
       tr.innerHTML =
-        '<td><div class="prod-name">' + escapeHtml(t.client_reference_id || t.id) + "</div>" +
+        '<td class="col-refid"><div class="prod-name">' + escapeHtml(t.client_reference_id || t.id) + "</div>" +
           '<div class="prod-sku">' + fmtDate(t.created_at) + "</div></td>" +
         "<td>" + escapeHtml(customerLabel(t)) + "</td>" +
-        "<td>" + escapeHtml(methodLabel(t)) + "</td>" +
+        '<td class="col-metode">' + escapeHtml(methodLabel(t)) + "</td>" +
         "<td>" + rupiah(t.amount) + "</td>" +
-        "<td>" + (t.ref_code ? '<span class="badge badge-purple">' + escapeHtml(t.ref_code) + "</span>" : "-") + "</td>" +
+        '<td class="col-affiliate">' + (t.ref_code ? '<span class="badge badge-purple">' + escapeHtml(t.ref_code) + "</span>" : "-") + "</td>" +
         "<td>" + statusBadge(t.status) + "</td>" +
         "<td>" + fmtDate(t.updated_at || t.created_at) + "</td>" +
         '<td class="row-actions"><div class="actions">' +
@@ -283,11 +280,11 @@
 
   if (refreshBtn) refreshBtn.addEventListener("click", loadAll);
 
-  // Muat data begitu tab "Transaksi" pertama kali dibuka.
   var loaded = false;
-  document.querySelectorAll('.nav-item[data-page="transaksi"]').forEach(function (link) {
-    link.addEventListener("click", function () {
-      if (!loaded) { loaded = true; loadAll(); }
-    });
+  function loadOnce() {
+    if (!loaded) { loaded = true; loadAll(); }
+  }
+  document.querySelectorAll('.nav-item[data-page="transaksi"], .nav-item[data-page="overview"]').forEach(function (link) {
+    link.addEventListener("click", loadOnce);
   });
 })();

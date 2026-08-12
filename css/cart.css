@@ -574,6 +574,19 @@
   color: var(--gray-400, #9a9a9e);
   text-align: center;
 }
+.cart-page .cart-checkout-hint--error {
+  color: #d9534f;
+  font-weight: 600;
+}
+.cart-page .cart-checkout-hint--error[hidden] {
+  display: none;
+}
+
+.cart-page .is-field-invalid {
+  outline: 2px solid #d9534f !important;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
 
 .cart-page .cart-confirm-overlay {
   position: fixed;

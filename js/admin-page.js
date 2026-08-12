@@ -393,6 +393,50 @@
     function gateOpen() { gateReset(); gateModal.classList.add("open"); }
     function gateClose() { gateModal.classList.remove("open"); }
 
+    var BIAYA_KEY = "admin_biaya_settings_v1";
+    var biayaModal = document.getElementById("biayaModal");
+    var biayaLayananInput = document.getElementById("biayaLayanan");
+    var biayaPajakInput = document.getElementById("biayaPajak");
+    var biayaEkspedisiInput = document.getElementById("biayaEkspedisi");
+
+    function loadBiayaSettings() {
+      try {
+        var raw = localStorage.getItem(BIAYA_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function biayaOpen() {
+      var settings = loadBiayaSettings();
+      biayaLayananInput.value = settings.layanan != null ? settings.layanan : "";
+      biayaPajakInput.value = settings.pajak != null ? settings.pajak : "";
+      biayaEkspedisiInput.value = settings.ekspedisi != null ? settings.ekspedisi : "";
+      biayaModal.classList.add("open");
+    }
+    function biayaClose() { biayaModal.classList.remove("open"); }
+
+    var btnAturBiaya = document.getElementById("btnAturBiaya");
+    if (btnAturBiaya) btnAturBiaya.addEventListener("click", biayaOpen);
+    document.getElementById("biayaCloseBtn").addEventListener("click", biayaClose);
+    document.getElementById("biayaCancelBtn").addEventListener("click", biayaClose);
+    biayaModal.addEventListener("click", function (e) { if (e.target === biayaModal) biayaClose(); });
+    document.getElementById("biayaSaveBtn").addEventListener("click", function () {
+      var settings = {
+        layanan: parseInt(biayaLayananInput.value, 10) || 0,
+        pajak: parseFloat(biayaPajakInput.value) || 0,
+        ekspedisi: parseInt(biayaEkspedisiInput.value, 10) || 0
+      };
+      try {
+        localStorage.setItem(BIAYA_KEY, JSON.stringify(settings));
+        AdminShared.toast("Pengaturan biaya disimpan.", "success");
+        biayaClose();
+      } catch (e) {
+        AdminShared.toast("Gagal menyimpan pengaturan biaya.", "error");
+      }
+    });
+
     document.getElementById("btnTambahProduk").addEventListener("click", gateOpen);
     document.getElementById("gateCloseBtn").addEventListener("click", gateClose);
     gateModal.addEventListener("click", function (e) { if (e.target === gateModal) gateClose(); });

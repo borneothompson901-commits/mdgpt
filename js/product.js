@@ -127,6 +127,13 @@
   var catalogEnd = document.getElementById("catalogEnd");
   var applyBtn = document.getElementById("filterApplyBtn");
   var resetBtn = document.getElementById("filterResetBtn");
+  var catalogLoading = document.getElementById("catalogLoading");
+  var catalogSection = document.getElementById("catalogSection");
+
+  function hideCatalogLoading() {
+    if (catalogLoading) catalogLoading.hidden = true;
+    if (catalogSection) catalogSection.hidden = false;
+  }
 
   function escapeHtmlCard(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -173,7 +180,7 @@
   }
 
   function renderCatalogFromData(DATA) {
-    if (!grid) return;
+    if (!grid) { hideCatalogLoading(); return; }
     var products = DATA.all || [];
     grid.innerHTML = products.map(function (p) { return buildCardHTML(p, DATA.rupiah); }).join("");
     cards = Array.prototype.slice.call(grid.querySelectorAll(".explore-card"));
@@ -187,6 +194,7 @@
       applyFilters();
     }
     applySort();
+    hideCatalogLoading();
   }
 
   function initCatalogFromProductsData() {

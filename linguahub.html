@@ -48,6 +48,13 @@
           <span class="nav-count" id="navTransaksiCount">0</span>
         </a>
       </li>
+      <li>
+        <a href="#" class="nav-item" data-page="affiliate">
+          <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="5" r="2.3" stroke="currentColor" stroke-width="1.35"/><path d="M1 13.5C1 11.015 3.015 9 5.5 9S10 11.015 10 13.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/><circle cx="12" cy="5.5" r="1.8" stroke="currentColor" stroke-width="1.2" opacity=".55"/><path d="M14.5 13c0-1.7-1.12-3.1-2.5-3.1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".55"/></svg>
+          <span class="nav-text">Affiliate</span>
+          <span class="nav-count" id="navAffiliateCount">0</span>
+        </a>
+      </li>
     </ul>
   </nav>
 
@@ -245,6 +252,100 @@
         </div>
       </section>
 
+      <!-- ========== PAGE: Affiliate ========== -->
+      <section class="page-section" id="pageAffiliate" data-page-section="affiliate" hidden>
+        <div class="page-head">
+          <div class="page-head-left">
+            <div class="page-title">Affiliate</div>
+            <div class="page-sub">Kelola akun, kontak, dan performa affiliate toko kamu.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-toolbar">
+            <div class="search-wrap">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="m14 14-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <input type="text" class="search-input" id="affSearchInput" placeholder="Cari nama atau email affiliate..." />
+            </div>
+            <div class="toolbar-spacer"></div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Affiliate</th>
+                  <th>Email</th>
+                  <th>Klik</th>
+                  <th>Terjual</th>
+                  <th>Fee</th>
+                  <th>WhatsApp</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="affiliateTbody">
+                <!-- rows injected -->
+              </tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="affiliateEmptyState" hidden>
+            <p>Belum ada affiliate yang terdaftar.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- Edit affiliate modal -->
+<div class="modal-backdrop" id="affEditModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Edit Affiliate</h3>
+      <button class="modal-close" id="affEditCloseBtn">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 4L4 11M4 4l7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="field" id="affEditEmailField">
+        <label>Email</label>
+        <input type="email" id="affEditEmail" placeholder="nama@email.com" autocomplete="off" />
+        <div class="field-error-msg" id="affEditEmailError" hidden></div>
+      </div>
+      <div class="field" id="affEditWaField">
+        <label>WhatsApp</label>
+        <input type="text" id="affEditWa" placeholder="08xxxxxxxxxx" autocomplete="off" />
+        <div class="field-error-msg" id="affEditWaError" hidden></div>
+      </div>
+      <div class="field" id="affEditPasswordField">
+        <label>Password Baru</label>
+        <input type="password" id="affEditPassword" placeholder="Kosongkan jika tidak diubah" autocomplete="new-password" />
+        <div class="hint">Minimal 6 karakter. Biarkan kosong kalau tidak mau ganti password.</div>
+        <div class="field-error-msg" id="affEditPasswordError" hidden></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="affEditCancelBtn">Batal</button>
+      <button class="btn btn-primary" id="affEditSaveBtn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete affiliate confirm modal -->
+<div class="modal-backdrop" id="affDeleteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Hapus Affiliate</h3>
+      <button class="modal-close" id="affDeleteCloseBtn">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 4L4 11M4 4l7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="delete-warn">Yakin mau menghapus affiliate "<strong id="affDeleteName"></strong>"? Akun login &amp; seluruh datanya akan hilang permanen.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="affDeleteCancelBtn">Batal</button>
+      <button class="btn btn-danger" id="affDeleteConfirmBtn">Hapus</button>
     </div>
   </div>
 </div>
@@ -337,5 +438,6 @@
 <script src="js/admin-core.js"></script>
 <script src="js/admin-page.js"></script>
 <script src="js/admin-transaksi.js"></script>
+<script src="js/admin-affiliate.js"></script>
 </body>
 </html>

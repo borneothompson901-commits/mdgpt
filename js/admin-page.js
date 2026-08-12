@@ -91,8 +91,9 @@
         .sort(function (a, b) { return (parseInt(b.sold, 10) || 0) - (parseInt(a.sold, 10) || 0); })
         .slice(0, 5);
 
-      list.innerHTML = top.map(function (p) {
+      list.innerHTML = top.map(function (p, idx) {
         return '<div class="overview-item">' +
+          '<span class="overview-item__rank">' + (idx + 1) + '</span>' +
           '<span class="overview-item__name" title="' + escapeHtml(p.title || "(Tanpa nama)") + '">' + escapeHtml(p.title || "(Tanpa nama)") + '</span>' +
           '<span class="badge badge-purple">' + (parseInt(p.sold, 10) || 0) + ' terjual</span>' +
         '</div>';

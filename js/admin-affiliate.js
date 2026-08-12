@@ -104,6 +104,44 @@
     return (a.name || "").toLowerCase().indexOf(q) !== -1 || (a.email || "").toLowerCase().indexOf(q) !== -1;
   }
 
+  var KOMISI_KEY = "admin_komisi_settings_v1";
+  var komisiModal = document.getElementById("komisiModal");
+  var komisiPersenInput = document.getElementById("komisiPersen");
+  var btnAturKomisi = document.getElementById("btnAturKomisi");
+
+  function loadKomisiSettings() {
+    try {
+      var raw = localStorage.getItem(KOMISI_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function komisiOpen() {
+    var settings = loadKomisiSettings();
+    komisiPersenInput.value = settings.persen != null ? settings.persen : "";
+    komisiModal.classList.add("open");
+  }
+  function komisiClose() { komisiModal.classList.remove("open"); }
+
+  if (btnAturKomisi) {
+    btnAturKomisi.addEventListener("click", komisiOpen);
+    document.getElementById("komisiCloseBtn").addEventListener("click", komisiClose);
+    document.getElementById("komisiCancelBtn").addEventListener("click", komisiClose);
+    komisiModal.addEventListener("click", function (e) { if (e.target === komisiModal) komisiClose(); });
+    document.getElementById("komisiSaveBtn").addEventListener("click", function () {
+      var settings = { persen: parseFloat(komisiPersenInput.value) || 0 };
+      try {
+        localStorage.setItem(KOMISI_KEY, JSON.stringify(settings));
+        AdminShared.toast("Pengaturan komisi disimpan.", "success");
+        komisiClose();
+      } catch (e) {
+        AdminShared.toast("Gagal menyimpan pengaturan komisi.", "error");
+      }
+    });
+  }
+
   function render() {
     var list = state.affiliates.filter(matchesFilter);
     tbody.innerHTML = "";

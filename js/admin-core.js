@@ -249,8 +249,8 @@
     },
 
     // ---------------- Affiliate (admin) ----------------
-    // Baca semua affiliate & edit email/whatsapp lewat RLS "affiliates_admin_*"
-    // (butuh akun admin login ini terdaftar di tabel public.admins).
+    // Baca semua affiliate lewat RLS "affiliates_admin_select" (butuh akun
+    // admin login ini terdaftar di tabel public.admins).
     async listAffiliates() {
       var headers = await writeHeaders();
       var res = await fetch(
@@ -260,53 +260,46 @@
       if (!res.ok) throw new Error("Gagal memuat affiliate (" + res.status + "): " + (await res.text()));
       return res.json();
     },
-    async updateAffiliateContact(id, payload) {
-      var headers = await writeHeaders({ Prefer: "return=representation" });
-      var res = await fetch(SUPABASE_URL + "/rest/v1/affiliates?id=eq." + encodeURIComponent(id), {
-        method: "PATCH",
-        headers: headers,
+    // Edit email/whatsapp/password/delete SEMUA lewat edge function
+    // affiliate-admin (bukan PATCH REST langsung), karena email & password
+    // affiliate juga harus disinkronkan ke akun login mereka di Supabase Auth
+    // (auth.users) — RLS di tabel affiliates saja tidak menjangkau itu.
+    async _callAffiliateAdminFn(payload) {
+      var session = await getValidSession();
+      if (!session) throw new Error("Sesi admin habis, silakan login ulang.");
+      var res = await fetch(AFFILIATE_ADMIN_FN, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + session.access_token,
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error("Gagal update affiliate (" + res.status + "): " + (await res.text()));
-      var rows = await res.json();
-      return rows[0];
+      var j = {};
+      try { j = await res.json(); } catch (e) { /* noop */ }
+      if (!res.ok) throw new Error(j.error || "Permintaan gagal (" + res.status + ")");
+      return j;
+    },
+    async updateAffiliateContact(id, payload) {
+      return db._callAffiliateAdminFn({
+        action: "update_contact",
+        affiliate_id: id,
+        email: payload.email,
+        whatsapp: payload.whatsapp
+      });
     },
     // Ganti password & hapus affiliate TIDAK bisa lewat RLS/REST biasa (nyentuh
     // auth.users), jadi lewat edge function affiliate-admin pakai access_token
     // admin yang sedang login (bukan anon key).
     async resetAffiliatePassword(affiliateId, newPassword) {
-      var session = await getValidSession();
-      if (!session) throw new Error("Sesi admin habis, silakan login ulang.");
-      var res = await fetch(AFFILIATE_ADMIN_FN, {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: "Bearer " + session.access_token,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ action: "reset_password", affiliate_id: affiliateId, new_password: newPassword })
-      });
-      var j = {};
-      try { j = await res.json(); } catch (e) { /* noop */ }
-      if (!res.ok) throw new Error(j.error || "Gagal mengubah password (" + res.status + ")");
-      return true;
+      return db._callAffiliateAdminFn({ action: "reset_password", affiliate_id: affiliateId, new_password: newPassword });
     },
+    // Kalau affiliate sudah punya riwayat order, DB menolak hapus permanen
+    // (biar histori order/komisi lama tidak hilang) — edge function otomatis
+    // fallback jadi suspend, ditandai lewat properti `suspended` di hasilnya.
     async deleteAffiliate(affiliateId) {
-      var session = await getValidSession();
-      if (!session) throw new Error("Sesi admin habis, silakan login ulang.");
-      var res = await fetch(AFFILIATE_ADMIN_FN, {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: "Bearer " + session.access_token,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ action: "delete", affiliate_id: affiliateId })
-      });
-      var j = {};
-      try { j = await res.json(); } catch (e) { /* noop */ }
-      if (!res.ok) throw new Error(j.error || "Gagal menghapus affiliate (" + res.status + ")");
-      return true;
+      return db._callAffiliateAdminFn({ action: "delete", affiliate_id: affiliateId });
     }
   };
 

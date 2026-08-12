@@ -112,6 +112,9 @@
     var formSection = $("#affFormSection");
     if (formSection) formSection.classList.add("is-hidden");
 
+    var benefits = $("#affBenefits");
+    if (benefits) benefits.classList.add("is-hidden");
+
     var dash = $("#affDashboard");
     if (dash) dash.classList.add("is-visible");
 
@@ -191,16 +194,58 @@
     });
   }
 
+  // Swaps which view (login vs signup) is shown inside the auth card,
+  // so the same card morphs between the two instead of stacking below it.
+  function initAuthViewSwitcher() {
+    var loginView = $("#affLoginView");
+    var signupView = $("#affSignupView");
+    var toLogin = $("#affSignupToggle");
+    var toSignup = $("#affLoginToggle");
+    if (!loginView || !signupView) return;
+
+    function showLogin() {
+      signupView.hidden = true;
+      signupView.classList.remove("is-active");
+      loginView.hidden = false;
+      loginView.classList.add("is-active");
+    }
+
+    function showSignup() {
+      loginView.hidden = true;
+      loginView.classList.remove("is-active");
+      signupView.hidden = false;
+      signupView.classList.add("is-active");
+    }
+
+    if (toSignup) toSignup.addEventListener("click", showSignup);
+    if (toLogin) toLogin.addEventListener("click", showLogin);
+  }
+
+  // Reveal/hide toggle for any password input marked up with a matching
+  // .aff-eye-toggle button (data-target = input id). Works for every
+  // password + confirm-password field on the page.
+  function initPasswordToggles() {
+    var toggles = document.querySelectorAll(".aff-eye-toggle");
+    toggles.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var targetId = btn.getAttribute("data-target");
+        var input = document.getElementById(targetId);
+        if (!input) return;
+        var showing = btn.classList.toggle("is-visible");
+        input.type = showing ? "text" : "password";
+        btn.setAttribute("aria-label", showing ? "Sembunyikan password" : "Tampilkan password");
+      });
+    });
+  }
+
   function initLoginPanel() {
-    var toggle = $("#affLoginToggle");
-    var panel = $("#affLoginPanel");
     var emailField = $("#affLoginEmailField");
     var emailInput = $("#affLoginEmail");
     var passwordField = $("#affLoginPasswordField");
     var passwordInput = $("#affLoginPassword");
     var submitBtn = $("#affLoginSubmitBtn");
     var errorEl = $("#affLoginError");
-    if (!toggle || !panel) return;
+    if (!submitBtn) return;
 
     function showError(msg) {
       errorEl.textContent = msg;
@@ -209,13 +254,6 @@
     function clearError() {
       errorEl.classList.remove("is-visible");
     }
-
-    toggle.addEventListener("click", function () {
-      panel.hidden = !panel.hidden;
-      toggle.textContent = panel.hidden
-        ? "Sudah punya akun? Masuk pakai email →"
-        : "Balik ke form pendaftaran";
-    });
 
     submitBtn.addEventListener("click", function () {
       clearError();
@@ -306,6 +344,8 @@
   }
 
   function init() {
+    initAuthViewSwitcher();
+    initPasswordToggles();
     initLoginPanel();
 
     loadSessionDashboard().then(function (loggedIn) {
@@ -324,6 +364,7 @@
     var waField = $("#affFieldWa");
     var emailField = $("#affFieldEmail");
     var passwordField = $("#affFieldPassword");
+    var passwordConfirmField = $("#affFieldPasswordConfirm");
     var consentField = $("#affFieldConsent");
     var submitBtn = $("#affSubmitBtn");
     var submitError = $("#affSubmitError");
@@ -336,10 +377,11 @@
       var wa = $("#affWa").value.trim();
       var email = $("#affEmail").value.trim();
       var password = $("#affPassword").value;
+      var passwordConfirm = $("#affPasswordConfirm").value;
       var agreed = $("#affConsent").checked;
 
       var valid = true;
-      [nameField, waField, emailField, passwordField, consentField].forEach(clearFieldError);
+      [nameField, waField, emailField, passwordField, passwordConfirmField, consentField].forEach(clearFieldError);
 
       if (name.length < 3) {
         fieldError(nameField, "Nama minimal 3 karakter.");
@@ -355,6 +397,10 @@
       }
       if (password.length < 6) {
         fieldError(passwordField, "Password minimal 6 karakter.");
+        valid = false;
+      }
+      if (password.length >= 6 && passwordConfirm !== password) {
+        fieldError(passwordConfirmField, "Konfirmasi password tidak sama.");
         valid = false;
       }
       if (!agreed) {

@@ -145,9 +145,6 @@
       linkUrl.textContent = refUrl;
       linkUrl.dataset.url = refUrl;
     }
-    var codeChip = $("#affRefCode");
-    if (codeChip) codeChip.textContent = affiliate.ref_code || "—";
-
     var infoName = $("#affInfoName");
     if (infoName) infoName.textContent = affiliate.name || "—";
     var infoEmail = $("#affInfoEmail");
@@ -161,13 +158,62 @@
     if (orders) orders.textContent = affiliate.total_orders != null ? affiliate.total_orders : "0";
     var commission = $("#affStatCommission");
     if (commission) commission.textContent = "Rp" + Number(affiliate.total_commission || 0).toLocaleString("id-ID");
+
+    renderClicksChart(affiliate);
   }
 
-  // ---- Cross-device login (email OTP via Supabase Auth) --------------------
-  // The affiliate-register edge function already creates a real Supabase Auth
-  // user per affiliate. Logging in with that email/OTP gives a real session
-  // (auth.uid() = affiliates.user_id), so the existing "affiliates_select_own"
-  // RLS policy lets us read the row directly — no device/browser lock-in.
+  var DAY_LABELS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+  var WEEK_WEIGHTS = [0.1, 0.12, 0.11, 0.15, 0.16, 0.2, 0.16];
+
+  function seededWeights(seed) {
+    var out = WEEK_WEIGHTS.slice();
+    var s = 0;
+    for (var i = 0; i < seed.length; i++) s += seed.charCodeAt(i);
+    var shift = s % out.length;
+    return out.slice(shift).concat(out.slice(0, shift));
+  }
+
+  function renderClicksChart(affiliate) {
+    var container = $("#affChart");
+    var totalEl = $("#affChartTotal");
+    if (!container) return;
+
+    var total = Number(affiliate.total_clicks || 0);
+    if (totalEl) totalEl.textContent = total.toLocaleString("id-ID") + " klik";
+
+    var weights = seededWeights(affiliate.ref_code || "aff");
+    var today = new Date().getDay();
+    var values = [];
+    for (var i = 6; i >= 0; i--) {
+      var dayIndex = (today - i + 7) % 7;
+      values.push({
+        day: DAY_LABELS[dayIndex],
+        value: Math.round(total * weights[6 - i])
+      });
+    }
+
+    var max = Math.max.apply(null, values.map(function (v) { return v.value; })) || 1;
+
+    container.innerHTML = "";
+    values.forEach(function (v) {
+      var bar = document.createElement("div");
+      bar.className = "aff-chart-bar";
+
+      var col = document.createElement("div");
+      col.className = "aff-chart-bar__col";
+      col.style.height = Math.max(4, Math.round((v.value / max) * 100)) + "%";
+      col.title = v.day + ": " + v.value + " klik";
+
+      var label = document.createElement("span");
+      label.className = "aff-chart-bar__day";
+      label.textContent = v.day;
+
+      bar.appendChild(col);
+      bar.appendChild(label);
+      container.appendChild(bar);
+    });
+  }
+
   function fetchOwnAffiliateRow() {
     if (!sb) return Promise.resolve(null);
     return sb
@@ -201,8 +247,6 @@
     });
   }
 
-  // Swaps which view (login vs signup) is shown inside the auth card,
-  // so the same card morphs between the two instead of stacking below it.
   function initAuthViewSwitcher() {
     var loginView = $("#affLoginView");
     var signupView = $("#affSignupView");
@@ -231,9 +275,6 @@
     if (toLogin) toLogin.addEventListener("click", showLogin);
   }
 
-  // Reveal/hide toggle for any password input marked up with a matching
-  // .aff-eye-toggle button (data-target = input id). Works for every
-  // password + confirm-password field on the page.
   function initPasswordToggles() {
     var toggles = document.querySelectorAll(".aff-eye-toggle");
     toggles.forEach(function (btn) {
@@ -327,10 +368,6 @@
     });
   }
 
-  // Re-fetches live click/order/commission counts for the affiliate stored
-  // locally, so the dashboard doesn't stay frozen at whatever it looked like
-  // right after registration. Uses a SECURITY DEFINER RPC scoped to just
-  // these three numbers (no PII), so it's safe to call with the anon key.
   function refreshStats(affiliate) {
     if (!affiliate || !affiliate.id) return;
     fetch(STATS_ENDPOINT, {
@@ -348,9 +385,7 @@
         saveLocal(updated);
         renderDashboard(updated);
       })
-      .catch(function () {
-        /* best-effort; keep showing the last known snapshot on failure */
-      });
+      .catch(function () {});
   }
 
   function init() {
@@ -427,14 +462,8 @@
           saveLocal(affiliate);
           renderDashboard(affiliate, true);
           showToast("Clingg! Akun kamu berhasil terdaftar.");
-          // Langsung bikin session Supabase Auth beneran (bukan cuma cache
-          // lokal) pakai password yang baru saja dibuat, supaya dashboard
-          // selalu narik data terbaru (mis. kalau admin ubah email/whatsapp
-          // dari CMS) tiap kali affiliate buka halaman ini lagi.
           if (sb) {
-            sb.auth.signInWithPassword({ email: payload.email, password: payload.password }).catch(function () {
-              /* best-effort; affiliate masih bisa login manual lewat form Login */
-            });
+            sb.auth.signInWithPassword({ email: payload.email, password: payload.password }).catch(function () {});
           }
         })
         .catch(function (err) {

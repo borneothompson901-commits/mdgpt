@@ -1,21 +1,6 @@
-/* ==========================================================================
-   admin-core.js
-   Gabungan admin-shared.js + admin-sidebar.js + auth session.
-   Isinya hal-hal yang dipakai bareng di SEMUA halaman admin:
-     1) AdminShared  -> konfigurasi Supabase, helper (rupiah/slugify/toast),
-        upload gambar, auth (login/logout/session). Dipakai Linguahub.html
-        (dashboard), tambah-produk.html (wizard), & login.html.
-     2) Sidebar behavior -> buka/tutup sidebar mobile, collapse desktop.
-        Otomatis no-op kalau elemen #sidebar tidak ada di halaman (aman dipakai di mana saja).
-     3) Auth gate -> kalau halaman ada #sidebar (halaman admin, bukan login.html),
-        otomatis cek session & redirect ke login.html kalau belum login.
-   ========================================================================== */
 (function (global) {
   "use strict";
 
-  /* ============================== 1) AdminShared ============================== */
-
-  // -- Samakan dengan js/products-data.js --
   var SUPABASE_URL = "https://xjtkipgopiormwmbdtfa.supabase.co";
   var SUPABASE_KEY = "sb_publishable_5abZti9M8zHWuHyh59q8Ew_Otn-QopO";
   var SUPABASE_HEADERS = {
@@ -24,11 +9,8 @@
     "Content-Type": "application/json"
   };
 
-  // Endpoint upload file yang sudah ada di project (butuh login admin/session).
   var UPLOAD_ENDPOINT = "/api/upload-file.php";
 
-  // Edge function admin-only: reset password & delete affiliate (operasi yang
-  // butuh Supabase Auth Admin API, jadi RLS biasa tidak bisa menjangkaunya).
   var AFFILIATE_ADMIN_FN = SUPABASE_URL + "/functions/v1/affiliate-admin";
 
   function rupiah(n) {
@@ -44,11 +26,6 @@
       .replace(/(^-|-$)/g, "");
   }
 
-  /* ---------------- Auth (Supabase Auth: email/password) ----------------
-     Kenapa perlu: tabel products/product_categories cuma boleh diBACA
-     publik (anon). Untuk insert/update/delete, Postgres RLS mensyaratkan
-     role "authenticated" — jadi request tulis harus bawa access_token
-     user yang login, bukan cuma publishable key. */
   var SESSION_KEY = "admin_session_v1";
 
   function loadSession() {
@@ -84,7 +61,7 @@
       body: JSON.stringify({ email: email, password: password })
     });
     var j = {};
-    try { j = await res.json(); } catch (e) { /* noop */ }
+    try { j = await res.json(); } catch (e) {  }
     if (!res.ok) {
       throw new Error(j.error_description || j.msg || "Email atau password salah.");
     }
@@ -109,7 +86,6 @@
     return fresh;
   }
 
-  // Return session yang valid (refresh dulu kalau mepet expired). null kalau belum login.
   async function getValidSession() {
     var session = loadSession();
     if (!session || !session.access_token) return null;
@@ -124,12 +100,11 @@
       fetch(SUPABASE_URL + "/auth/v1/logout", {
         method: "POST",
         headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + session.access_token }
-      }).catch(function () { /* noop, tetap logout di sisi client */ });
+      }).catch(function () {  });
     }
     location.href = "login.html";
   }
 
-  // Panggil di halaman admin (yang ada #sidebar). Redirect ke login.html kalau belum login.
   async function requireAuth() {
     var session = await getValidSession();
     if (!session) {
@@ -149,8 +124,6 @@
     return session;
   }
 
-  // Header buat request TULIS (insert/update/delete): pakai access_token user
-  // kalau ada session, supaya kena role "authenticated" di RLS.
   async function writeHeaders(extra) {
     var session = await getValidSession();
     var token = (session && session.access_token) || SUPABASE_KEY;
@@ -160,9 +133,8 @@
     );
   }
 
-  // ---------------- Supabase REST (PostgREST) ----------------
   var db = {
-    // Baca: publik, cukup publishable key.
+
     async listProducts() {
       var res = await fetch(SUPABASE_URL + "/rest/v1/products?select=*&order=id.desc", { headers: SUPABASE_HEADERS });
       if (!res.ok) throw new Error("Gagal memuat produk (" + res.status + ")");
@@ -179,7 +151,7 @@
       if (!res.ok) throw new Error("Gagal memuat kategori (" + res.status + ")");
       return res.json();
     },
-    // Tulis: butuh session login (authenticated), lihat writeHeaders().
+
     async createCategory(payload) {
       var headers = await writeHeaders({ Prefer: "return=representation" });
       var res = await fetch(SUPABASE_URL + "/rest/v1/product_categories", {
@@ -223,11 +195,6 @@
       return true;
     },
 
-    // ---------------- Transaksi (read-only, tabel: orders) ----------------
-    // Diisi oleh edge function pivot-create-payment (insert awal) lalu
-    // diupdate oleh webhook handler Pivot pas status berubah (PAID/EXPIRED/dst).
-    // RLS di tabel ini cuma boleh SELECT oleh role "authenticated" (bukan public
-    // kayak products), jadi selalu pakai writeHeaders() walau ini request baca.
     async listTransactions() {
       var headers = await writeHeaders();
       var res = await fetch(
@@ -248,9 +215,6 @@
       return rows[0] || null;
     },
 
-    // ---------------- Affiliate (admin) ----------------
-    // Baca semua affiliate lewat RLS "affiliates_admin_select" (butuh akun
-    // admin login ini terdaftar di tabel public.admins).
     async listAffiliates() {
       var headers = await writeHeaders();
       var res = await fetch(
@@ -260,10 +224,7 @@
       if (!res.ok) throw new Error("Gagal memuat affiliate (" + res.status + "): " + (await res.text()));
       return res.json();
     },
-    // Edit email/whatsapp/password/delete SEMUA lewat edge function
-    // affiliate-admin (bukan PATCH REST langsung), karena email & password
-    // affiliate juga harus disinkronkan ke akun login mereka di Supabase Auth
-    // (auth.users) — RLS di tabel affiliates saja tidak menjangkau itu.
+
     async _callAffiliateAdminFn(payload) {
       var session = await getValidSession();
       if (!session) throw new Error("Sesi admin habis, silakan login ulang.");
@@ -277,7 +238,7 @@
         body: JSON.stringify(payload)
       });
       var j = {};
-      try { j = await res.json(); } catch (e) { /* noop */ }
+      try { j = await res.json(); } catch (e) {  }
       if (!res.ok) throw new Error(j.error || "Permintaan gagal (" + res.status + ")");
       return j;
     },
@@ -289,25 +250,16 @@
         whatsapp: payload.whatsapp
       });
     },
-    // Ganti password & hapus affiliate TIDAK bisa lewat RLS/REST biasa (nyentuh
-    // auth.users), jadi lewat edge function affiliate-admin pakai access_token
-    // admin yang sedang login (bukan anon key).
+
     async resetAffiliatePassword(affiliateId, newPassword) {
       return db._callAffiliateAdminFn({ action: "reset_password", affiliate_id: affiliateId, new_password: newPassword });
     },
-    // Kalau affiliate sudah punya riwayat order, DB menolak hapus permanen
-    // (biar histori order/komisi lama tidak hilang) — edge function otomatis
-    // fallback jadi suspend, ditandai lewat properti `suspended` di hasilnya.
+
     async deleteAffiliate(affiliateId) {
       return db._callAffiliateAdminFn({ action: "delete", affiliate_id: affiliateId });
     }
   };
 
-  // ---------------- Upload gambar ----------------
-  // Mengembalikan path publik (mis. /uploads/xxxx.jpg) sesuai respons
-  // api/upload-file.php yang sudah ada di project.
-  // Ikut kirim token Supabase (Authorization: Bearer ...) — upload-file.php
-  // sekarang verifikasi login lewat token ini juga, jadi cukup 1x login.
   async function uploadImage(file) {
     var fd = new FormData();
     fd.append("file", file);
@@ -318,16 +270,14 @@
     }
     var res = await fetch(UPLOAD_ENDPOINT, fetchOpts);
     var j = null;
-    try { j = await res.json(); } catch (e) { /* noop */ }
+    try { j = await res.json(); } catch (e) {  }
     if (!res.ok || !j || j.error) {
       throw new Error((j && j.error) || "Upload gagal (" + res.status + ")");
     }
-    // Sesuaikan dengan bentuk respons upload-file.php di project kamu,
-    // umumnya { success:true, path:"/uploads/xxx.jpg" } atau { url:"..." }.
+
     return j.path || j.url || j.publicpath || j.filepath;
   }
 
-  // ---------------- Toast ----------------
   function toast(msg, type) {
     var el = document.getElementById("appToast");
     if (!el) {
@@ -357,12 +307,8 @@
     }
   };
 
-  /* ============================== 2) Sidebar + Auth gate ============================== */
-  // No-op otomatis kalau halaman tidak punya #sidebar (mis. login.html).
-
   document.addEventListener("DOMContentLoaded", function () {
-    // Semua halaman admin (linguahub.html, tambah-produk.html, dst) wajib login,
-    // KECUALI login.html sendiri (dikasih flag data-public di <body>).
+
     if (document.body.getAttribute("data-public") !== "true") {
       requireAuth();
     }

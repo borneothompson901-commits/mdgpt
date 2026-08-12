@@ -104,23 +104,18 @@
     return (a.name || "").toLowerCase().indexOf(q) !== -1 || (a.email || "").toLowerCase().indexOf(q) !== -1;
   }
 
-  var KOMISI_KEY = "admin_komisi_settings_v1";
   var komisiModal = document.getElementById("komisiModal");
   var komisiPersenInput = document.getElementById("komisiPersen");
   var btnAturKomisi = document.getElementById("btnAturKomisi");
 
-  function loadKomisiSettings() {
+  async function komisiOpen() {
+    komisiPersenInput.value = "";
     try {
-      var raw = localStorage.getItem(KOMISI_KEY);
-      return raw ? JSON.parse(raw) : {};
+      var config = await db.getAffiliateConfig();
+      komisiPersenInput.value = config && config.komisi_persen != null ? config.komisi_persen : "";
     } catch (e) {
-      return {};
+      AdminShared.toast(e.message || "Gagal memuat pengaturan komisi", "error");
     }
-  }
-
-  function komisiOpen() {
-    var settings = loadKomisiSettings();
-    komisiPersenInput.value = settings.persen != null ? settings.persen : "";
     komisiModal.classList.add("open");
   }
   function komisiClose() { komisiModal.classList.remove("open"); }
@@ -130,14 +125,20 @@
     document.getElementById("komisiCloseBtn").addEventListener("click", komisiClose);
     document.getElementById("komisiCancelBtn").addEventListener("click", komisiClose);
     komisiModal.addEventListener("click", function (e) { if (e.target === komisiModal) komisiClose(); });
-    document.getElementById("komisiSaveBtn").addEventListener("click", function () {
-      var settings = { persen: parseFloat(komisiPersenInput.value) || 0 };
+    document.getElementById("komisiSaveBtn").addEventListener("click", async function () {
+      var persen = parseFloat(komisiPersenInput.value) || 0;
+      var saveBtn = document.getElementById("komisiSaveBtn");
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Menyimpan...";
       try {
-        localStorage.setItem(KOMISI_KEY, JSON.stringify(settings));
+        await db.updateAffiliateConfig({ komisi_persen: persen });
         AdminShared.toast("Pengaturan komisi disimpan.", "success");
         komisiClose();
       } catch (e) {
-        AdminShared.toast("Gagal menyimpan pengaturan komisi.", "error");
+        AdminShared.toast(e.message || "Gagal menyimpan pengaturan komisi.", "error");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Simpan";
       }
     });
   }

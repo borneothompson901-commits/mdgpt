@@ -103,7 +103,7 @@ document.getElementById("save_new").addEventListener("click", async ()=>{
   fd.append("title", key);
   fd.append("body", val);
 
-  const res = await fetch("/mdgpt/api/contents_upsert.php",{method:"POST",body:fd});
+  const res = await fetch("/api/contents_upsert.php",{method:"POST",body:fd});
   const j = await res.json();
 
   document.getElementById("msg_new").textContent = j.success ? "Saved" : (j.error || "Error");

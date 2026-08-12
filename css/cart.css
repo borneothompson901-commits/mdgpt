@@ -90,8 +90,6 @@
   padding: calc(var(--nav-height, 68px) + 32px) 0 80px;
 }
 
-/* Step pembayaran (pilih metode / hasil) kontennya pendek, jadi di-center
-   vertikal biar ga nyisain area kosong gede di bawah pada layar desktop. */
 .cart-page.is-checkout-view {
   display: flex;
   flex-direction: column;
@@ -122,8 +120,6 @@
   align-items: start;
 }
 
-/* State keranjang kosong: cuma tampilin card "kosong" di tengah,
-   summary/field harga dkk disembunyikan total */
 .cart-page .cart-layout.is-empty {
   grid-template-columns: 1fr;
   min-height: 50vh;
@@ -760,8 +756,7 @@
   margin: 0;
   padding: 6px;
   z-index: 30;
-  /* Show at most 5 options, the rest scrolls */
-  max-height: 212px;
+    max-height: 212px;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
@@ -793,7 +788,6 @@
   background: rgba(238, 77, 45, 0.06);
 }
 
-/* Cek Ongkir: full-width button + 4 expedition rows shown at once */
 .cart-page .cart-btn-cekongkir {
   width: 100%;
   display: block;
@@ -842,7 +836,6 @@
   border-color: var(--cat-accent, #ee4d2d);
 }
 
-/* Row utama kurir (JNE / J&T / dst) — ini yang harus paling menonjol secara visual */
 .cart-page .cart-kurir-item {
   width: 100%;
   display: flex;
@@ -895,8 +888,6 @@
   color: var(--cat-accent, #ee4d2d);
 }
 
-/* Panel accordion paket layanan — dibuat custom (bukan <details> bawaan browser)
-   pakai trik CSS grid-template-rows biar transisinya smooth */
 .cart-page .cart-kurir-paket-panel {
   display: grid;
   grid-template-rows: 0fr;
@@ -919,8 +910,6 @@
   gap: 4px;
 }
 
-/* Opsi paket (REG/YES/OKE dst) — sengaja dibikin lebih redup/kecil
-   dibanding row kurir utama supaya fokus mata tetap di nama ekspedisi */
 .cart-page .cart-kurir-paket-item {
   display: flex;
   align-items: center;
@@ -1011,7 +1000,6 @@
   color: var(--cat-accent, #ee4d2d);
 }
 
-/* ===== Checkout Panel (replaces product list in left column) ===== */
 .checkout-panel {
   background: var(--white, #fff);
   border-radius: 14px;
@@ -1046,7 +1034,6 @@
   color: var(--gray-900, #1a1a1a);
 }
 
-/* Accordion */
 .payment-accordion {
   display: flex;
   flex-direction: column;
@@ -1063,6 +1050,10 @@
   border-color: var(--cat-accent, #a91ab6);
 }
 
+.payment-accordion__item--disabled {
+  opacity: 0.6;
+}
+
 .payment-accordion__header {
   width: 100%;
   display: flex;
@@ -1074,6 +1065,22 @@
   padding: 14px 16px;
   cursor: pointer;
   text-align: left;
+}
+
+.payment-accordion__header:disabled {
+  cursor: not-allowed;
+}
+
+.payment-accordion__badge {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gray-500, #6b6b70);
+  background: var(--gray-50, #fafafa);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.12));
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
 }
 
 .payment-accordion__label {
@@ -1132,6 +1139,42 @@
   padding: 10px 12px;
 }
 
+.payment-channel-row--disabled {
+  opacity: 0.6;
+}
+
+.payment-channel-row__icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-100, #f0f0f2);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+}
+.payment-channel-row__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.payment-channel-row__icon-fallback {
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.payment-channel-row__main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
 .payment-channel-row__info {
   display: flex;
   flex-direction: column;
@@ -1146,6 +1189,18 @@
 .payment-channel-row__desc {
   font-size: 0.74rem;
   color: var(--gray-500, #6b6b70);
+}
+
+.payment-channel-row__badge {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gray-500, #6b6b70);
+  background: var(--gray-50, #fafafa);
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.12));
+  border-radius: 999px;
+  padding: 4px 10px;
+  white-space: nowrap;
 }
 
 .payment-pick-btn {
@@ -1182,7 +1237,6 @@
   display: none;
 }
 
-/* Countdown */
 .payment-countdown {
   display: flex;
   align-items: center;
@@ -1234,7 +1288,6 @@
   margin-top: 4px;
 }
 
-/* Result step */
 .payment-result__order-id {
   font-size: 0.76rem;
   color: var(--gray-400, #9a9a9e);

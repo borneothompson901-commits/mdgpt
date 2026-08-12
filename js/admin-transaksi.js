@@ -74,6 +74,20 @@
     return d.toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
   }
 
+  function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+
+  function fmtDateShort(iso) {
+    if (!iso) return "-";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "-";
+    var dd = pad2(d.getDate());
+    var mm = pad2(d.getMonth() + 1);
+    var yy = pad2(d.getFullYear() % 100);
+    var hh = pad2(d.getHours());
+    var mi = pad2(d.getMinutes());
+    return dd + "/" + mm + "/" + yy + " " + hh + ":" + mi;
+  }
+
   function customerObj(t) {
     return t.customer && typeof t.customer === "object" ? t.customer : {};
   }
@@ -137,7 +151,10 @@
         "<td>" + rupiah(t.amount) + "</td>" +
         '<td class="col-affiliate">' + (t.ref_code ? '<span class="badge badge-purple">' + escapeHtml(t.ref_code) + "</span>" : "-") + "</td>" +
         "<td>" + statusBadge(t.status) + "</td>" +
-        "<td>" + fmtDate(t.updated_at || t.created_at) + "</td>" +
+        '<td class="col-waktu">' +
+          '<span class="waktu-full">' + fmtDate(t.updated_at || t.created_at) + "</span>" +
+          '<span class="waktu-short">' + fmtDateShort(t.updated_at || t.created_at) + "</span>" +
+        "</td>" +
         '<td class="row-actions"><div class="actions">' +
           '<button class="btn-icon" data-detail="' + escAttr(t.id) + '" title="Detail">' +
             '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5.3v.1M8 7.5v3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' +

@@ -51,6 +51,27 @@
 
   var SERVICE_FEE = 0;
   var TAX_RATE = 0;
+  var ONGKIR_RATE = 0;
+  var CHECKOUT_CONFIG_ENDPOINT = SUPABASE_URL + "/rest/v1/checkout_config?select=*&limit=1";
+
+  function loadCheckoutConfig() {
+    return fetch(CHECKOUT_CONFIG_ENDPOINT, { headers: SUPABASE_FN_HEADERS })
+      .then(function (res) { return res.json(); })
+      .then(function (rows) {
+        var cfg = (rows && rows[0]) || {};
+        SERVICE_FEE = parseInt(cfg.biaya_layanan, 10) || 0;
+        TAX_RATE = (parseFloat(cfg.pajak_persen) || 0) / 100;
+        ONGKIR_RATE = (parseFloat(cfg.ongkir_rate_persen) || 0) / 100;
+        updateTotals();
+      })
+      .catch(function () {  });
+  }
+
+  function terapkanTarifOngkir(nilai) {
+    var angka = parseInt(nilai, 10) || 0;
+    return Math.round(angka * (1 + ONGKIR_RATE));
+  }
+
   var state = {
     ongkir: 0,
     ongkirChecked: false,
@@ -835,7 +856,13 @@
         .then(function (data) {
           var byCourier = (data && data.results) || {};
           return couriers.map(function (courier) {
-            return { courier: courier, data: byCourier[courier] || null };
+            var entry = byCourier[courier] || null;
+            if (entry && Array.isArray(entry.services)) {
+              entry.services.forEach(function (svc) {
+                svc.cost = terapkanTarifOngkir(svc.cost);
+              });
+            }
+            return { courier: courier, data: entry };
           });
         })
         .catch(function () {
@@ -1499,6 +1526,7 @@
   document.addEventListener("cart:updated", renderCart);
   resetKurirResults();
   renderCart();
+  loadCheckoutConfig();
 
   function isEffectivelyVisible(el) {
     return !el.hidden && el.style.display !== "none";

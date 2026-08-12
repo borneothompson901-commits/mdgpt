@@ -6,10 +6,13 @@
   var SUPABASE_TABLE = "affiliates";
   var REGISTER_ENDPOINT = SUPABASE_URL + "/functions/v1/affiliate-register";
   var STATS_ENDPOINT = SUPABASE_URL + "/rest/v1/rpc/get_affiliate_stats";
+  var CONFIG_ENDPOINT = SUPABASE_URL + "/rest/v1/affiliate_config?select=komisi_persen&limit=1";
   var SUPABASE_FN_HEADERS = {
     apikey: SUPABASE_ANON_KEY,
     Authorization: "Bearer " + SUPABASE_ANON_KEY
   };
+  var DEFAULT_COMMISSION_PERSEN = 10;
+  var currentCommissionPersen = DEFAULT_COMMISSION_PERSEN;
 
   var CATALOG_URL = "https://mdgpt.id/lingua/";
   var COOKIE_NAME = "mdgpt_ref";
@@ -94,6 +97,24 @@
     }
   }
 
+  function loadCommissionConfig() {
+    return fetch(CONFIG_ENDPOINT, { headers: SUPABASE_FN_HEADERS })
+      .then(function (res) {
+        return res.ok ? res.json() : null;
+      })
+      .then(function (rows) {
+        var row = rows && rows[0];
+        var persen = row && row.komisi_persen != null ? Number(row.komisi_persen) : DEFAULT_COMMISSION_PERSEN;
+        currentCommissionPersen = persen;
+        var badge = $("#affBenefitCommission");
+        if (badge) badge.textContent = persen + "%";
+        return persen;
+      })
+      .catch(function () {
+        return currentCommissionPersen;
+      });
+  }
+
   function showToast(msg) {
     var toast = $("#affToast");
     if (!toast) return;
@@ -151,6 +172,10 @@
     if (infoEmail) infoEmail.textContent = affiliate.email || "—";
     var infoWa = $("#affInfoWa");
     if (infoWa) infoWa.textContent = affiliate.whatsapp ? "+" + affiliate.whatsapp : "—";
+    var infoCommission = $("#affInfoCommission");
+    if (infoCommission) {
+      infoCommission.textContent = affiliate.commission_rate != null ? Number(affiliate.commission_rate) + "%" : "—";
+    }
 
     var clicks = $("#affStatClicks");
     if (clicks) clicks.textContent = affiliate.total_clicks != null ? affiliate.total_clicks : "0";
@@ -392,6 +417,7 @@
     initAuthViewSwitcher();
     initPasswordToggles();
     initLoginPanel();
+    loadCommissionConfig();
 
     loadSessionDashboard().then(function (loggedIn) {
       if (loggedIn) return;
@@ -448,7 +474,7 @@
         email: email.toLowerCase(),
         password: password,
         ref_code: generateRefCode(),
-        commission_rate: 10,
+        commission_rate: currentCommissionPersen,
         total_clicks: 0,
         total_orders: 0,
         total_commission: 0

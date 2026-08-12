@@ -195,6 +195,25 @@
       return true;
     },
 
+    async getCheckoutConfig() {
+      var res = await fetch(SUPABASE_URL + "/rest/v1/checkout_config?select=*&limit=1", { headers: SUPABASE_HEADERS });
+      if (!res.ok) throw new Error("Gagal memuat pengaturan (" + res.status + ")");
+      var rows = await res.json();
+      return rows[0] || { ongkir_rate_persen: 0, biaya_layanan: 0, pajak_persen: 0 };
+    },
+    async updateCheckoutConfig(payload) {
+      var headers = await writeHeaders({ Prefer: "return=representation" });
+      payload = Object.assign({}, payload, { updated_at: new Date().toISOString() });
+      var res = await fetch(SUPABASE_URL + "/rest/v1/checkout_config?id=eq.true", {
+        method: "PATCH",
+        headers: headers,
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("Gagal simpan pengaturan (" + res.status + "): " + (await res.text()));
+      var rows = await res.json();
+      return rows[0];
+    },
+
     async listTransactions() {
       var headers = await writeHeaders();
       var res = await fetch(

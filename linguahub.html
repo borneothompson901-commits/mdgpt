@@ -90,7 +90,7 @@
         <div class="page-head">
           <div class="page-head-left">
             <div class="page-title">Overview</div>
-            <div class="page-sub">Ringkasan katalog produk digital &amp; fisik toko kamu.</div>
+            <div class="page-sub">Ringkasan performa toko: produk, transaksi, dan affiliate.</div>
           </div>
         </div>
 
@@ -99,6 +99,14 @@
           <div class="stat-card"><div class="stat-card__label">Produk Digital</div><div class="stat-card__value" id="statDigital">0</div></div>
           <div class="stat-card"><div class="stat-card__label">Produk Fisik</div><div class="stat-card__value" id="statFisik">0</div></div>
           <div class="stat-card"><div class="stat-card__label">Stok Menipis</div><div class="stat-card__value" id="statLowStock">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Total Transaksi</div><div class="stat-card__value" id="txStatTotal">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Berhasil (Paid)</div><div class="stat-card__value" id="txStatPaid">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Menunggu</div><div class="stat-card__value" id="txStatPending">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Gagal / Kadaluarsa</div><div class="stat-card__value" id="txStatFailed">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Omzet Terbayar</div><div class="stat-card__value" id="txStatRevenue">Rp0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Total Affiliate</div><div class="stat-card__value" id="affStatTotal">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Total Klik Affiliate</div><div class="stat-card__value" id="affStatClicks">0</div></div>
+          <div class="stat-card"><div class="stat-card__label">Total Fee Affiliate</div><div class="stat-card__value" id="affStatFee">Rp0</div></div>
         </div>
 
         <div class="overview-grid">
@@ -118,20 +126,20 @@
             <div class="overview-list" id="outStockList"></div>
             <div class="overview-empty" id="outStockEmpty" hidden>Tidak ada produk dengan stok habis.</div>
           </div>
-        </div>
-
-        <div class="page-head" style="margin-top:26px;">
-          <div class="page-head-left">
-            <div class="page-title" style="font-size:1rem;">Overview Transaksi</div>
-            <div class="page-sub">Ringkasan pembayaran masuk dari Pivot Payment.</div>
+          <div class="card overview-panel">
+            <div class="overview-panel__head">
+              <span>Top 5 Affiliate — Klik Terbanyak</span>
+            </div>
+            <div class="overview-list" id="topClickList"></div>
+            <div class="overview-empty" id="topClickEmpty" hidden>Belum ada data klik affiliate.</div>
           </div>
-        </div>
-        <div class="stat-grid" id="txStatGrid">
-          <div class="stat-card"><div class="stat-card__label">Total Transaksi</div><div class="stat-card__value" id="txStatTotal">0</div></div>
-          <div class="stat-card"><div class="stat-card__label">Berhasil (Paid)</div><div class="stat-card__value" id="txStatPaid">0</div></div>
-          <div class="stat-card"><div class="stat-card__label">Menunggu</div><div class="stat-card__value" id="txStatPending">0</div></div>
-          <div class="stat-card"><div class="stat-card__label">Gagal / Kadaluarsa</div><div class="stat-card__value" id="txStatFailed">0</div></div>
-          <div class="stat-card"><div class="stat-card__label">Omzet Terbayar</div><div class="stat-card__value" id="txStatRevenue">Rp0</div></div>
+          <div class="card overview-panel">
+            <div class="overview-panel__head">
+              <span>Top 5 Produk Terjual</span>
+            </div>
+            <div class="overview-list" id="topSoldList"></div>
+            <div class="overview-empty" id="topSoldEmpty" hidden>Belum ada produk terjual.</div>
+          </div>
         </div>
       </section>
 

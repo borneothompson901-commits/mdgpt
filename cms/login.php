@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . "/../config/session_init.php";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $u = $_POST["username"] ?? "";
   $p = $_POST["password"] ?? "";

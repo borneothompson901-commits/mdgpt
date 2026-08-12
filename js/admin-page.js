@@ -393,27 +393,21 @@
     function gateOpen() { gateReset(); gateModal.classList.add("open"); }
     function gateClose() { gateModal.classList.remove("open"); }
 
-    var BIAYA_KEY = "admin_biaya_settings_v1";
     var biayaModal = document.getElementById("biayaModal");
+    var biayaOngkirRateInput = document.getElementById("biayaOngkirRate");
     var biayaLayananInput = document.getElementById("biayaLayanan");
     var biayaPajakInput = document.getElementById("biayaPajak");
-    var biayaEkspedisiInput = document.getElementById("biayaEkspedisi");
 
-    function loadBiayaSettings() {
-      try {
-        var raw = localStorage.getItem(BIAYA_KEY);
-        return raw ? JSON.parse(raw) : {};
-      } catch (e) {
-        return {};
-      }
-    }
-
-    function biayaOpen() {
-      var settings = loadBiayaSettings();
-      biayaLayananInput.value = settings.layanan != null ? settings.layanan : "";
-      biayaPajakInput.value = settings.pajak != null ? settings.pajak : "";
-      biayaEkspedisiInput.value = settings.ekspedisi != null ? settings.ekspedisi : "";
+    async function biayaOpen() {
       biayaModal.classList.add("open");
+      try {
+        var cfg = await AdminShared.db.getCheckoutConfig();
+        biayaOngkirRateInput.value = cfg.ongkir_rate_persen != null ? cfg.ongkir_rate_persen : "";
+        biayaLayananInput.value = cfg.biaya_layanan != null ? cfg.biaya_layanan : "";
+        biayaPajakInput.value = cfg.pajak_persen != null ? cfg.pajak_persen : "";
+      } catch (e) {
+        AdminShared.toast("Gagal memuat pengaturan biaya.", "error");
+      }
     }
     function biayaClose() { biayaModal.classList.remove("open"); }
 
@@ -422,14 +416,14 @@
     document.getElementById("biayaCloseBtn").addEventListener("click", biayaClose);
     document.getElementById("biayaCancelBtn").addEventListener("click", biayaClose);
     biayaModal.addEventListener("click", function (e) { if (e.target === biayaModal) biayaClose(); });
-    document.getElementById("biayaSaveBtn").addEventListener("click", function () {
-      var settings = {
-        layanan: parseInt(biayaLayananInput.value, 10) || 0,
-        pajak: parseFloat(biayaPajakInput.value) || 0,
-        ekspedisi: parseInt(biayaEkspedisiInput.value, 10) || 0
+    document.getElementById("biayaSaveBtn").addEventListener("click", async function () {
+      var payload = {
+        ongkir_rate_persen: parseFloat(biayaOngkirRateInput.value) || 0,
+        biaya_layanan: parseInt(biayaLayananInput.value, 10) || 0,
+        pajak_persen: parseFloat(biayaPajakInput.value) || 0
       };
       try {
-        localStorage.setItem(BIAYA_KEY, JSON.stringify(settings));
+        await AdminShared.db.updateCheckoutConfig(payload);
         AdminShared.toast("Pengaturan biaya disimpan.", "success");
         biayaClose();
       } catch (e) {

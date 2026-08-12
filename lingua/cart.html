@@ -204,7 +204,7 @@
                     <textarea id="cartAddressDetail" rows="3" placeholder="Nama jalan, nomor rumah, RT/RW, patokan..."></textarea>
                   </div>
 
-                  <div class="cart-field">
+                  <div class="cart-field" id="kurirField">
                     <label>Kurir <span class="cart-required" title="Wajib diisi">*</span></label>
                     <button type="button" class="cart-btn-cekongkir" id="cekOngkirBtn">Cek Ongkir</button>
                     <p class="cart-ongkir-hint" id="cartOngkirHint" hidden>Lengkapi alamat dulu ya!</p>
@@ -322,10 +322,10 @@
                 </div>
 
                 <div id="checkoutBtnSection">
-                  <button type="button" class="cart-checkout-btn" id="checkoutBtn" disabled>
+                  <button type="button" class="cart-checkout-btn" id="checkoutBtn">
                     Lanjutkan Pembayaran
                   </button>
-                  <p class="cart-checkout-hint">Pilih metode pembayaran (VA / QRIS / E-Wallet) di langkah berikutnya.</p>
+                  <p class="cart-checkout-hint cart-checkout-hint--error" id="checkoutValidationHint" hidden></p>
                 </div>
               </div>
             </aside>

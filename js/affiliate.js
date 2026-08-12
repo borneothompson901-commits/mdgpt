@@ -208,6 +208,7 @@
     var signupView = $("#affSignupView");
     var toLogin = $("#affSignupToggle");
     var toSignup = $("#affLoginToggle");
+    var visualBrand = $("#affAuthVisualBrand");
     if (!loginView || !signupView) return;
 
     function showLogin() {
@@ -215,6 +216,7 @@
       signupView.classList.remove("is-active");
       loginView.hidden = false;
       loginView.classList.add("is-active");
+      if (visualBrand) visualBrand.textContent = "Login";
     }
 
     function showSignup() {
@@ -222,6 +224,7 @@
       loginView.classList.remove("is-active");
       signupView.hidden = false;
       signupView.classList.add("is-active");
+      if (visualBrand) visualBrand.textContent = "Sign Up";
     }
 
     if (toSignup) toSignup.addEventListener("click", showSignup);

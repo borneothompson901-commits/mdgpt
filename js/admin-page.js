@@ -58,8 +58,6 @@
       var outList = document.getElementById("outStockList");
       if (!lowList || !outList) return;
 
-      // Cuma produk fisik / produk dengan varian yang punya konsep stok (samain
-      // sama logika renderStockBadge di tabel & statLowStock di renderStats).
       var stockables = state.products.filter(function (p) {
         return p.type === "fisik" || (p.variantGroups && p.variantGroups.length > 0);
       });
@@ -81,6 +79,25 @@
       document.getElementById("lowStockEmpty").hidden = low.length !== 0;
       outList.innerHTML = out.map(itemRow).join("");
       document.getElementById("outStockEmpty").hidden = out.length !== 0;
+    }
+
+    function renderTopSold() {
+      var list = document.getElementById("topSoldList");
+      var empty = document.getElementById("topSoldEmpty");
+      if (!list || !empty) return;
+
+      var top = state.products
+        .filter(function (p) { return (parseInt(p.sold, 10) || 0) > 0; })
+        .sort(function (a, b) { return (parseInt(b.sold, 10) || 0) - (parseInt(a.sold, 10) || 0); })
+        .slice(0, 5);
+
+      list.innerHTML = top.map(function (p) {
+        return '<div class="overview-item">' +
+          '<span class="overview-item__name" title="' + escapeHtml(p.title || "(Tanpa nama)") + '">' + escapeHtml(p.title || "(Tanpa nama)") + '</span>' +
+          '<span class="badge badge-purple">' + (parseInt(p.sold, 10) || 0) + ' terjual</span>' +
+        '</div>';
+      }).join("");
+      empty.hidden = top.length !== 0;
     }
 
     function matchesFilter(p) {
@@ -164,6 +181,7 @@
         renderStats();
         render();
         renderOverviewLists();
+        renderTopSold();
       } catch (e) {
         console.error(e);
         AdminShared.toast(e.message || "Gagal memuat produk", "error");
@@ -419,7 +437,7 @@
       try {
         await db.deleteProduct(deleteTargetId);
         state.products = state.products.filter(function (p) { return String(p.id) !== String(deleteTargetId); });
-        renderStats(); render(); renderOverviewLists();
+        renderStats(); render(); renderOverviewLists(); renderTopSold();
         AdminShared.toast("Produk dihapus", "success");
       } catch (e) {
         AdminShared.toast(e.message || "Gagal menghapus produk", "error");

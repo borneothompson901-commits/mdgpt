@@ -226,7 +226,42 @@
   var customerNameEl = document.getElementById("cartCustomerName");
 
   var CHECKOUT_STORAGE_KEY = "mdgpt_lingua_checkout";
+  var SHIPPING_DRAFT_KEY = "mdgpt_lingua_shipping_draft";
   var COUNTDOWN_MS = 6 * 60 * 60 * 1000;
+
+  function readShippingDraft() {
+    try {
+      var raw = localStorage.getItem(SHIPPING_DRAFT_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clearShippingDraft() {
+    try { localStorage.removeItem(SHIPPING_DRAFT_KEY); } catch (e) {}
+  }
+
+  function saveShippingDraft() {
+    try {
+      var draft = {
+        customerName: customerNameEl ? customerNameEl.value : "",
+        whatsapp: waEl ? waEl.value : "",
+        addressDetail: addressDetailEl ? addressDetailEl.value : "",
+        province: provinceDd && provinceDd.value ? { id: provinceDd.value, label: provinceDd.label } : null,
+        city: cityDd && cityDd.value ? { id: cityDd.value, label: cityDd.label } : null,
+        district: districtDd && districtDd.value ? { id: districtDd.value, label: districtDd.label } : null,
+        subdistrict: subdistrictDd && subdistrictDd.value ? { id: subdistrictDd.value, label: subdistrictDd.label } : null,
+        kurir: state.ongkirChecked && kurirHiddenEl && kurirHiddenEl.value ? {
+          courier: kurirHiddenEl.value,
+          serviceCode: state.ongkirServiceCode,
+          cost: state.ongkir,
+          etd: state.ongkirEtd
+        } : null
+      };
+      localStorage.setItem(SHIPPING_DRAFT_KEY, JSON.stringify(draft));
+    } catch (e) {}
+  }
 
   var navTitleMain = document.getElementById("navTitleMain");
   var navTitleMobile = document.getElementById("navTitleMobile");
@@ -468,6 +503,16 @@
   }
 
   function updateTotals() {
+    if (checkoutModeActive && checkoutState && checkoutState.orderSnapshot) {
+      var snap = checkoutState.orderSnapshot;
+      sumSubtotalEl.textContent = formatRupiah(snap.subtotal || 0);
+      sumOngkirEl.textContent = formatRupiah(snap.ongkir || 0);
+      sumLayananEl.textContent = formatRupiah(snap.layanan || 0);
+      sumPajakEl.textContent = formatRupiah(snap.pajak || 0);
+      sumTotalEl.textContent = formatRupiah(snap.total || 0);
+      return;
+    }
+
     var subtotal = window.CartStore.getSubtotal();
     var ongkir = state.ongkirChecked ? state.ongkir : 0;
     var layanan = SERVICE_FEE;
@@ -661,6 +706,7 @@
 
     updateTotals();
     updateCheckoutState();
+    saveShippingDraft();
   }
 
   function clearDestinationSelection() {
@@ -759,6 +805,57 @@
       }
       resetKurirResults();
       updateCheckoutState();
+      saveShippingDraft();
+    });
+  }
+
+  function restoreShippingDraft() {
+    var draft = readShippingDraft();
+    if (!draft) return;
+
+    if (customerNameEl && draft.customerName) customerNameEl.value = draft.customerName;
+    if (waEl && draft.whatsapp) waEl.value = draft.whatsapp;
+    if (addressDetailEl && draft.addressDetail) addressDetailEl.value = draft.addressDetail;
+
+    if (!provinceDd || !draft.province || !draft.province.id) return;
+
+    fetchHierarchy("province").then(function (items) {
+      provinceDd.setItems(items);
+      provinceDd.setValue(draft.province.id, draft.province.label);
+      if (!draft.city || !draft.city.id) return;
+
+      cityDd.setDisabled(false);
+      return fetchHierarchy("city", draft.province.id).then(function (cityItems) {
+        cityDd.setItems(cityItems);
+        cityDd.setValue(draft.city.id, draft.city.label);
+        if (!draft.district || !draft.district.id) return;
+
+        districtDd.setDisabled(false);
+        return fetchHierarchy("district", draft.city.id).then(function (districtItems) {
+          districtDd.setItems(districtItems);
+          districtDd.setValue(draft.district.id, draft.district.label);
+          if (!draft.subdistrict || !draft.subdistrict.id) return;
+
+          subdistrictDd.setDisabled(false);
+          return fetchHierarchy("subdistrict", draft.district.id).then(function (subdistrictItems) {
+            subdistrictDd.setItems(subdistrictItems);
+            subdistrictDd.setValue(draft.subdistrict.id, draft.subdistrict.label);
+            destinationIdEl.value = draft.subdistrict.id;
+            state.destinationLabel = buildDestinationLabel();
+            if (ongkirHintEl) setVisible(ongkirHintEl, false);
+            reconcileShippingVisibility();
+
+            if (draft.kurir && draft.kurir.courier) {
+              var group = kurirListEl.querySelector('.cart-kurir-group[data-courier-group="' + draft.kurir.courier + '"]');
+              if (group) {
+                var courierName = COURIER_NAMES[draft.kurir.courier] || draft.kurir.courier;
+                selectPaket(group, draft.kurir.courier, courierName, draft.kurir.serviceCode, draft.kurir.cost, draft.kurir.etd, { silent: true });
+              }
+            }
+            updateCheckoutState();
+          });
+        });
+      });
     });
   }
 
@@ -932,6 +1029,7 @@
     addressDetailEl.addEventListener("input", function () {
       clearFieldInvalid(addressDetailEl);
       updateCheckoutState();
+      saveShippingDraft();
     });
   }
 
@@ -941,6 +1039,14 @@
     waEl.addEventListener("input", function () {
       clearFieldInvalid(waEl);
       updateCheckoutState();
+      saveShippingDraft();
+    });
+  }
+
+  if (customerNameEl) {
+    customerNameEl.addEventListener("input", function () {
+      clearFieldInvalid(customerNameEl);
+      saveShippingDraft();
     });
   }
 
@@ -950,6 +1056,20 @@
     var layanan = SERVICE_FEE;
     var pajak = Math.round(subtotal * TAX_RATE);
     return subtotal + ongkir + layanan + pajak;
+  }
+
+  function getOrderBreakdown() {
+    var subtotal = window.CartStore.getSubtotal();
+    var ongkir = state.ongkirChecked ? state.ongkir : 0;
+    var layanan = SERVICE_FEE;
+    var pajak = Math.round(subtotal * TAX_RATE);
+    return {
+      subtotal: subtotal,
+      ongkir: ongkir,
+      layanan: layanan,
+      pajak: pajak,
+      total: subtotal + ongkir + layanan + pajak
+    };
   }
 
   var METHOD_META = {
@@ -1408,6 +1528,7 @@
       hideFieldError();
 
       var total = getOrderTotal();
+      var breakdown = getOrderBreakdown();
       var phone = waEl ? waEl.value.trim() : "";
       var name = customerNameEl ? customerNameEl.value.trim() : "";
 
@@ -1429,12 +1550,17 @@
         orderSnapshot: {
           items: items,
           total: total,
+          subtotal: breakdown.subtotal,
+          ongkir: breakdown.ongkir,
+          layanan: breakdown.layanan,
+          pajak: breakdown.pajak,
           customerName: name,
           phone: phone
         },
         createdAt: Date.now()
       };
       writeCheckoutState(checkoutState);
+      clearShippingDraft();
       showCheckoutMethodView();
     });
   }
@@ -1471,6 +1597,7 @@
   }
 
   applyPersistedCheckoutState();
+  if (!checkoutState) restoreShippingDraft();
 
   window.addEventListener("pageshow", function (e) {
     if (e.persisted) applyPersistedCheckoutState();

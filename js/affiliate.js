@@ -183,18 +183,9 @@
     });
   }
 
-  function sendLoginOtp(email) {
+  function loginWithPassword(email, password) {
     if (!sb) return Promise.reject(new Error("Layanan login belum siap."));
-    return sb.auth
-      .signInWithOtp({ email: email, options: { shouldCreateUser: false } })
-      .then(function (res) {
-        if (res.error) throw res.error;
-      });
-  }
-
-  function verifyLoginOtp(email, token) {
-    if (!sb) return Promise.reject(new Error("Layanan login belum siap."));
-    return sb.auth.verifyOtp({ email: email, token: token, type: "email" }).then(function (res) {
+    return sb.auth.signInWithPassword({ email: email, password: password }).then(function (res) {
       if (res.error) throw res.error;
       return loadSessionDashboard();
     });
@@ -205,10 +196,9 @@
     var panel = $("#affLoginPanel");
     var emailField = $("#affLoginEmailField");
     var emailInput = $("#affLoginEmail");
-    var sendBtn = $("#affLoginSendBtn");
-    var codeField = $("#affLoginCodeField");
-    var codeInput = $("#affLoginCode");
-    var verifyBtn = $("#affLoginVerifyBtn");
+    var passwordField = $("#affLoginPasswordField");
+    var passwordInput = $("#affLoginPassword");
+    var submitBtn = $("#affLoginSubmitBtn");
     var errorEl = $("#affLoginError");
     if (!toggle || !panel) return;
 
@@ -227,52 +217,35 @@
         : "Balik ke form pendaftaran";
     });
 
-    sendBtn.addEventListener("click", function () {
+    submitBtn.addEventListener("click", function () {
       clearError();
       var email = (emailInput.value || "").trim().toLowerCase();
+      var password = passwordInput.value || "";
+      [emailField, passwordField].forEach(clearFieldError);
+
+      var valid = true;
       if (!isValidEmail(email)) {
         fieldError(emailField, "Format email tidak valid.");
-        return;
+        valid = false;
       }
-      clearFieldError(emailField);
-      sendBtn.disabled = true;
-      sendBtn.querySelector("span").textContent = "Mengirim...";
-      sendLoginOtp(email)
-        .then(function () {
-          codeField.hidden = false;
-          verifyBtn.hidden = false;
-          showToast("Kode login dikirim ke " + email);
-        })
-        .catch(function (err) {
-          showError((err && err.message) || "Gagal mengirim kode, coba lagi.");
-        })
-        .finally(function () {
-          sendBtn.disabled = false;
-          sendBtn.querySelector("span").textContent = "Kirim Kode ke Email";
-        });
-    });
+      if (!password) {
+        fieldError(passwordField, "Password salah.");
+        valid = false;
+      }
+      if (!valid) return;
 
-    verifyBtn.addEventListener("click", function () {
-      clearError();
-      var email = (emailInput.value || "").trim().toLowerCase();
-      var code = (codeInput.value || "").trim();
-      if (!code) {
-        fieldError(codeField, "Kode salah atau sudah kedaluwarsa.");
-        return;
-      }
-      clearFieldError(codeField);
-      verifyBtn.disabled = true;
-      verifyBtn.querySelector("span").textContent = "Memeriksa...";
-      verifyLoginOtp(email, code)
+      submitBtn.disabled = true;
+      submitBtn.querySelector("span").textContent = "Memeriksa...";
+      loginWithPassword(email, password)
         .then(function (ok) {
-          if (!ok) showError("Akun affiliate untuk email ini tidak ditemukan.");
+          if (!ok) showError("Email atau password salah.");
         })
         .catch(function (err) {
-          showError((err && err.message) || "Kode salah atau sudah kedaluwarsa.");
+          showError((err && err.message) || "Email atau password salah.");
         })
         .finally(function () {
-          verifyBtn.disabled = false;
-          verifyBtn.querySelector("span").textContent = "Masuk";
+          submitBtn.disabled = false;
+          submitBtn.querySelector("span").textContent = "Masuk";
         });
     });
 
@@ -295,7 +268,8 @@
       body: JSON.stringify({
         name: payload.name,
         whatsapp: payload.whatsapp,
-        email: payload.email
+        email: payload.email,
+        password: payload.password
       })
     }).then(function (res) {
       return res.json().then(function (data) {
@@ -349,6 +323,7 @@
     var nameField = $("#affFieldName");
     var waField = $("#affFieldWa");
     var emailField = $("#affFieldEmail");
+    var passwordField = $("#affFieldPassword");
     var consentField = $("#affFieldConsent");
     var submitBtn = $("#affSubmitBtn");
     var submitError = $("#affSubmitError");
@@ -360,10 +335,11 @@
       var name = $("#affName").value.trim();
       var wa = $("#affWa").value.trim();
       var email = $("#affEmail").value.trim();
+      var password = $("#affPassword").value;
       var agreed = $("#affConsent").checked;
 
       var valid = true;
-      [nameField, waField, emailField, consentField].forEach(clearFieldError);
+      [nameField, waField, emailField, passwordField, consentField].forEach(clearFieldError);
 
       if (name.length < 3) {
         fieldError(nameField, "Nama minimal 3 karakter.");
@@ -377,6 +353,10 @@
         fieldError(emailField, "Format email tidak valid.");
         valid = false;
       }
+      if (password.length < 6) {
+        fieldError(passwordField, "Password minimal 6 karakter.");
+        valid = false;
+      }
       if (!agreed) {
         fieldError(consentField, "Kamu harus menyetujui ketentuan affiliate.");
         valid = false;
@@ -387,6 +367,7 @@
         name: name,
         whatsapp: normalizeWhatsapp(wa),
         email: email.toLowerCase(),
+        password: password,
         ref_code: generateRefCode(name),
         commission_rate: 10,
         total_clicks: 0,

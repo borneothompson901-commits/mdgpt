@@ -130,9 +130,10 @@
       .sort(function (a, b) { return (parseInt(b.total_clicks, 10) || 0) - (parseInt(a.total_clicks, 10) || 0); })
       .slice(0, 5);
 
-    topList.innerHTML = top.map(function (a) {
+    topList.innerHTML = top.map(function (a, idx) {
       var label = a.name || a.email || "(Tanpa nama)";
       return '<div class="overview-item">' +
+        '<span class="overview-item__rank">' + (idx + 1) + '</span>' +
         '<span class="overview-item__name" title="' + escapeHtml(label) + '">' + escapeHtml(label) + '</span>' +
         '<span class="badge badge-purple">' + (parseInt(a.total_clicks, 10) || 0) + ' klik</span>' +
       '</div>';

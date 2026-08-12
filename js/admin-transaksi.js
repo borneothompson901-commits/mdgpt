@@ -280,11 +280,5 @@
 
   if (refreshBtn) refreshBtn.addEventListener("click", loadAll);
 
-  var loaded = false;
-  function loadOnce() {
-    if (!loaded) { loaded = true; loadAll(); }
-  }
-  document.querySelectorAll('.nav-item[data-page="transaksi"], .nav-item[data-page="overview"]').forEach(function (link) {
-    link.addEventListener("click", loadOnce);
-  });
+  loadAll();
 })();

@@ -1,3 +1,25 @@
+<?php
+require __DIR__ . '/config/supabase.php';
+
+$bannerUtama = fetchLinguaSection('banner_utama');
+$bannerCards = fetchLinguaSection('banner_cards');
+
+function lg_val($data, string $key, string $default): string
+{
+    if (is_array($data) && !empty($data[$key])) {
+        return lg_e($data[$key]);
+    }
+    return $default;
+}
+
+function lg_card_val($cards, int $index, string $key, string $default): string
+{
+    if (is_array($cards) && isset($cards[$index][$key]) && $cards[$index][$key] !== '') {
+        return lg_e($cards[$index][$key]);
+    }
+    return $default;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -97,14 +119,13 @@
       <section class="hero">
         <div class="hero__inner">
           <div class="hero__content">
-            <span class="hero__eyebrow" id="heroEyebrow">Toko Digital M-DGPT Agency</span>
+            <span class="hero__eyebrow" id="heroEyebrow"><?= lg_val($bannerUtama, 'pill', 'Toko Digital M-DGPT Agency') ?></span>
             <h1 class="hero__title">
-              <span id="heroTitleLine1">Digital Product yang Bikin</span>
-              <span class="hero__title-accent" id="heroTitleLine2">Bisnismu Naik Level</span>
+              <span id="heroTitleLine1"><?= lg_val($bannerUtama, 'headline1', 'Digital Product yang Bikin') ?></span>
+              <span class="hero__title-accent" id="heroTitleLine2"><?= lg_val($bannerUtama, 'headline2', 'Bisnismu Naik Level') ?></span>
             </h1>
             <p class="hero__desc" id="heroDesc">
-              Template konten, ebook strategi, dan tools otomasi siap pakai,
-              dirancang langsung oleh tim M-DGPT Agency untuk brand yang serius growth.
+              <?= lg_val($bannerUtama, 'subheadline', 'Template konten, ebook strategi, dan tools otomasi siap pakai, dirancang langsung oleh tim M-DGPT Agency untuk brand yang serius growth.') ?>
             </p>
             <div class="hero__actions">
               <a href="/lingua/index.html" class="btn-cta"><span>Belanja Sekarang</span></a>
@@ -120,8 +141,8 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
             </span>
             <div class="hero__trust-text">
-              <strong id="heroTrust1Title">Produk Original</strong>
-              <span id="heroTrust1Desc">Dibuat langsung oleh tim ahli</span>
+              <strong id="heroTrust1Title"><?= lg_card_val($bannerCards, 0, 'headline', 'Produk Original') ?></strong>
+              <span id="heroTrust1Desc"><?= lg_card_val($bannerCards, 0, 'subheadline', 'Dibuat langsung oleh tim ahli') ?></span>
             </div>
           </div>
           <div class="hero__trust-item">
@@ -129,8 +150,8 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14M5 12l7 7 7-7"/><path d="M5 21h14"/></svg>
             </span>
             <div class="hero__trust-text">
-              <strong id="heroTrust2Title">Instant Download</strong>
-              <span id="heroTrust2Desc">Langsung setelah checkout</span>
+              <strong id="heroTrust2Title"><?= lg_card_val($bannerCards, 1, 'headline', 'Instant Download') ?></strong>
+              <span id="heroTrust2Desc"><?= lg_card_val($bannerCards, 1, 'subheadline', 'Langsung setelah checkout') ?></span>
             </div>
           </div>
           <div class="hero__trust-item">
@@ -138,8 +159,8 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
             </span>
             <div class="hero__trust-text">
-              <strong id="heroTrust3Title">Update Berkala</strong>
-              <span id="heroTrust3Desc">Selalu ikut tren terbaru</span>
+              <strong id="heroTrust3Title"><?= lg_card_val($bannerCards, 2, 'headline', 'Update Berkala') ?></strong>
+              <span id="heroTrust3Desc"><?= lg_card_val($bannerCards, 2, 'subheadline', 'Selalu ikut tren terbaru') ?></span>
             </div>
           </div>
           <div class="hero__trust-item">
@@ -147,8 +168,8 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9.5 8.3A8.5 8.5 0 1 1 21 11.5Z"/><path d="M12 7v5l3 2"/></svg>
             </span>
             <div class="hero__trust-text">
-              <strong id="heroTrust4Title">Support Cepat</strong>
-              <span id="heroTrust4Desc">Respon dalam hitungan jam</span>
+              <strong id="heroTrust4Title"><?= lg_card_val($bannerCards, 3, 'headline', 'Support Cepat') ?></strong>
+              <span id="heroTrust4Desc"><?= lg_card_val($bannerCards, 3, 'subheadline', 'Respon dalam hitungan jam') ?></span>
             </div>
           </div>
         </div>

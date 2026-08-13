@@ -102,7 +102,6 @@
   var gantiEkspedisiBtn = document.getElementById("gantiEkspedisiBtn");
 
   var cekOngkirBtn = document.getElementById("cekOngkirBtn");
-  var ongkirNoteEl = document.getElementById("cartOngkirNote");
   var ongkirHintEl = document.getElementById("cartOngkirHint");
   var sumOngkirRowEl = document.getElementById("sumOngkirRow");
 
@@ -642,15 +641,6 @@
     if (gantiEkspedisiBtn) setVisible(gantiEkspedisiBtn, true);
   }
 
-  function markKurirInvalid() {
-    if (!ongkirNoteEl) return;
-    if (!ongkirNoteEl.textContent || !ongkirNoteEl.textContent.trim()) {
-      ongkirNoteEl.textContent = "Silakan pilih ekspedisi terlebih dahulu.";
-    }
-    ongkirNoteEl.hidden = false;
-    ongkirNoteEl.style.color = "#d9534f";
-  }
-
   if (gantiEkspedisiBtn) {
     gantiEkspedisiBtn.addEventListener("click", function () {
       showAllKurirGroups();
@@ -756,14 +746,6 @@
     state.ongkirEtd = etd || "";
     clearFieldInvalid(kurirFieldEl);
 
-    if (!opts.silent) {
-      showOngkirNote(
-        "Ekspedisi dipilih " + state.ongkirService + ": " + formatRupiah(state.ongkir) +
-          (state.ongkirEtd ? " (est. " + state.ongkirEtd + " hari)" : ""),
-        "success"
-      );
-    }
-
     focusKurirGroup(courier);
     setVisible(kurirListEl, true);
     updateTotals();
@@ -777,7 +759,6 @@
 
     if (state.ongkirChecked) {
       state.ongkirChecked = false;
-      ongkirNoteEl.hidden = true;
       updateTotals();
     }
     resetKurirResults();
@@ -862,7 +843,6 @@
 
       if (state.ongkirChecked) {
         state.ongkirChecked = false;
-        ongkirNoteEl.hidden = true;
         updateTotals();
       }
       resetKurirResults();
@@ -939,12 +919,6 @@
     });
   }
 
-  function showOngkirNote(text, kind) {
-    ongkirNoteEl.hidden = false;
-    ongkirNoteEl.style.color = kind === "error" ? "#d9534f" : "#1a9c5c";
-    ongkirNoteEl.textContent = text;
-  }
-
   if (kurirListEl) {
     kurirListEl.addEventListener("click", function (e) {
       var paketRow = e.target.closest(".cart-kurir-paket-item");
@@ -987,8 +961,6 @@
     var groups = kurirListEl ? kurirListEl.querySelectorAll(".cart-kurir-group") : [];
 
     state.ongkirChecked = false;
-    ongkirNoteEl.hidden = true;
-    ongkirNoteEl.style.color = "";
     kurirHiddenEl.value = "";
     setVisible(kurirListEl, true);
     showAllKurirGroups();
@@ -1038,7 +1010,6 @@
       });
 
     return ongkirRequest.then(function (results) {
-      var cheapest = null;
       var byCourierResult = {};
 
       results.forEach(function (result) {
@@ -1064,27 +1035,7 @@
 
         var courierCheapest = services[0];
         if (costEl) costEl.textContent = "mulai " + formatRupiah(courierCheapest.cost);
-
-        if (!cheapest || courierCheapest.cost < cheapest.cost) {
-          cheapest = {
-            group: group,
-            courier: result.courier,
-            courierName: courierName,
-            service: courierCheapest.service,
-            cost: courierCheapest.cost,
-            etd: courierCheapest.etd
-          };
-        }
       });
-
-      if (cheapest) {
-        showOngkirNote(
-          "Termurah: " + cheapest.courierName + " " + formatRupiah(cheapest.cost) + ". Silakan pilih ekspedisi.",
-          "success"
-        );
-      } else {
-        showOngkirNote("Gagal ambil ongkir, coba lagi.", "error");
-      }
 
       updateTotals();
       updateCheckoutState();
@@ -1097,7 +1048,6 @@
     cekOngkirBtn.addEventListener("click", function () {
       if (!hasValidDestination()) {
         if (ongkirHintEl) setVisible(ongkirHintEl, true);
-        ongkirNoteEl.hidden = true;
         if (provinceDd) provinceDd.root.querySelector(".custom-select__trigger").focus();
         return;
       }
@@ -1747,7 +1697,7 @@
         return { outlineEl: addressDetailEl, focusEl: addressDetailEl, msg: "Isi detail alamat pengiriman dulu ya." };
       }
       if (!kurirHiddenEl.value || !state.ongkirChecked) {
-        return { kurirInvalid: true, focusEl: cekOngkirBtn, msg: "Pilih ekspedisi pengiriman dulu ya." };
+        return { outlineEl: kurirFieldEl, focusEl: cekOngkirBtn, msg: "Pilih ekspedisi pengiriman dulu ya." };
       }
     }
     if (waEl.value.trim().length < 9) {
@@ -1760,10 +1710,7 @@
     document.querySelectorAll(".is-field-invalid").forEach(function (el) {
       el.classList.remove("is-field-invalid");
     });
-    if (invalid.kurirInvalid) {
-      markKurirInvalid();
-      if (kurirFieldEl) kurirFieldEl.scrollIntoView({ behavior: "smooth", block: "center" });
-    } else if (invalid.outlineEl) {
+    if (invalid.outlineEl) {
       invalid.outlineEl.classList.add("is-field-invalid");
       invalid.outlineEl.scrollIntoView({ behavior: "smooth", block: "center" });
     }

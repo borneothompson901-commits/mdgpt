@@ -12,6 +12,7 @@
   var ONGKIR_ENDPOINT = SUPABASE_URL + "/functions/v1/ongkir";
   var HIERARCHY_ENDPOINT = SUPABASE_URL + "/functions/v1/destination-hierarchy";
   var PIVOT_ENDPOINT = SUPABASE_URL + "/functions/v1/pivot-create-payment";
+  var ORDER_STATUS_ENDPOINT = SUPABASE_URL + "/functions/v1/order-status";
 
   var VA_CHANNELS = [
     { code: "BCA", label: "BCA", disabled: true },
@@ -227,7 +228,7 @@
 
   var CHECKOUT_STORAGE_KEY = "mdgpt_lingua_checkout";
   var SHIPPING_DRAFT_KEY = "mdgpt_lingua_shipping_draft";
-  var COUNTDOWN_MS = 6 * 60 * 60 * 1000;
+  var COUNTDOWN_MS = 15 * 60 * 1000;
 
   function readShippingDraft() {
     try {
@@ -284,6 +285,7 @@
   var checkoutModeActive = false;
 
   var countdownTimer = null;
+  var statusPollTimer = null;
 
   function readCheckoutState() {
     try {
@@ -1239,6 +1241,7 @@
     setNavTitle("Keranjang Belanja");
     if (cartPageEl) cartPageEl.classList.remove("is-checkout-view");
     stopCountdown();
+    stopStatusPoll();
     renderCart();
   }
 
@@ -1254,6 +1257,7 @@
     closeAllAccordionPanels();
     if (cartPageEl) cartPageEl.classList.add("is-checkout-view");
     stopCountdown();
+    stopStatusPoll();
     renderCart();
   }
 
@@ -1264,47 +1268,138 @@
     }
   }
 
+  function stopStatusPoll() {
+    if (statusPollTimer) {
+      clearInterval(statusPollTimer);
+      statusPollTimer = null;
+    }
+  }
+
+  function isTerminalOrderStatus(status) {
+    return status === "PAID" || status === "EXPIRED" || status === "CANCELLED" || status === "FAILED";
+  }
+
+  function checkOrderStatus() {
+    if (!checkoutState || !checkoutState.resultData) return;
+    var ref = checkoutState.resultData.clientReferenceId;
+    if (!ref) return;
+
+    fetch(ORDER_STATUS_ENDPOINT + "?ref=" + encodeURIComponent(ref), { headers: SUPABASE_FN_HEADERS })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (data) {
+        if (!data || !data.status || data.status === checkoutState.orderStatus) return;
+        checkoutState.orderStatus = data.status;
+        writeCheckoutState(checkoutState);
+        if (isTerminalOrderStatus(data.status)) stopStatusPoll();
+        if (checkoutModeActive && checkoutState.step === "result") renderResultView();
+      })
+      .catch(function () {});
+  }
+
+  function startStatusPoll() {
+    stopStatusPoll();
+    if (checkoutState && isTerminalOrderStatus(checkoutState.orderStatus)) return;
+    checkOrderStatus();
+    statusPollTimer = setInterval(checkOrderStatus, 6000);
+  }
+
   function formatCountdown(ms) {
     var totalSec = Math.max(0, Math.floor(ms / 1000));
-    var h = Math.floor(totalSec / 3600);
-    var m = Math.floor((totalSec % 3600) / 60);
+    var m = Math.floor(totalSec / 60);
     var s = totalSec % 60;
     function pad(n) { return n < 10 ? "0" + n : "" + n; }
-    return pad(h) + ":" + pad(m) + ":" + pad(s);
+    return pad(m) + ":" + pad(s);
   }
 
   function startCountdown(expiryAt) {
     stopCountdown();
     var timeEl = document.getElementById("checkoutCountdownTime");
-    var wrapEl = document.getElementById("checkoutCountdownWrap");
-    var reorderBtn = document.getElementById("checkoutReorderBtn");
     if (!timeEl) return;
 
     function tick() {
       var remaining = expiryAt - Date.now();
       if (remaining <= 0) {
         timeEl.textContent = "00:00:00";
-        if (wrapEl) wrapEl.classList.add("is-expired");
-        if (reorderBtn) reorderBtn.hidden = false;
         stopCountdown();
+        checkoutState.uiExpired = true;
+        writeCheckoutState(checkoutState);
+        renderResultView();
         return;
       }
       timeEl.textContent = formatCountdown(remaining);
-      if (reorderBtn) reorderBtn.hidden = true;
     }
     tick();
     countdownTimer = setInterval(tick, 1000);
   }
 
-  function renderResultView() {
-    if (!checkoutResultContent || !checkoutState) return;
+  function adminWhatsappLink(message) {
+    return "https://wa.me/" + ADMIN_WHATSAPP + "?text=" + encodeURIComponent(message);
+  }
+
+  function getResultOrderId() {
+    var data = (checkoutState && checkoutState.resultData) || {};
+    return data.clientReferenceId || data.orderId || "-";
+  }
+
+  function renderExpiredCard() {
+    stopCountdown();
+    stopStatusPoll();
+    var orderId = getResultOrderId();
+    var waHref = adminWhatsappLink(
+      "Halo admin, saya mau tanya soal pembayaran order " + orderId + " yang sudah kadaluarsa. Saya sudah terlanjur transfer/bayar."
+    );
+
+    checkoutResultContent.innerHTML =
+      '<div class="payment-result__box payment-result__box--expired">' +
+        '<p class="payment-result__label">Waktu Pembayaran Habis</p>' +
+        '<p class="payment-result__note">Sesi pembayaran untuk pesanan ini sudah berakhir dan otomatis dibatalkan. Kalau kamu sudah terlanjur transfer atau bayar, jangan khawatir — langsung hubungi admin ya, biar segera dibantu dicek.</p>' +
+        '<p class="payment-result__order-id">Order ID: ' + orderId + '</p>' +
+      '</div>' +
+      '<a class="payment-result__ewallet-btn payment-result__wa-btn" href="' + waHref + '" target="_blank" rel="noopener">Hubungi Admin (WhatsApp)</a>' +
+      '<button type="button" class="checkout-reorder-btn" id="expiredReorderBtn">Pesan Ulang</button>';
+
+    var reorderBtn = document.getElementById("expiredReorderBtn");
+    if (reorderBtn) {
+      reorderBtn.addEventListener("click", function () {
+        writeCheckoutState(null);
+        window.location.href = "../lingua/index.html";
+      });
+    }
+  }
+
+  function renderPaidCard() {
+    stopCountdown();
+    stopStatusPoll();
+    var orderId = getResultOrderId();
+    var waHref = adminWhatsappLink(
+      "Halo admin, pembayaran order " + orderId + " sudah berhasil. Mohon info selanjutnya ya."
+    );
+
+    checkoutResultContent.innerHTML =
+      '<div class="payment-result__box payment-result__box--success">' +
+        '<p class="payment-result__label">Pembayaran Berhasil</p>' +
+        '<p class="payment-result__note">Terima kasih, pesanan kamu sudah kami terima! Nomor resi (untuk produk fisik) atau file/dokumen (untuk produk digital) akan diinfokan admin lewat WhatsApp maksimal 1x24 jam.</p>' +
+        '<p class="payment-result__order-id">Order ID: ' + orderId + '</p>' +
+      '</div>' +
+      '<a class="payment-result__ewallet-btn payment-result__wa-btn" href="' + waHref + '" target="_blank" rel="noopener">Hubungi Admin (WhatsApp)</a>' +
+      '<button type="button" class="checkout-reorder-btn payment-result__home-btn" id="paidHomeBtn">Halaman Utama</button>';
+
+    var homeBtn = document.getElementById("paidHomeBtn");
+    if (homeBtn) {
+      homeBtn.addEventListener("click", function () {
+        writeCheckoutState(null);
+        window.location.href = "../lingua.html";
+      });
+    }
+  }
+
+  function renderPendingCard() {
     var method = checkoutState.method;
     var data = checkoutState.resultData || {};
     var html = '<div class="payment-countdown" id="checkoutCountdownWrap">' +
         '<span class="payment-countdown__label">Selesaikan pembayaran dalam</span>' +
-        '<span class="payment-countdown__time" id="checkoutCountdownTime">06:00:00</span>' +
-      '</div>' +
-      '<button type="button" class="checkout-reorder-btn" id="checkoutReorderBtn" hidden>Pesan Ulang</button>';
+        '<span class="payment-countdown__time" id="checkoutCountdownTime">15:00</span>' +
+      '</div>';
 
     html += '<p class="payment-result__order-id">Order ID: ' + (data.clientReferenceId || data.orderId || "-") + '</p>';
 
@@ -1347,11 +1442,6 @@
 
     checkoutResultContent.innerHTML = html;
 
-    var reorderBtn = document.getElementById("checkoutReorderBtn");
-    if (reorderBtn) {
-      reorderBtn.addEventListener("click", cancelCheckoutAndReturnToCart);
-    }
-
     var copyBtn = document.getElementById("checkoutCopyVaBtn");
     var vaNumberEl = document.getElementById("checkoutVaNumber");
     if (copyBtn && vaNumberEl) {
@@ -1376,6 +1466,26 @@
     if (method === "EWALLET" && data.ewallet && data.ewallet.redirectUrl && checkoutState.justCreated) {
       window.open(data.ewallet.redirectUrl, "_blank", "noopener");
     }
+
+    var expiryAt = checkoutState.expiryAt || (Date.now() + COUNTDOWN_MS);
+    startCountdown(expiryAt);
+  }
+
+  function renderResultView() {
+    if (!checkoutResultContent || !checkoutState) return;
+
+    if (checkoutState.orderStatus === "PAID") {
+      renderPaidCard();
+      return;
+    }
+
+    var expiredByTimer = checkoutState.uiExpired || (checkoutState.expiryAt && Date.now() >= checkoutState.expiryAt);
+    if (expiredByTimer || isTerminalOrderStatus(checkoutState.orderStatus)) {
+      renderExpiredCard();
+      return;
+    }
+
+    renderPendingCard();
   }
 
   function showCheckoutResultView() {
@@ -1388,8 +1498,7 @@
     setVisible(checkoutStepResult, true);
     if (cartPageEl) cartPageEl.classList.add("is-checkout-view");
     renderResultView();
-    var expiryAt = checkoutState.expiryAt || (Date.now() + COUNTDOWN_MS);
-    startCountdown(expiryAt);
+    startStatusPoll();
     checkoutState.justCreated = false;
     writeCheckoutState(checkoutState);
     renderCart();
@@ -1444,11 +1553,20 @@
           serverExpiry = new Date(result.data.qr.expiryAt).getTime();
         }
 
+        // Batas waktu tampilan selalu 15 menit dari sekarang, kecuali sesi
+        // dari Pivot sendiri ternyata lebih pendek dari itu.
+        var uiExpiry = Date.now() + COUNTDOWN_MS;
+        if (serverExpiry && serverExpiry > Date.now() && serverExpiry < uiExpiry) {
+          uiExpiry = serverExpiry;
+        }
+
         checkoutState.step = "result";
         checkoutState.method = method;
         checkoutState.channel = channelCode || "";
         checkoutState.resultData = result.data;
-        checkoutState.expiryAt = serverExpiry && serverExpiry > Date.now() ? serverExpiry : Date.now() + COUNTDOWN_MS;
+        checkoutState.expiryAt = uiExpiry;
+        checkoutState.orderStatus = result.data.status === "PAID" ? "PAID" : "";
+        checkoutState.uiExpired = false;
         checkoutState.justCreated = true;
         writeCheckoutState(checkoutState);
 
@@ -1569,6 +1687,7 @@
   var checkoutDoneBtn = document.getElementById("checkoutDoneBtn");
 
   function cancelCheckoutAndReturnToCart() {
+    stopStatusPoll();
     checkoutState = null;
     writeCheckoutState(null);
     showCartView();

@@ -534,13 +534,14 @@
     '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Ditambahkan</span>';
 
   addCartBtn.addEventListener("click", function () {
-    if (addCartBtn.classList.contains("is-added")) return;
+    if (addCartBtn.classList.contains("is-added") || addCartBtn.disabled) return;
 
     if (Array.isArray(product.variantGroups) && product.variantGroups.length > 0) {
       if (typeof window.openVariantModal !== "function") {
         console.warn("openVariantModal belum ke-load. Pastikan js/variant-modal.js di-include sebelum produk.js.");
         return;
       }
+      addCartBtn.disabled = true;
       window.openVariantModal(product, {
         image: product.images[0],
         sourceImgEl: mainImage,
@@ -553,6 +554,9 @@
             addCartBtn.classList.remove("is-added");
             addCartBtn.innerHTML = addCartOriginal;
           }, 1600);
+        },
+        onClose: function () {
+          addCartBtn.disabled = false;
         }
       });
       return;
@@ -573,10 +577,17 @@
   });
 
   var buyNowBtn = document.getElementById("pdBuyNowBtn");
+  var buyNowLocked = false;
   buyNowBtn.addEventListener("click", function () {
+    if (buyNowLocked) return;
+    buyNowLocked = true;
+    buyNowBtn.disabled = true;
+
     if (Array.isArray(product.variantGroups) && product.variantGroups.length > 0) {
       if (typeof window.openVariantModal !== "function") {
         console.warn("openVariantModal belum ke-load. Pastikan js/variant-modal.js di-include sebelum produk.js.");
+        buyNowLocked = false;
+        buyNowBtn.disabled = false;
         return;
       }
       window.openVariantModal(product, {
@@ -586,6 +597,10 @@
         initialQty: clampQty(qty),
         onAdded: function () {
           window.location.href = "cart.html";
+        },
+        onClose: function () {
+          buyNowLocked = false;
+          buyNowBtn.disabled = false;
         }
       });
       return;

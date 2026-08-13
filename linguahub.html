@@ -59,6 +59,12 @@
           <span class="nav-count" id="navAffiliateCount">0</span>
         </a>
       </li>
+      <li>
+        <a href="#" class="nav-item" data-page="website">
+          <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.35"/><path d="M2 8h12M8 2c1.7 1.7 2.7 3.8 2.7 6s-1 4.3-2.7 6c-1.7-1.7-2.7-3.8-2.7-6s1-4.3 2.7-6z" stroke="currentColor" stroke-width="1.35"/></svg>
+          <span class="nav-text">Website</span>
+        </a>
+      </li>
     </ul>
   </nav>
 
@@ -388,6 +394,29 @@
         </div>
       </section>
 
+      <section class="page-section" id="pageWebsite" data-page-section="website" hidden>
+        <div class="page-head">
+          <div class="page-head-left">
+            <div class="page-title">Website</div>
+            <div class="page-sub">Kelola konten tampilan halaman depan website kamu.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table class="data-table data-table--website">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="websiteTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
     </div>
   </div>
 </div>
@@ -576,9 +605,52 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="websiteEditModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="websiteEditTitle">Edit Banner</h3>
+      <button class="modal-close" id="websiteEditCloseBtn">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 4L4 11M4 4l7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Headline</label>
+        <input type="text" id="websiteEditHeadline" placeholder="Judul utama banner" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>Sub Headline</label>
+        <input type="text" id="websiteEditSubheadline" placeholder="Kalimat pendukung headline" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>Teks CTA</label>
+        <input type="text" id="websiteEditCta" placeholder="Contoh: Belanja Sekarang" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>Foto (1600 x 500 px)</label>
+        <div class="upload-grid" style="grid-template-columns:1fr;">
+          <label class="upload-slot upload-slot-banner" id="websiteEditPhotoSlot">
+            <span id="websiteEditPhotoPlaceholder">
+              <svg width="22" height="22" viewBox="0 0 16 16" fill="none"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h1.2l.8-1.2h5l.8 1.2h1.2A1.5 1.5 0 0 1 14 5.5v6A1.5 1.5 0 0 1 12.5 13h-9A1.5 1.5 0 0 1 2 11.5v-6z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="8" cy="8.2" r="2.1" stroke="currentColor" stroke-width="1.2"/></svg>
+              <div>Foto Banner</div>
+            </span>
+            <input type="file" id="websiteEditPhotoInput" accept="image/*" />
+          </label>
+        </div>
+        <div class="upload-hint">Ukuran ideal 1600 x 500px. Format JPG/PNG/WebP, maks 10MB.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="websiteEditCancelBtn">Batal</button>
+      <button class="btn btn-primary" id="websiteEditSaveBtn">Simpan</button>
+    </div>
+  </div>
+</div>
+
 <script src="js/admin-core.js"></script>
 <script src="js/admin-page.js"></script>
 <script src="js/admin-transaksi.js"></script>
 <script src="js/admin-affiliate.js"></script>
+<script src="js/admin-website.js"></script>
 </body>
 </html>

@@ -272,6 +272,7 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
 .upload-slot__remove:hover { background:var(--danger); }
 .upload-slot__main-badge { position:absolute; bottom:4px; left:4px; background:rgba(37,99,235,.92); color:#fff; font-size:0.6rem; font-weight:700; padding:1px 6px; border-radius:99px; z-index:2; text-transform:uppercase; letter-spacing:.03em; }
 .upload-slot-main { aspect-ratio:1080/1350; grid-column:span 2; }
+.upload-slot-banner { aspect-ratio:1600/500; grid-column:span 1; }
 .upload-hint { font-size:0.76rem; color:var(--text-3); margin-top:8px; line-height:1.5; }
 
 .upload-grid-gallery { grid-template-columns:repeat(auto-fill,minmax(78px,1fr)); }

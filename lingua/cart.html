@@ -8,8 +8,18 @@
         var raw = localStorage.getItem("mdgpt_lingua_checkout");
         if (!raw) return;
         var parsed = JSON.parse(raw);
-        if (parsed && parsed.step === "result" && parsed.resultData && parsed.orderStatus === "PAID") {
+        if (!parsed || parsed.step !== "result" || !parsed.resultData) return;
+        if (parsed.orderStatus === "PAID") {
           document.documentElement.classList.add("cart-preload-paid");
+          return;
+        }
+        var terminalStatuses = ["EXPIRED", "CANCELLED", "FAILED"];
+        var isExpired =
+          parsed.uiExpired ||
+          (parsed.expiryAt && Date.now() >= parsed.expiryAt) ||
+          terminalStatuses.indexOf(parsed.orderStatus) !== -1;
+        if (isExpired) {
+          document.documentElement.classList.add("cart-preload-expired");
         }
       } catch (e) {}
     })();

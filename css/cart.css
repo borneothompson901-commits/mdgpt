@@ -145,6 +145,29 @@
   margin: 0 auto;
 }
 
+html.cart-preload-paid .cart-page .cart-layout {
+  grid-template-columns: 1fr;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+html.cart-preload-paid .cart-page .cart-layout .cart-items {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+}
+html.cart-preload-paid #cartLoading,
+html.cart-preload-paid #cartEmpty,
+html.cart-preload-paid #cartList,
+html.cart-preload-paid #checkoutStepMethod,
+html.cart-preload-paid #cartSummary {
+  display: none !important;
+}
+html.cart-preload-paid #checkoutPanel,
+html.cart-preload-paid #checkoutStepResult {
+  display: block !important;
+}
+
 @media (max-width: 900px) {
   .cart-page .cart-layout {
     grid-template-columns: 1fr;

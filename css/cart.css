@@ -938,6 +938,28 @@ html.cart-preload-expired #checkoutStepResult {
   color: #d9534f;
 }
 
+.cart-page .cart-btn-ganti-ekspedisi {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--cat-accent, #ee4d2d);
+  background: var(--white, #fff);
+  color: var(--cat-accent, #ee4d2d);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  transition: background-color 0.15s ease;
+}
+.cart-page .cart-btn-ganti-ekspedisi:hover {
+  background: rgba(238, 77, 45, 0.08);
+}
+.cart-page .cart-btn-ganti-ekspedisi[hidden] {
+  display: none;
+}
+
 .cart-page .cart-kurir-list {
   display: flex;
   flex-direction: column;
@@ -1070,6 +1092,32 @@ html.cart-preload-expired #checkoutStepResult {
 }
 .cart-page .cart-kurir-paket-item.is-selected .cart-kurir-paket-item__harga {
   color: var(--cat-accent, #ee4d2d);
+}
+.cart-page .cart-kurir-paket-item .cart-kurir-paket-item__right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cart-page .cart-kurir-paket-item__pilih-btn {
+  flex-shrink: 0;
+  border: 1px solid var(--cat-accent, #ee4d2d);
+  background: var(--white, #fff);
+  color: var(--cat-accent, #ee4d2d);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.cart-page .cart-kurir-paket-item__pilih-btn:hover {
+  background: rgba(238, 77, 45, 0.08);
+}
+.cart-page .cart-kurir-paket-item.is-selected .cart-kurir-paket-item__pilih-btn {
+  background: var(--cat-accent, #ee4d2d);
+  color: var(--white, #fff);
 }
 .cart-page .cart-kurir-paket-empty {
   padding: 8px 10px;

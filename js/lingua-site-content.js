@@ -7,11 +7,35 @@
     apikey: SUPABASE_KEY,
     Authorization: "Bearer " + SUPABASE_KEY
   };
+  var CACHE_PREFIX = "lingua_cms_";
 
   function setText(id, value) {
     if (value == null || value === "") return;
     var el = document.getElementById(id);
-    if (el) el.textContent = value;
+    if (!el || el.textContent === value) return;
+    el.style.transition = "opacity .15s ease";
+    el.style.opacity = "0";
+    requestAnimationFrame(function () {
+      el.textContent = value;
+      requestAnimationFrame(function () {
+        el.style.opacity = "1";
+      });
+    });
+  }
+
+  function readCache(section) {
+    try {
+      var raw = sessionStorage.getItem(CACHE_PREFIX + section);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeCache(section, data) {
+    try {
+      sessionStorage.setItem(CACHE_PREFIX + section, JSON.stringify(data));
+    } catch (e) {}
   }
 
   function fetchSection(section) {
@@ -20,6 +44,16 @@
       .then(function (res) { return res.ok ? res.json() : []; })
       .then(function (rows) { return (rows && rows[0]) ? rows[0].data : null; })
       .catch(function () { return null; });
+  }
+
+  function loadSection(section, applyFn) {
+    var cached = readCache(section);
+    if (cached) applyFn(cached);
+    fetchSection(section).then(function (data) {
+      if (data == null) return;
+      writeCache(section, data);
+      applyFn(data);
+    });
   }
 
   function applyBannerUtama(data) {
@@ -81,19 +115,27 @@
         "<p><strong>" + (i + 1) + ". " + escapeHtml(item.headline) + "</strong><br>" +
         escapeHtml(item.subheadline) + "</p>";
     });
-    container.innerHTML = html;
+    if (container.innerHTML === html) return;
+    container.style.transition = "opacity .15s ease";
+    container.style.opacity = "0";
+    requestAnimationFrame(function () {
+      container.innerHTML = html;
+      requestAnimationFrame(function () {
+        container.style.opacity = "1";
+      });
+    });
   }
 
   function run() {
     if (document.getElementById("heroEyebrow")) {
-      fetchSection("banner_utama").then(applyBannerUtama);
-      fetchSection("banner_cards").then(applyBannerCards);
+      loadSection("banner_utama", applyBannerUtama);
+      loadSection("banner_cards", applyBannerCards);
     }
     if (document.getElementById("affCoverTitle")) {
-      fetchSection("banner_affiliate").then(applyBannerAffiliate);
-      fetchSection("card_affiliate").then(applyCardAffiliate);
-      fetchSection("faq_affiliate").then(applyFaqAffiliate);
-      fetchSection("syarat_ketentuan").then(applySyaratKetentuan);
+      loadSection("banner_affiliate", applyBannerAffiliate);
+      loadSection("card_affiliate", applyCardAffiliate);
+      loadSection("faq_affiliate", applyFaqAffiliate);
+      loadSection("syarat_ketentuan", applySyaratKetentuan);
     }
   }
 

@@ -139,8 +139,20 @@
     fieldEl.classList.remove("has-error");
   }
 
+  function setCtaLoggedIn(isLoggedIn) {
+    var guestText = $("#affCtaGuestText");
+    var loggedInText = $("#affCtaLoggedInText");
+    var joinBtn = $("#affJoinCtaBtn");
+    var contactBtn = $("#affContactCtaBtn");
+    if (guestText) guestText.classList.toggle("is-hidden", isLoggedIn);
+    if (joinBtn) joinBtn.classList.toggle("is-hidden", isLoggedIn);
+    if (loggedInText) loggedInText.classList.toggle("is-hidden", !isLoggedIn);
+    if (contactBtn) contactBtn.classList.toggle("is-hidden", !isLoggedIn);
+  }
+
   function renderDashboard(affiliate, viaSession) {
     document.body.classList.remove("aff-auth-page");
+    setCtaLoggedIn(true);
 
     var formSection = $("#affFormSection");
     if (formSection) formSection.classList.add("is-hidden");

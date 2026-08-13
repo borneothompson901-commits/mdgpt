@@ -430,6 +430,12 @@ body.aff-auth-page .aff-auth {
 }
 
 @media (max-width: 640px) {
+  .aff-auth-visual {
+    padding: 28px 20px;
+  }
+  .aff-auth-visual__brand {
+    font-size: 1.5rem;
+  }
   .aff-auth-view__title { font-size: 1.3rem; }
   .aff-auth-view__sub { font-size: 0.9rem; }
   .aff-field label { font-size: 0.82rem; }

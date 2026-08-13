@@ -108,6 +108,8 @@
         currentCommissionPersen = persen;
         var badge = $("#affBenefitCommission");
         if (badge) badge.textContent = persen + "%";
+        var infoCommission = $("#affInfoCommission");
+        if (infoCommission) infoCommission.textContent = persen + "%";
         return persen;
       })
       .catch(function () {
@@ -174,7 +176,10 @@
     if (infoWa) infoWa.textContent = affiliate.whatsapp ? "+" + affiliate.whatsapp : "—";
     var infoCommission = $("#affInfoCommission");
     if (infoCommission) {
-      infoCommission.textContent = affiliate.commission_rate != null ? Number(affiliate.commission_rate) + "%" : "—";
+      // Always show the current global commission rate (kept in sync via
+      // loadCommissionConfig), not affiliate.commission_rate, which is a
+      // one-time snapshot taken at signup and never reflects later changes.
+      infoCommission.textContent = currentCommissionPersen + "%";
     }
 
     var clicks = $("#affStatClicks");
@@ -474,7 +479,6 @@
         email: email.toLowerCase(),
         password: password,
         ref_code: generateRefCode(),
-        commission_rate: currentCommissionPersen,
         total_clicks: 0,
         total_orders: 0,
         total_commission: 0

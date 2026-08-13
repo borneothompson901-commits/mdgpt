@@ -13,23 +13,51 @@
     var searchInput = document.getElementById("searchInput");
 
     var PAGE_TITLES = { overview: "Overview", produk: "Produk", transaksi: "Transaksi", affiliate: "Affiliate", website: "Website" };
-    var ACTIVE_PAGE_KEY = "linguahub_active_page";
+    var ALLOWED_PAGES = ["overview", "produk", "transaksi", "affiliate", "website"];
+
+    function sanitizePage(page) {
+      return ALLOWED_PAGES.indexOf(page) !== -1 ? page : "overview";
+    }
+
+    function applyBootStyle(page) {
+      var style = document.getElementById("lghPanelBootStyle");
+      if (!style) {
+        style = document.createElement("style");
+        style.id = "lghPanelBootStyle";
+        document.head.appendChild(style);
+      }
+      style.textContent =
+        "[data-page-section]{display:none !important;}" +
+        "[data-page-section=\"" + page + "\"]{display:block !important;}";
+    }
 
     function activatePage(page, opts) {
       opts = opts || {};
+      page = sanitizePage(page);
+
       var navLinks = document.querySelectorAll(".nav-item[data-page]");
       var targetLink = null;
       navLinks.forEach(function (l) { if (l.dataset.page === page) targetLink = l; });
       if (!targetLink) return false;
 
       navLinks.forEach(function (l) { l.classList.toggle("active", l === targetLink); });
+      applyBootStyle(page);
       document.querySelectorAll(".page-section[data-page-section]").forEach(function (sec) {
         sec.hidden = sec.dataset.pageSection !== page;
       });
       var bc = document.getElementById("bcCurrent");
       if (bc) bc.textContent = PAGE_TITLES[page] || page;
 
-      try { sessionStorage.setItem(ACTIVE_PAGE_KEY, page); } catch (err) {}
+      if (!opts.skipHistory) {
+        var newHash = "#" + page;
+        if (location.hash !== newHash) {
+          if (opts.replace) {
+            history.replaceState(null, "", newHash);
+          } else {
+            history.pushState(null, "", newHash);
+          }
+        }
+      }
 
       if (!opts.silent) {
         var sidebar = document.getElementById("sidebar");
@@ -49,11 +77,13 @@
         activatePage(link.dataset.page);
       });
     });
-
-    (function restoreActivePage() {
-      var saved;
-      try { saved = sessionStorage.getItem(ACTIVE_PAGE_KEY); } catch (err) { saved = null; }
-      if (saved) activatePage(saved, { silent: true });
+    window.addEventListener("hashchange", function () {
+      var page = (location.hash || "").replace("#", "");
+      activatePage(page, { silent: true, skipHistory: true });
+    });
+    (function syncInitialPage() {
+      var initial = sanitizePage(window.__lghInitialPage || (location.hash || "").replace("#", ""));
+      activatePage(initial, { silent: true, skipHistory: true });
     })();
 
     var iconBox = function () {
@@ -512,23 +542,6 @@
 
     loadAll();
   }
-
-  /* ================================ WIZARD ================================
-     Alur wizard sekarang ditentukan di awal lewat query string:
-       ?type=digital|fisik      -> dari gate modal langkah 1
-       ?variant=single|multi    -> dari gate modal langkah 2
-     "single"  = tanpa varian / hanya 1 varian:
-        1) Nama produk, Kategori, Berat(fisik), Stok, Harga Jual, Harga Coret
-        2) Deskripsi, Spesifikasi
-        3) Rating awal, Jumlah terjual
-        4) Foto Utama, Foto Thumbnail
-     "multi"   = lebih dari 1 varian:
-        1) Nama produk, Kategori, Berat(fisik), Deskripsi, Spesifikasi
-        2) Stok, Harga Jual, Harga Coret per kombinasi varian
-        3) Rating awal, Jumlah terjual
-        4) Foto Utama + Foto per kombinasi varian
-     5) Review & Simpan (sama utk semua mode)
-     ========================================================================== */
   else if (document.getElementById("wizardBackBtn")) {
     var wdb = AdminShared.db;
     var wrupiah = AdminShared.rupiah;
@@ -539,7 +552,7 @@
     var gateVariant = qs.get("variant");
 
     if (!editId && (!gateType || !gateVariant)) {
-      location.replace("linguahub.html");
+      location.replace("linguahub.html#produk");
       return;
     }
 
@@ -575,7 +588,7 @@
     document.getElementById("exitCloseBtn").addEventListener("click", function () { exitModal.classList.remove("open"); });
     document.getElementById("exitCancelBtn").addEventListener("click", function () { exitModal.classList.remove("open"); });
     exitModal.addEventListener("click", function (e) { if (e.target === exitModal) exitModal.classList.remove("open"); });
-    document.getElementById("exitConfirmBtn").addEventListener("click", function () { location.href = "linguahub.html"; });
+    document.getElementById("exitConfirmBtn").addEventListener("click", function () { location.href = "linguahub.html#produk"; });
 
     var previewToggleBtn = document.getElementById("previewToggleBtn");
     var previewCloseBtn = document.getElementById("previewCloseBtn");
@@ -835,7 +848,7 @@
         document.getElementById("wizardTitle").textContent = "Edit Produk";
         try {
           var row = await wdb.getProduct(editId);
-          if (!row) { AdminShared.toast("Produk tidak ditemukan", "error"); location.href = "linguahub.html"; return; }
+          if (!row) { AdminShared.toast("Produk tidak ditemukan", "error"); location.href = "linguahub.html#produk"; return; }
           hydrateFromRow(row);
         } catch (e) {
           AdminShared.toast("Gagal memuat produk", "error");
@@ -1673,7 +1686,7 @@
           await wdb.createProduct(payload);
         }
         sessionStorage.setItem("admin_toast", publish ? "Produk berhasil dipublikasikan" : "Draft produk disimpan");
-        location.href = "linguahub.html";
+        location.href = "linguahub.html#produk";
       } catch (e) {
         console.error(e);
         AdminShared.toast(e.message || "Gagal menyimpan produk", "error");

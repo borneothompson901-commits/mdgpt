@@ -1020,7 +1020,7 @@ body.aff-scroll-lock {
 .aff-chart-dot {
   fill: var(--white);
   stroke: var(--cat-accent);
-  stroke-width: 2;
+  stroke-width: 1.5;
 }
 
 .aff-chart-labels {

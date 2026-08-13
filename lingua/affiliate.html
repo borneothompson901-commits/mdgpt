@@ -1,3 +1,61 @@
+<?php
+require __DIR__ . '/../config/supabase.php';
+
+$bannerAffiliate = fetchLinguaSection('banner_affiliate');
+$cardAffiliate   = fetchLinguaSection('card_affiliate');
+$faqAffiliate    = fetchLinguaSection('faq_affiliate');
+$syaratKetentuan = fetchLinguaSection('syarat_ketentuan');
+
+function lg_val($data, string $key, string $default): string
+{
+    if (is_array($data) && !empty($data[$key])) {
+        return lg_e($data[$key]);
+    }
+    return $default;
+}
+
+function lg_list_val($list, int $index, string $key, string $default): string
+{
+    if (is_array($list) && isset($list[$index][$key]) && $list[$index][$key] !== '') {
+        return lg_e($list[$index][$key]);
+    }
+    return $default;
+}
+
+function lg_terms_html($list, array $defaults): string
+{
+    $items = [];
+    if (is_array($list) && count($list) > 0) {
+        foreach ($list as $i => $item) {
+            $head = $item['headline'] ?? '';
+            $sub  = $item['subheadline'] ?? '';
+            if ($head === '' && $sub === '') continue;
+            $items[] = '<p><strong>' . ($i + 1) . '. ' . lg_e($head) . '</strong><br>' . lg_e($sub) . '</p>';
+        }
+    }
+    if (empty($items)) {
+        foreach ($defaults as $i => $d) {
+            $items[] = '<p><strong>' . ($i + 1) . '. ' . lg_e($d[0]) . '</strong><br>' . lg_e($d[1]) . '</p>';
+        }
+    }
+    return implode("\n            ", $items);
+}
+
+$termsDefaults = [
+    ['Definisi & Kedudukan Affiliate', 'Affiliate adalah individu yang telah terdaftar melalui formulir pendaftaran resmi dan mendapatkan tautan rujukan unik untuk menyebarkan produk atau layanan Lingua. Status affiliate bersifat non-eksklusif dan tidak menjadikan affiliate sebagai karyawan, agen resmi, perwakilan hukum, maupun mitra usaha (partnership) dari Lingua dalam bentuk apa pun.'],
+    ['Kelayakan Pendaftaran', 'Pendaftar wajib mengisi data diri secara benar, lengkap, dan dapat diverifikasi, termasuk nama lengkap, nomor WhatsApp aktif, dan alamat email yang valid. Lingua berhak menolak, menangguhkan, atau membatalkan pendaftaran apabila ditemukan data yang tidak valid, ganda, atau terindikasi disalahgunakan.'],
+    ['Penggunaan Tautan Affiliate', 'Tautan affiliate hanya boleh disebarkan melalui cara-cara yang sah dan tidak melanggar hukum maupun kebijakan platform pihak ketiga (media sosial, mesin pencari, marketplace, forum, dan sejenisnya). Penyebaran dapat dilakukan melalui konten organik, media sosial pribadi, blog, grup komunitas, maupun kanal digital lain yang dimiliki atau dikelola secara sah oleh affiliate.'],
+    ['Larangan dalam Penyebaran', 'Affiliate dilarang keras melakukan hal-hal berikut: menyebarkan tautan melalui spam (termasuk namun tidak terbatas pada email massal tanpa izin, komentar spam, atau pesan berantai tanpa persetujuan penerima); melakukan iklan berbayar menggunakan nama brand Lingua atau variasi penulisannya sebagai kata kunci tanpa izin tertulis; membuat klaim, janji, potongan harga, atau informasi yang menyesatkan dan tidak sesuai dengan fakta di halaman resmi; menyamar sebagai pihak resmi Lingua; menggunakan bot, skrip otomatis, cookie stuffing, atau metode kecurangan lain untuk memanipulasi jumlah klik maupun transaksi; serta mendaftarkan atau menggunakan tautan affiliate milik sendiri untuk transaksi atas nama sendiri (self-referral).'],
+    ['Tanggung Jawab Konten dan Legalitas', 'Segala bentuk konten, narasi, klaim, maupun media promosi yang dibuat dan disebarkan oleh affiliate sepenuhnya menjadi tanggung jawab affiliate yang bersangkutan. Lingua tidak bertanggung jawab atas sengketa, pelaporan, maupun konsekuensi hukum yang timbul akibat konten promosi yang dibuat secara sepihak oleh affiliate, termasuk namun tidak terbatas pada pelanggaran hak cipta, pelanggaran ketentuan platform pihak ketiga, atau klaim yang menyesatkan konsumen.'],
+    ['Pelacakan Referral', 'Setiap transaksi yang tercatat melalui tautan atau kode referral affiliate akan dilacak menggunakan sistem internal Lingua. Masa berlaku pelacakan (cookie/kode referral) mengikuti kebijakan teknis yang berlaku dan dapat berubah sewaktu-waktu tanpa pemberitahuan sebelumnya. Lingua berhak melakukan verifikasi manual atas setiap transaksi yang tercatat sebelum dinyatakan sah.'],
+    ['Pencairan Hasil Referral', 'Proses pencairan hasil referral tidak dilakukan secara otomatis melalui sistem. Affiliate wajib menghubungi admin resmi Lingua melalui WhatsApp untuk mengajukan permintaan pencairan, verifikasi data transaksi, dan konfirmasi metode pembayaran. Waktu pemrosesan pencairan mengikuti kebijakan dan jadwal operasional admin Lingua.'],
+    ['Pembatalan dan Pemblokiran Akun', 'Lingua berhak menangguhkan, membekukan, atau menghentikan status affiliate secara sepihak tanpa pemberitahuan sebelumnya apabila ditemukan pelanggaran terhadap ketentuan ini, indikasi kecurangan, atau aktivitas yang merugikan reputasi Lingua. Seluruh hasil referral yang berasal dari aktivitas yang melanggar ketentuan dapat dinyatakan tidak sah dan tidak akan dicairkan.'],
+    ['Kerahasiaan & Perlindungan Data', 'Data pribadi yang diberikan pada saat pendaftaran hanya akan digunakan untuk keperluan pengelolaan program affiliate, termasuk verifikasi identitas, pelacakan referral, dan proses pencairan. Lingua berkomitmen untuk tidak membagikan data pribadi affiliate kepada pihak ketiga yang tidak berkepentingan tanpa persetujuan, kecuali diwajibkan oleh peraturan perundang-undangan yang berlaku.'],
+    ['Batasan Tanggung Jawab', 'Lingua tidak bertanggung jawab atas kerugian langsung maupun tidak langsung yang timbul akibat gangguan teknis, kesalahan input data oleh affiliate, force majeure, atau faktor eksternal lain di luar kendali wajar Lingua.'],
+    ['Perubahan Ketentuan', 'Lingua berhak mengubah, memperbarui, atau menambahkan ketentuan ini sewaktu-waktu sesuai kebutuhan operasional dan kebijakan internal. Perubahan akan berlaku efektif sejak dipublikasikan pada halaman ini, dan affiliate dianggap menyetujui perubahan tersebut dengan tetap menggunakan tautan affiliate setelah perubahan berlaku.'],
+    ['Penyelesaian Sengketa', 'Segala bentuk perselisihan yang timbul sehubungan dengan program affiliate ini akan diselesaikan terlebih dahulu secara musyawarah antara affiliate dan admin Lingua melalui kanal komunikasi resmi sebelum ditempuh langkah-langkah lain sesuai peraturan perundang-undangan yang berlaku di Indonesia.'],
+];
+?>
 <!DOCTYPE html>
 <html lang="id">
   <head>
@@ -55,8 +113,8 @@
 
         <div class="aff-profile-card">
           <div class="aff-cover" id="affCover">
-            <h1 class="aff-cover__title" id="affCoverTitle">Program Affiliate</h1>
-            <p class="aff-cover__sub" id="affCoverSub">Bagikan link kamu, dapat komisi tiap ada yang checkout.</p>
+            <h1 class="aff-cover__title" id="affCoverTitle"><?= lg_val($bannerAffiliate, 'headline', 'Program Affiliate') ?></h1>
+            <p class="aff-cover__sub" id="affCoverSub"><?= lg_val($bannerAffiliate, 'subheadline', 'Bagikan link kamu, dapat komisi tiap ada yang checkout.') ?></p>
             <div class="aff-cover__avatar-wrap" id="affAvatarWrap">
               <span class="aff-cover__avatar" id="affAvatar">A</span>
             </div>
@@ -75,18 +133,18 @@
         <section class="aff-benefits" id="affBenefits">
           <div class="aff-benefit-card">
             <span class="aff-benefit-card__num" id="affBenefitCommission">&nbsp;</span>
-            <p class="aff-benefit-card__title" id="affBenefitCard1Title">Komisi tiap transaksi</p>
-            <p class="aff-benefit-card__desc" id="affBenefitCard1Desc">Berlaku untuk checkout produk apapun di katalog.</p>
+            <p class="aff-benefit-card__title" id="affBenefitCard1Title"><?= lg_list_val($cardAffiliate, 0, 'headline', 'Komisi tiap transaksi') ?></p>
+            <p class="aff-benefit-card__desc" id="affBenefitCard1Desc"><?= lg_list_val($cardAffiliate, 0, 'subheadline', 'Berlaku untuk checkout produk apapun di katalog.') ?></p>
           </div>
           <div class="aff-benefit-card">
-            <span class="aff-benefit-card__num" id="affBenefitCard2Num">14 hari</span>
-            <p class="aff-benefit-card__title" id="affBenefitCard2Title">Cookie tracking</p>
-            <p class="aff-benefit-card__desc" id="affBenefitCard2Desc">Klik link kamu tetap terhitung sampai 14 hari ke depan.</p>
+            <span class="aff-benefit-card__num" id="affBenefitCard2Num"><?= lg_list_val($cardAffiliate, 1, 'bold', '14 hari') ?></span>
+            <p class="aff-benefit-card__title" id="affBenefitCard2Title"><?= lg_list_val($cardAffiliate, 1, 'headline', 'Cookie tracking') ?></p>
+            <p class="aff-benefit-card__desc" id="affBenefitCard2Desc"><?= lg_list_val($cardAffiliate, 1, 'subheadline', 'Klik link kamu tetap terhitung sampai 14 hari ke depan.') ?></p>
           </div>
           <div class="aff-benefit-card">
-            <span class="aff-benefit-card__num" id="affBenefitCard3Num">Rp0</span>
-            <p class="aff-benefit-card__title" id="affBenefitCard3Title">Biaya pendaftaran</p>
-            <p class="aff-benefit-card__desc" id="affBenefitCard3Desc">Aktif dalam kurang dari 1 menit, cair via WhatsApp.</p>
+            <span class="aff-benefit-card__num" id="affBenefitCard3Num"><?= lg_list_val($cardAffiliate, 2, 'bold', 'Rp0') ?></span>
+            <p class="aff-benefit-card__title" id="affBenefitCard3Title"><?= lg_list_val($cardAffiliate, 2, 'headline', 'Biaya pendaftaran') ?></p>
+            <p class="aff-benefit-card__desc" id="affBenefitCard3Desc"><?= lg_list_val($cardAffiliate, 2, 'subheadline', 'Aktif dalam kurang dari 1 menit, cair via WhatsApp.') ?></p>
           </div>
         </section>
 
@@ -225,40 +283,40 @@
           <div class="aff-faq-list aff-faq-list--grid">
             <div class="aff-faq-item">
               <button type="button" class="aff-faq-trigger" aria-expanded="false" aria-controls="affPreFaqPanel1">
-                <span class="aff-faq-trigger__q" id="affPreFaqQ1">Kapan komisi affiliate saya cair?</span>
+                <span class="aff-faq-trigger__q" id="affPreFaqQ1"><?= lg_list_val($faqAffiliate, 0, 'judul', 'Kapan komisi affiliate saya cair?') ?></span>
                 <span class="aff-faq-trigger__icon" aria-hidden="true">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                 </span>
               </button>
               <div class="aff-faq-panel" id="affPreFaqPanel1" role="region">
                 <div class="aff-faq-panel__inner">
-                  <p id="affPreFaqA1">Pencairan tidak otomatis lewat sistem. Hubungi admin lewat WhatsApp untuk verifikasi transaksi dan konfirmasi metode pembayaran, lalu komisi akan diproses sesuai jadwal operasional admin.</p>
+                  <p id="affPreFaqA1"><?= lg_list_val($faqAffiliate, 0, 'isi', 'Pencairan tidak otomatis lewat sistem. Hubungi admin lewat WhatsApp untuk verifikasi transaksi dan konfirmasi metode pembayaran, lalu komisi akan diproses sesuai jadwal operasional admin.') ?></p>
                 </div>
               </div>
             </div>
             <div class="aff-faq-item">
               <button type="button" class="aff-faq-trigger" aria-expanded="false" aria-controls="affPreFaqPanel2">
-                <span class="aff-faq-trigger__q" id="affPreFaqQ2">Berapa lama cookie tracking link affiliate berlaku?</span>
+                <span class="aff-faq-trigger__q" id="affPreFaqQ2"><?= lg_list_val($faqAffiliate, 1, 'judul', 'Berapa lama cookie tracking link affiliate berlaku?') ?></span>
                 <span class="aff-faq-trigger__icon" aria-hidden="true">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                 </span>
               </button>
               <div class="aff-faq-panel" id="affPreFaqPanel2" role="region">
                 <div class="aff-faq-panel__inner">
-                  <p id="affPreFaqA2">14 hari sejak klik pertama. Selama pembeli checkout dalam rentang waktu itu, transaksinya tetap tercatat sebagai referral kamu.</p>
+                  <p id="affPreFaqA2"><?= lg_list_val($faqAffiliate, 1, 'isi', '14 hari sejak klik pertama. Selama pembeli checkout dalam rentang waktu itu, transaksinya tetap tercatat sebagai referral kamu.') ?></p>
                 </div>
               </div>
             </div>
             <div class="aff-faq-item">
               <button type="button" class="aff-faq-trigger" aria-expanded="false" aria-controls="affPreFaqPanel3">
-                <span class="aff-faq-trigger__q" id="affPreFaqQ3">Bisa pakai link affiliate sendiri untuk beli produk sendiri?</span>
+                <span class="aff-faq-trigger__q" id="affPreFaqQ3"><?= lg_list_val($faqAffiliate, 2, 'judul', 'Bisa pakai link affiliate sendiri untuk beli produk sendiri?') ?></span>
                 <span class="aff-faq-trigger__icon" aria-hidden="true">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                 </span>
               </button>
               <div class="aff-faq-panel" id="affPreFaqPanel3" role="region">
                 <div class="aff-faq-panel__inner">
-                  <p id="affPreFaqA3">Tidak. Self-referral tidak diperbolehkan sesuai syarat &amp; ketentuan, dan transaksi dari aktivitas semacam ini bisa dinyatakan tidak sah.</p>
+                  <p id="affPreFaqA3"><?= lg_list_val($faqAffiliate, 2, 'isi', 'Tidak. Self-referral tidak diperbolehkan sesuai syarat &amp; ketentuan, dan transaksi dari aktivitas semacam ini bisa dinyatakan tidak sah.') ?></p>
                 </div>
               </div>
             </div>
@@ -336,40 +394,40 @@
             <div class="aff-faq-list">
               <div class="aff-faq-item">
                 <button type="button" class="aff-faq-trigger" aria-expanded="false" aria-controls="affFaqPanel1">
-                  <span class="aff-faq-trigger__q" id="affFaqQ1">Kapan komisi affiliate saya cair?</span>
+                  <span class="aff-faq-trigger__q" id="affFaqQ1"><?= lg_list_val($faqAffiliate, 0, 'judul', 'Kapan komisi affiliate saya cair?') ?></span>
                   <span class="aff-faq-trigger__icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                   </span>
                 </button>
                 <div class="aff-faq-panel" id="affFaqPanel1" role="region">
                   <div class="aff-faq-panel__inner">
-                    <p id="affFaqA1">Pencairan tidak otomatis lewat sistem. Hubungi admin lewat WhatsApp untuk verifikasi transaksi dan konfirmasi metode pembayaran, lalu komisi akan diproses sesuai jadwal operasional admin.</p>
+                    <p id="affFaqA1"><?= lg_list_val($faqAffiliate, 0, 'isi', 'Pencairan tidak otomatis lewat sistem. Hubungi admin lewat WhatsApp untuk verifikasi transaksi dan konfirmasi metode pembayaran, lalu komisi akan diproses sesuai jadwal operasional admin.') ?></p>
                   </div>
                 </div>
               </div>
               <div class="aff-faq-item">
                 <button type="button" class="aff-faq-trigger" aria-expanded="false" aria-controls="affFaqPanel2">
-                  <span class="aff-faq-trigger__q" id="affFaqQ2">Berapa lama cookie tracking link affiliate berlaku?</span>
+                  <span class="aff-faq-trigger__q" id="affFaqQ2"><?= lg_list_val($faqAffiliate, 1, 'judul', 'Berapa lama cookie tracking link affiliate berlaku?') ?></span>
                   <span class="aff-faq-trigger__icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                   </span>
                 </button>
                 <div class="aff-faq-panel" id="affFaqPanel2" role="region">
                   <div class="aff-faq-panel__inner">
-                    <p id="affFaqA2">14 hari sejak klik pertama. Selama pembeli checkout dalam rentang waktu itu, transaksinya tetap tercatat sebagai referral kamu.</p>
+                    <p id="affFaqA2"><?= lg_list_val($faqAffiliate, 1, 'isi', '14 hari sejak klik pertama. Selama pembeli checkout dalam rentang waktu itu, transaksinya tetap tercatat sebagai referral kamu.') ?></p>
                   </div>
                 </div>
               </div>
               <div class="aff-faq-item">
                 <button type="button" class="aff-faq-trigger" aria-expanded="false" aria-controls="affFaqPanel3">
-                  <span class="aff-faq-trigger__q" id="affFaqQ3">Bisa pakai link affiliate sendiri untuk beli produk sendiri?</span>
+                  <span class="aff-faq-trigger__q" id="affFaqQ3"><?= lg_list_val($faqAffiliate, 2, 'judul', 'Bisa pakai link affiliate sendiri untuk beli produk sendiri?') ?></span>
                   <span class="aff-faq-trigger__icon" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                   </span>
                 </button>
                 <div class="aff-faq-panel" id="affFaqPanel3" role="region">
                   <div class="aff-faq-panel__inner">
-                    <p id="affFaqA3">Tidak. Self-referral tidak diperbolehkan sesuai syarat &amp; ketentuan, dan transaksi dari aktivitas semacam ini bisa dinyatakan tidak sah.</p>
+                    <p id="affFaqA3"><?= lg_list_val($faqAffiliate, 2, 'isi', 'Tidak. Self-referral tidak diperbolehkan sesuai syarat &amp; ketentuan, dan transaksi dari aktivitas semacam ini bisa dinyatakan tidak sah.') ?></p>
                   </div>
                 </div>
               </div>
@@ -400,18 +458,7 @@
           <div class="aff-terms-sheet__body">
             <p>Dengan mendaftar dan berpartisipasi sebagai affiliate Lingua, kamu dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan berikut secara penuh dan tanpa syarat.</p>
             <div id="affTermsList">
-            <p><strong>1. Definisi &amp; Kedudukan Affiliate</strong><br>Affiliate adalah individu yang telah terdaftar melalui formulir pendaftaran resmi dan mendapatkan tautan rujukan unik untuk menyebarkan produk atau layanan Lingua. Status affiliate bersifat non-eksklusif dan tidak menjadikan affiliate sebagai karyawan, agen resmi, perwakilan hukum, maupun mitra usaha (partnership) dari Lingua dalam bentuk apa pun.</p>
-            <p><strong>2. Kelayakan Pendaftaran</strong><br>Pendaftar wajib mengisi data diri secara benar, lengkap, dan dapat diverifikasi, termasuk nama lengkap, nomor WhatsApp aktif, dan alamat email yang valid. Lingua berhak menolak, menangguhkan, atau membatalkan pendaftaran apabila ditemukan data yang tidak valid, ganda, atau terindikasi disalahgunakan.</p>
-            <p><strong>3. Penggunaan Tautan Affiliate</strong><br>Tautan affiliate hanya boleh disebarkan melalui cara-cara yang sah dan tidak melanggar hukum maupun kebijakan platform pihak ketiga (media sosial, mesin pencari, marketplace, forum, dan sejenisnya). Penyebaran dapat dilakukan melalui konten organik, media sosial pribadi, blog, grup komunitas, maupun kanal digital lain yang dimiliki atau dikelola secara sah oleh affiliate.</p>
-            <p><strong>4. Larangan dalam Penyebaran</strong><br>Affiliate dilarang keras melakukan hal-hal berikut: menyebarkan tautan melalui spam (termasuk namun tidak terbatas pada email massal tanpa izin, komentar spam, atau pesan berantai tanpa persetujuan penerima); melakukan iklan berbayar menggunakan nama brand Lingua atau variasi penulisannya sebagai kata kunci tanpa izin tertulis; membuat klaim, janji, potongan harga, atau informasi yang menyesatkan dan tidak sesuai dengan fakta di halaman resmi; menyamar sebagai pihak resmi Lingua; menggunakan bot, skrip otomatis, cookie stuffing, atau metode kecurangan lain untuk memanipulasi jumlah klik maupun transaksi; serta mendaftarkan atau menggunakan tautan affiliate milik sendiri untuk transaksi atas nama sendiri (self-referral).</p>
-            <p><strong>5. Tanggung Jawab Konten dan Legalitas</strong><br>Segala bentuk konten, narasi, klaim, maupun media promosi yang dibuat dan disebarkan oleh affiliate sepenuhnya menjadi tanggung jawab affiliate yang bersangkutan. Lingua tidak bertanggung jawab atas sengketa, pelaporan, maupun konsekuensi hukum yang timbul akibat konten promosi yang dibuat secara sepihak oleh affiliate, termasuk namun tidak terbatas pada pelanggaran hak cipta, pelanggaran ketentuan platform pihak ketiga, atau klaim yang menyesatkan konsumen.</p>
-            <p><strong>6. Pelacakan Referral</strong><br>Setiap transaksi yang tercatat melalui tautan atau kode referral affiliate akan dilacak menggunakan sistem internal Lingua. Masa berlaku pelacakan (cookie/kode referral) mengikuti kebijakan teknis yang berlaku dan dapat berubah sewaktu-waktu tanpa pemberitahuan sebelumnya. Lingua berhak melakukan verifikasi manual atas setiap transaksi yang tercatat sebelum dinyatakan sah.</p>
-            <p><strong>7. Pencairan Hasil Referral</strong><br>Proses pencairan hasil referral tidak dilakukan secara otomatis melalui sistem. Affiliate wajib menghubungi admin resmi Lingua melalui WhatsApp untuk mengajukan permintaan pencairan, verifikasi data transaksi, dan konfirmasi metode pembayaran. Waktu pemrosesan pencairan mengikuti kebijakan dan jadwal operasional admin Lingua.</p>
-            <p><strong>8. Pembatalan dan Pemblokiran Akun</strong><br>Lingua berhak menangguhkan, membekukan, atau menghentikan status affiliate secara sepihak tanpa pemberitahuan sebelumnya apabila ditemukan pelanggaran terhadap ketentuan ini, indikasi kecurangan, atau aktivitas yang merugikan reputasi Lingua. Seluruh hasil referral yang berasal dari aktivitas yang melanggar ketentuan dapat dinyatakan tidak sah dan tidak akan dicairkan.</p>
-            <p><strong>9. Kerahasiaan &amp; Perlindungan Data</strong><br>Data pribadi yang diberikan pada saat pendaftaran hanya akan digunakan untuk keperluan pengelolaan program affiliate, termasuk verifikasi identitas, pelacakan referral, dan proses pencairan. Lingua berkomitmen untuk tidak membagikan data pribadi affiliate kepada pihak ketiga yang tidak berkepentingan tanpa persetujuan, kecuali diwajibkan oleh peraturan perundang-undangan yang berlaku.</p>
-            <p><strong>10. Batasan Tanggung Jawab</strong><br>Lingua tidak bertanggung jawab atas kerugian langsung maupun tidak langsung yang timbul akibat gangguan teknis, kesalahan input data oleh affiliate, force majeure, atau faktor eksternal lain di luar kendali wajar Lingua.</p>
-            <p><strong>11. Perubahan Ketentuan</strong><br>Lingua berhak mengubah, memperbarui, atau menambahkan ketentuan ini sewaktu-waktu sesuai kebutuhan operasional dan kebijakan internal. Perubahan akan berlaku efektif sejak dipublikasikan pada halaman ini, dan affiliate dianggap menyetujui perubahan tersebut dengan tetap menggunakan tautan affiliate setelah perubahan berlaku.</p>
-            <p><strong>12. Penyelesaian Sengketa</strong><br>Segala bentuk perselisihan yang timbul sehubungan dengan program affiliate ini akan diselesaikan terlebih dahulu secara musyawarah antara affiliate dan admin Lingua melalui kanal komunikasi resmi sebelum ditempuh langkah-langkah lain sesuai peraturan perundang-undangan yang berlaku di Indonesia.</p>
+            <?= lg_terms_html($syaratKetentuan, $termsDefaults) ?>
             </div>
           </div>
           <div class="aff-terms-sheet__footer">

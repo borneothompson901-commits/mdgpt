@@ -600,3 +600,10 @@ body.wizard-mode { background:var(--surface); min-height:100vh; }
   justify-content:center; transition:background var(--t),color var(--t),border-color var(--t);
 }
 .btn-remove-speaker:hover { color:var(--danger); border-color:#FECACA; background:#FEF2F2; }
+
+/* Fee pill & status select — Affiliate panel */
+.fee-pill{background:var(--blue-50,#EFF6FF);color:var(--blue,#2563EB);border:1px solid var(--blue-100,#DBEAFE);border-radius:99px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;transition:background .15s ease,transform .1s ease;}
+.fee-pill:hover{background:var(--blue-100,#DBEAFE);}
+.fee-pill:active{transform:scale(.96);}
+.fee-status-select{border:1px solid var(--border);border-radius:8px;padding:5px 8px;font-size:.8rem;background:#fff;color:var(--text-1);cursor:pointer;}
+.fee-status-select:disabled{opacity:.5;cursor:wait;}

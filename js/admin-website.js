@@ -67,9 +67,8 @@
   var headline1Field = document.getElementById("websiteEditHeadline1Field");
   var headline2Field = document.getElementById("websiteEditHeadline2Field");
   var headlineField = document.getElementById("websiteEditHeadlineField");
-  var headlineLabel = document.getElementById("websiteEditHeadlineLabel");
   var subheadlineField = document.getElementById("websiteEditSubheadlineField");
-  var subheadlineLabel = document.getElementById("websiteEditSubheadlineLabel");
+  var subheadlineLargeField = document.getElementById("websiteEditSubheadlineLargeField");
   var isiField = document.getElementById("websiteEditIsiField");
 
   var pillInput = document.getElementById("websiteEditPill");
@@ -79,6 +78,7 @@
   var headline2Input = document.getElementById("websiteEditHeadline2");
   var headlineInput = document.getElementById("websiteEditHeadline");
   var subheadlineInput = document.getElementById("websiteEditSubheadline");
+  var subheadlineLargeInput = document.getElementById("websiteEditSubheadlineLarge");
   var isiInput = document.getElementById("websiteEditIsi");
   var editSaveBtn = document.getElementById("websiteEditSaveBtn");
 
@@ -91,7 +91,7 @@
     bannerAffiliate: { title: "Edit Banner Affiliate", fields: ["headline", "subheadline"] },
     cardAffiliate: { title: "Edit Card Affiliate", fields: ["bold", "headline", "subheadline"] },
     faq: { title: "Edit FAQ Affiliate", fields: ["judul", "isi"] },
-    syarat: { title: "Edit Poin Syarat & Ketentuan", fields: ["headline", "subheadline"] }
+    syarat: { title: "Edit Poin Syarat & Ketentuan", fields: ["headline", "subheadlineLarge"] }
   };
 
   function escapeHtml(s) {
@@ -216,10 +216,8 @@
     setFieldVisible(headline2Field, config.fields.indexOf("headline2") !== -1);
     setFieldVisible(headlineField, config.fields.indexOf("headline") !== -1);
     setFieldVisible(subheadlineField, config.fields.indexOf("subheadline") !== -1);
+    setFieldVisible(subheadlineLargeField, config.fields.indexOf("subheadlineLarge") !== -1);
     setFieldVisible(isiField, config.fields.indexOf("isi") !== -1);
-
-    headlineLabel.textContent = "Headline";
-    subheadlineLabel.textContent = "Sub Headline";
 
     pillInput.value = "";
     boldInput.value = "";
@@ -228,6 +226,7 @@
     headline2Input.value = "";
     headlineInput.value = "";
     subheadlineInput.value = "";
+    subheadlineLargeInput.value = "";
     isiInput.value = "";
 
     if (type === "bannerUtama") {
@@ -257,10 +256,8 @@
     } else if (type === "syarat") {
       var syaratItem = findCard(state.syaratKetentuan, editingId);
       if (!syaratItem) return;
-      headlineLabel.textContent = "Headline";
-      subheadlineLabel.textContent = "Sub Headline";
       headlineInput.value = syaratItem.headline || "";
-      subheadlineInput.value = syaratItem.subheadline || "";
+      subheadlineLargeInput.value = syaratItem.subheadline || "";
     }
 
     editModal.classList.add("open");
@@ -306,7 +303,7 @@
       var syaratItem = findCard(state.syaratKetentuan, editingId);
       if (!syaratItem) return;
       syaratItem.headline = headlineInput.value.trim();
-      syaratItem.subheadline = subheadlineInput.value.trim();
+      syaratItem.subheadline = subheadlineLargeInput.value.trim();
       renderSyarat();
     } else {
       return;

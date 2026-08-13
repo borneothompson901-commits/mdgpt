@@ -275,6 +275,10 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
 .upload-slot-banner { aspect-ratio:1600/500; grid-column:span 1; }
 .data-table--website th:last-child, .data-table--website td:last-child { width:1%; white-space:nowrap; text-align:right; }
 .data-table--website td.row-actions .actions { justify-content:flex-end; }
+.data-table--website thead tr { background:linear-gradient(135deg, var(--blue), var(--blue-h)); position:relative; overflow:hidden; }
+.data-table--website thead tr::after { content:""; position:absolute; right:-12px; top:-10px; width:70px; height:70px; border-radius:50%; background:rgba(255,255,255,.14); pointer-events:none; }
+.data-table--website thead tr::before { content:""; position:absolute; right:40px; bottom:-24px; width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.1); pointer-events:none; }
+.data-table--website th { background:transparent; color:rgba(255,255,255,.85); position:relative; z-index:1; }
 .website-section { margin-bottom:20px; }
 .website-section:last-child { margin-bottom:0; }
 .website-section__head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px; flex-wrap:wrap; }

@@ -263,6 +263,19 @@
       return res.json();
     },
 
+    async listAffiliateOrders(affiliateId) {
+      var headers = await writeHeaders();
+      var res = await fetch(
+        SUPABASE_URL + "/rest/v1/orders?affiliate_id=eq." + encodeURIComponent(affiliateId) + "&select=id,created_at,items,commission_amount,commission_status&order=created_at.desc",
+        { headers: headers }
+      );
+      if (!res.ok) throw new Error("Gagal memuat order affiliate (" + res.status + "): " + (await res.text()));
+      return res.json();
+    },
+    async updateOrderCommissionStatus(orderId, status) {
+      return db._callAffiliateAdminFn({ action: "update_order_commission_status", order_id: orderId, status: status });
+    },
+
     async _callAffiliateAdminFn(payload) {
       var session = await getValidSession();
       if (!session) throw new Error("Sesi admin habis, silakan login ulang.");

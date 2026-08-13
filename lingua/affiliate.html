@@ -197,6 +197,56 @@
           </div>
         </section>
 
+        <section class="aff-pre-faq" id="affPreFaqSection">
+          <p class="aff-card__label">FAQ</p>
+          <h2 class="aff-card__title">Pertanyaan Seputar Affiliate</h2>
+          <div class="aff-faq-list">
+            <div class="aff-faq-item">
+              <button type="button" class="aff-faq-trigger" aria-expanded="false" aria-controls="affPreFaqPanel1">
+                <span class="aff-faq-trigger__q">Kapan komisi affiliate saya cair?</span>
+                <span class="aff-faq-trigger__icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </button>
+              <div class="aff-faq-panel" id="affPreFaqPanel1" role="region">
+                <div class="aff-faq-panel__inner">
+                  <p>Pencairan tidak otomatis lewat sistem. Hubungi admin lewat WhatsApp untuk verifikasi transaksi dan konfirmasi metode pembayaran, lalu komisi akan diproses sesuai jadwal operasional admin.</p>
+                </div>
+              </div>
+            </div>
+            <div class="aff-faq-item">
+              <button type="button" class="aff-faq-trigger" aria-expanded="false" aria-controls="affPreFaqPanel2">
+                <span class="aff-faq-trigger__q">Berapa lama cookie tracking link affiliate berlaku?</span>
+                <span class="aff-faq-trigger__icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </button>
+              <div class="aff-faq-panel" id="affPreFaqPanel2" role="region">
+                <div class="aff-faq-panel__inner">
+                  <p>14 hari sejak klik pertama. Selama pembeli checkout dalam rentang waktu itu, transaksinya tetap tercatat sebagai referral kamu.</p>
+                </div>
+              </div>
+            </div>
+            <div class="aff-faq-item">
+              <button type="button" class="aff-faq-trigger" aria-expanded="false" aria-controls="affPreFaqPanel3">
+                <span class="aff-faq-trigger__q">Bisa pakai link affiliate sendiri untuk beli produk sendiri?</span>
+                <span class="aff-faq-trigger__icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </button>
+              <div class="aff-faq-panel" id="affPreFaqPanel3" role="region">
+                <div class="aff-faq-panel__inner">
+                  <p>Tidak. Self-referral tidak diperbolehkan sesuai syarat &amp; ketentuan, dan transaksi dari aktivitas semacam ini bisa dinyatakan tidak sah.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="aff-join-cta" id="affJoinCtaBtn" data-scroll-target="affFormSection">
+            Gabung Sekarang!
+          </button>
+        </section>
+
         <section class="aff-dashboard" id="affDashboard">
           <div class="aff-card aff-card--link">
             <p class="aff-card__label">Link affiliate kamu</p>
@@ -397,6 +447,23 @@
           var openPanel = document.querySelector(".aff-faq-item.is-open .aff-faq-panel");
           if (openPanel) openPanel.style.maxHeight = openPanel.scrollHeight + "px";
         });
+
+        var joinCtaBtn = document.getElementById("affJoinCtaBtn");
+        if (joinCtaBtn) {
+          joinCtaBtn.addEventListener("click", function () {
+            var targetId = joinCtaBtn.getAttribute("data-scroll-target");
+            var target = targetId ? document.getElementById(targetId) : null;
+            if (!target) return;
+            var navH = parseInt(
+              getComputedStyle(document.documentElement).getPropertyValue("--nav-height") || "68",
+              10
+            );
+            window.scrollTo({
+              top: target.getBoundingClientRect().top + window.scrollY - navH - 12,
+              behavior: "smooth"
+            });
+          });
+        }
       })();
     </script>
   </body>

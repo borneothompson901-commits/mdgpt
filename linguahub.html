@@ -600,6 +600,36 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="feeModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="feeModalTitle">Fee Affiliate</h3>
+      <button class="modal-close" id="feeCloseBtn">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 4L4 11M4 4l7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Produk</th>
+              <th>Fee</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="feeOrdersTbody"></tbody>
+        </table>
+      </div>
+      <p class="empty-state" id="feeOrdersEmpty" hidden>Belum ada order dengan komisi untuk affiliate ini.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="feeCloseBtn2">Tutup</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="txDetailModal">
   <div class="modal">
     <div class="modal-header">

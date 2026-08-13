@@ -68,20 +68,11 @@
 
   function copyWaToClipboard(btn, waDigits) {
     var text = formatWaLocal(waDigits);
-    function showCopiedHint() {
-      var hint = document.createElement("span");
-      hint.className = "copy-hint";
-      hint.textContent = "Tersalin!";
-      btn.style.position = "relative";
-      btn.appendChild(hint);
-      requestAnimationFrame(function () { hint.classList.add("show"); });
-      setTimeout(function () {
-        hint.classList.remove("show");
-        setTimeout(function () { hint.remove(); }, 160);
-      }, 1100);
+    function showCopiedToast() {
+      AdminShared.toast("Nomor WhatsApp tersalin!", "success");
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(showCopiedHint).catch(function () {
+      navigator.clipboard.writeText(text).then(showCopiedToast).catch(function () {
         AdminShared.toast("Gagal menyalin nomor.", "error");
       });
     } else {
@@ -91,7 +82,7 @@
       ta.style.opacity = "0";
       document.body.appendChild(ta);
       ta.select();
-      try { document.execCommand("copy"); showCopiedHint(); } catch (e) {
+      try { document.execCommand("copy"); showCopiedToast(); } catch (e) {
         AdminShared.toast("Gagal menyalin nomor.", "error");
       }
       ta.remove();
@@ -164,7 +155,7 @@
         '<td>' + (parseInt(a.total_orders, 10) || 0) + '</td>' +
         '<td class="col-fee"><button type="button" class="fee-pill" data-fee="' + a.id + '" data-name="' + escapeHtml(a.name || a.email || "") + '">' + rupiah(a.total_commission) + '</button></td>' +
         '<td><div class="wa-cell">' +
-          (a.whatsapp ? '<button type="button" class="btn-icon wa-action" data-wa="' + escapeHtml(a.whatsapp) + '" title="Salin nomor WhatsApp">' + iconCopy() + '</button>' : '<span>—</span>') +
+          (a.whatsapp ? '<button type="button" class="btn-icon wa-action" data-wa="' + escapeHtml(a.whatsapp) + '" title="Salin nomor kontak">' + iconCopy() + '</button>' : '<span>—</span>') +
         '</div></td>' +
         '<td class="row-actions"><div class="actions">' +
           '<button class="btn-icon edit" data-edit="' + a.id + '" title="Edit">' +

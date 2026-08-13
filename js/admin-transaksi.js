@@ -193,6 +193,35 @@
     );
   }
 
+  function shippingHtml(t) {
+    var c = customerObj(t);
+    var addr = (t.shipping_address && typeof t.shipping_address === "object") ? t.shipping_address : {};
+    var hasAddr = addr.province || addr.city || addr.district || addr.subdistrict || addr.addressDetail;
+    var hasKurir = t.shipping_courier || t.shipping_cost != null;
+
+    var rows =
+      '<div class="review-row"><span class="review-row__label">Customer</span><span class="review-row__value">' + escapeHtml(c.name || "-") + "</span></div>" +
+      '<div class="review-row"><span class="review-row__label">Telepon</span><span class="review-row__value">' + escapeHtml(c.phone || "-") + "</span></div>";
+
+    if (hasAddr) {
+      rows +=
+        '<div class="review-row"><span class="review-row__label">Provinsi</span><span class="review-row__value">' + escapeHtml((addr.province && addr.province.label) || "-") + "</span></div>" +
+        '<div class="review-row"><span class="review-row__label">Kota/Kab</span><span class="review-row__value">' + escapeHtml((addr.city && addr.city.label) || "-") + "</span></div>" +
+        '<div class="review-row"><span class="review-row__label">Kecamatan</span><span class="review-row__value">' + escapeHtml((addr.district && addr.district.label) || "-") + "</span></div>" +
+        '<div class="review-row"><span class="review-row__label">Kelurahan</span><span class="review-row__value">' + escapeHtml((addr.subdistrict && addr.subdistrict.label) || "-") + "</span></div>" +
+        '<div class="review-row"><span class="review-row__label">Alamat</span><span class="review-row__value">' + escapeHtml(addr.addressDetail || "-") + "</span></div>";
+    }
+
+    if (hasKurir) {
+      rows +=
+        '<div class="review-row"><span class="review-row__label">Ekspedisi</span><span class="review-row__value">' + escapeHtml(t.shipping_courier_name || t.shipping_courier || "-") + "</span></div>" +
+        '<div class="review-row"><span class="review-row__label">Paket</span><span class="review-row__value">' + escapeHtml(t.shipping_service_name || t.shipping_service_code || "-") + "</span></div>" +
+        '<div class="review-row"><span class="review-row__label">Biaya Ekspedisi</span><span class="review-row__value">' + (t.shipping_cost != null ? rupiah(t.shipping_cost) : "-") + "</span></div>";
+    }
+
+    return '<div style="margin-top:14px;font-weight:600;font-size:0.85rem;">Detail Pesanan</div>' + rows;
+  }
+
   function itemsHtml(t) {
     var items = itemsList(t);
     if (!items.length) return "";
@@ -217,13 +246,12 @@
       '<div class="review-row"><span class="review-row__label">Jumlah</span><span class="review-row__value">' + rupiah(tx.amount) + "</span></div>" +
       '<div class="review-row"><span class="review-row__label">Metode</span><span class="review-row__value">' + escapeHtml(methodLabel(tx)) + "</span></div>" +
       paymentSpecificHtml(tx) +
-      '<div class="review-row"><span class="review-row__label">Customer</span><span class="review-row__value">' + escapeHtml(c.name || "-") + "</span></div>" +
       (c.email ? '<div class="review-row"><span class="review-row__label">Email</span><span class="review-row__value">' + escapeHtml(c.email) + "</span></div>" : "") +
-      (c.phone ? '<div class="review-row"><span class="review-row__label">Telepon</span><span class="review-row__value">' + escapeHtml(c.phone) + "</span></div>" : "") +
       '<div class="review-row"><span class="review-row__label">Dibuat</span><span class="review-row__value">' + fmtDate(tx.created_at) + "</span></div>" +
       (tx.paid_at ? '<div class="review-row"><span class="review-row__label">Dibayar</span><span class="review-row__value">' + fmtDate(tx.paid_at) + "</span></div>" : "") +
       '<div class="review-row"><span class="review-row__label">Kadaluarsa</span><span class="review-row__value">' + fmtDate(tx.expiry_at) + "</span></div>" +
       itemsHtml(tx) +
+      shippingHtml(tx) +
       affiliateHtml(tx) +
       (tx.pivot_payment_session_id ? '<div style="margin-top:14px;font-weight:600;font-size:0.85rem;">Pivot</div><div class="review-row"><span class="review-row__label">Session ID</span><span class="review-row__value" style="word-break:break-all;">' + escapeHtml(tx.pivot_payment_session_id) + "</span></div>" : "");
 

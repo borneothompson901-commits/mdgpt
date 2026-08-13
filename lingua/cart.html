@@ -2,6 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem("mdgpt_lingua_checkout");
+        if (!raw) return;
+        var parsed = JSON.parse(raw);
+        if (parsed && parsed.step === "result" && parsed.resultData && parsed.orderStatus === "PAID") {
+          document.documentElement.classList.add("cart-preload-paid");
+        }
+      } catch (e) {}
+    })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>M-DGPT Agency</title>
     <script>

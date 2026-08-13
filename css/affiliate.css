@@ -429,6 +429,18 @@ body.aff-auth-page .aff-auth {
   display: block;
 }
 
+@media (max-width: 640px) {
+  .aff-auth-view__title { font-size: 1.3rem; }
+  .aff-auth-view__sub { font-size: 0.9rem; }
+  .aff-field label { font-size: 0.82rem; }
+  .aff-input input { font-size: 1rem; }
+  .aff-input__prefix { font-size: 0.92rem; }
+  .aff-field__error { font-size: 0.78rem; }
+  .aff-consent__text { font-size: 0.84rem; }
+  .aff-submit-btn { font-size: 1rem; }
+  .aff-auth-switch { font-size: 0.9rem; }
+}
+
 @media (min-width: 860px) {
   .aff-benefits {
     grid-template-columns: repeat(3, 1fr);

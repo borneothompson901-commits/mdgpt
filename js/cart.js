@@ -879,6 +879,9 @@
     if (waEl && draft.whatsapp) waEl.value = draft.whatsapp;
     if (addressDetailEl && draft.addressDetail) addressDetailEl.value = draft.addressDetail;
 
+    var hasKurirDraft = !!(draft.kurir && draft.kurir.courier);
+    if (hasKurirDraft && cekOngkirBtn) setVisible(cekOngkirBtn, false);
+
     if (!provinceDd || !draft.province || !draft.province.id) return;
 
     fetchHierarchy("province").then(function (items) {
@@ -922,9 +925,9 @@
                 })[0] || services[0];
 
                 if (matched) {
-                  selectPaket(group, courier, courierName, matched.service, matched.cost, matched.etd, { silent: true });
+                  selectPaket(group, courier, courierName, matched.service, matched.cost, matched.etd);
                 } else {
-                  selectPaket(group, courier, courierName, draft.kurir.serviceCode, draft.kurir.cost, draft.kurir.etd, { silent: true });
+                  selectPaket(group, courier, courierName, draft.kurir.serviceCode, draft.kurir.cost, draft.kurir.etd);
                 }
                 updateCheckoutState();
               });
@@ -1863,6 +1866,7 @@
     }
   }
 
+  resetKurirResults();
   applyPersistedCheckoutState();
   if (!checkoutState) restoreShippingDraft();
 
@@ -1918,7 +1922,6 @@
   });
 
   document.addEventListener("cart:updated", renderCart);
-  resetKurirResults();
   renderCart();
   loadCheckoutConfig();
 

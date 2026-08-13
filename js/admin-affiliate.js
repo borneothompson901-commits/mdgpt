@@ -437,6 +437,28 @@
     });
   }
 
+  function positionFeeDropdownMenu(dd) {
+    var trigger = dd.querySelector(".fee-status-dd__trigger");
+    var menu = dd.querySelector(".fee-status-dd__menu");
+    var rect = trigger.getBoundingClientRect();
+    var menuWidth = menu.offsetWidth || 132;
+    var left = rect.right - menuWidth;
+    var maxLeft = window.innerWidth - menuWidth - 8;
+    if (left > maxLeft) left = maxLeft;
+    if (left < 8) left = 8;
+    var menuHeight = menu.offsetHeight || 160;
+    var top = rect.bottom + 4;
+    if (top + menuHeight > window.innerHeight - 8) top = rect.top - menuHeight - 4;
+    menu.style.top = top + "px";
+    menu.style.left = left + "px";
+  }
+
+  var feeTableWrap = document.querySelector("#feeModal .fee-table-wrap");
+  if (feeTableWrap) {
+    feeTableWrap.addEventListener("scroll", function () { closeAllFeeDropdowns(); }, true);
+  }
+  window.addEventListener("resize", function () { closeAllFeeDropdowns(); });
+
   function bindFeeStatusDropdowns() {
     feeOrdersTbody.querySelectorAll(".fee-status-dd").forEach(function (dd) {
       var trigger = dd.querySelector(".fee-status-dd__trigger");
@@ -449,6 +471,7 @@
         closeAllFeeDropdowns(dd);
         dd.classList.toggle("open", willOpen);
         trigger.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        if (willOpen) positionFeeDropdownMenu(dd);
       });
 
       menu.querySelectorAll(".fee-status-dd__item").forEach(function (item) {

@@ -620,6 +620,13 @@ img { max-width: 100%; display: block; }
   color: #fca5a5;
 }
 
+.toast__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .team-grid-section {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

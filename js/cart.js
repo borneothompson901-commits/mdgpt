@@ -337,10 +337,18 @@
     if (!item) return Infinity;
     if (!window.PRODUCTS_DATA || typeof window.PRODUCTS_DATA.getById !== "function") return Infinity;
     var product = window.PRODUCTS_DATA.getById(item.id);
-    if (!product || !product.variantPricing) return Infinity;
+    if (!product) return Infinity;
+
     var key = item.variantKey || "";
-    var pricing = product.variantPricing[key];
-    if (pricing && typeof pricing.stock === "number") return pricing.stock;
+    if (key && product.variantPricing) {
+      var pricing = product.variantPricing[key];
+      if (pricing && typeof pricing.stock === "number") return pricing.stock;
+    }
+
+    // Non-variant product: fall back to the flat stock column. Digital
+    // products (or physical ones with untracked stock) leave stock null,
+    // meaning unlimited.
+    if (typeof product.stock === "number") return product.stock;
     return Infinity;
   }
 

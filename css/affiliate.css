@@ -244,10 +244,10 @@ body.aff-auth-page .aff-auth {
   margin: 0;
   padding: 24px 14px;
   border-radius: 0;
-  background:
-    radial-gradient(720px 420px at 12% 8%, rgba(169, 26, 182, 0.16), transparent 60%),
-    radial-gradient(680px 460px at 88% 92%, rgba(177, 4, 255, 0.14), transparent 60%),
-    linear-gradient(160deg, #f6ecfb 0%, #eef1fd 55%, #eaf4ff 100%);
+ background:
+  radial-gradient(720px 420px at 12% 8%, rgba(169, 26, 182, 0.22), transparent 60%),
+  radial-gradient(680px 460px at 88% 92%, rgba(177, 4, 255, 0.20), transparent 60%),
+  linear-gradient(160deg, #f3e6fa 0%, #eceffd 55%, #e6f2ff 100%);
 }
 
 .aff-auth-card {

@@ -562,6 +562,7 @@ body {
 .filter-drawer__body {
    flex: 1;
    overflow-y: auto;
+   overflow-x: hidden;
    overscroll-behavior: contain;
    padding: 22px;
 }
@@ -605,8 +606,8 @@ body {
 
 .price-slider {
    position: relative;
-   height: 32px;
-   margin-bottom: 6px;
+   height: 16px;
+   margin: 8px 2px 12px;
 }
 
 .price-slider__track {
@@ -618,23 +619,27 @@ body {
    transform: translateY(-50%);
    background: var(--gray-200);
    border-radius: var(--radius-pill);
+   pointer-events: none;
 }
 
 .price-slider__range {
    position: absolute;
-   top: 0;
-   height: 100%;
+   top: 50%;
+   height: 4px;
+   transform: translateY(-50%);
    background: var(--gradient, var(--brand));
    border-radius: var(--radius-pill);
+   pointer-events: none;
 }
 
 .price-slider__input {
    position: absolute;
-   top: 50%;
+   top: 0;
    left: 0;
    width: 100%;
+   height: 16px;
    margin: 0;
-   transform: translateY(-50%);
+   padding: 0;
    appearance: none;
    -webkit-appearance: none;
    background: transparent;
@@ -643,11 +648,13 @@ body {
 
 .price-slider__input::-webkit-slider-runnable-track {
    -webkit-appearance: none;
+   width: 100%;
    height: 4px;
    background: transparent;
 }
 
 .price-slider__input::-moz-range-track {
+   width: 100%;
    height: 4px;
    background: transparent;
    border: none;
@@ -656,25 +663,29 @@ body {
 .price-slider__input::-webkit-slider-thumb {
    -webkit-appearance: none;
    pointer-events: auto;
-   width: 18px;
-   height: 18px;
+   width: 15px;
+   height: 15px;
    border-radius: 50%;
    background: #fff;
-   border: 3px solid var(--brand);
-   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+   border: 2px solid var(--brand);
+   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
    cursor: pointer;
-   margin-top: 0;
+   margin-top: -5.5px;
 }
 
 .price-slider__input::-moz-range-thumb {
    pointer-events: auto;
-   width: 18px;
-   height: 18px;
+   width: 15px;
+   height: 15px;
    border-radius: 50%;
    background: #fff;
-   border: 3px solid var(--brand);
-   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+   border: 2px solid var(--brand);
+   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
    cursor: pointer;
+}
+
+.price-slider__input::-moz-focus-outer {
+   border: 0;
 }
 
 .price-slider__input--min {
@@ -686,19 +697,21 @@ body {
 }
 
 .price-fields {
-   display: flex;
+   display: grid;
+   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
    align-items: center;
    gap: 8px;
    margin-top: 12px;
+   width: 100%;
 }
 
 .price-field {
-   flex: 1;
+   min-width: 0;
    display: flex;
    align-items: center;
-   gap: 6px;
+   gap: 4px;
    height: 40px;
-   padding: 0 12px;
+   padding: 0 10px;
    border: 1px solid var(--border);
    border-radius: 10px;
    background: var(--gray-100);
@@ -719,9 +732,10 @@ body {
 .price-field__input {
    flex: 1;
    min-width: 0;
+   width: 100%;
    border: none;
    background: transparent;
-   font-size: 14px;
+   font-size: 13px;
    font-weight: 600;
    color: var(--gray-900);
    outline: none;
@@ -730,7 +744,7 @@ body {
 .price-fields__sep {
    font-size: 13px;
    color: var(--color-muted);
-   flex-shrink: 0;
+   white-space: nowrap;
 }
 
 .filter-drawer__footer {

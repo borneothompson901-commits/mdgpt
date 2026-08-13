@@ -300,7 +300,22 @@
     currentSort = mode;
     updateSortUI();
     applySort();
+    syncSortRadios();
   }
+
+  var sortOptionRadios = Array.prototype.slice.call(document.querySelectorAll('input[name="sortOption"]'));
+
+  function syncSortRadios() {
+    sortOptionRadios.forEach(function (radio) {
+      radio.checked = radio.value === currentSort;
+    });
+  }
+
+  sortOptionRadios.forEach(function (radio) {
+    radio.addEventListener("change", function () {
+      if (radio.checked) setSort(radio.value);
+    });
+  });
 
   SORT_GROUPS.forEach(function (group) {
     var itemEl = document.getElementById(group.id);
@@ -487,15 +502,142 @@
     }
   }
 
+  var PRICE_SLIDER_MAX = 10000000;
+  var priceSliderMin = document.getElementById("priceSliderMin");
+  var priceSliderMax = document.getElementById("priceSliderMax");
+  var priceSliderRange = document.getElementById("priceSliderRange");
+  var priceInputMin = document.getElementById("priceInputMin");
+  var priceInputMax = document.getElementById("priceInputMax");
+
+  function formatRibuan(num) {
+    num = Math.max(0, Math.round(Number(num) || 0));
+    return num.toLocaleString("id-ID");
+  }
+
+  // Terima input dalam format apapun: "1.000", "1,000", "1000" -> selalu dibaca sebagai angka murni
+  function parseAngka(str) {
+    var digits = String(str == null ? "" : str).replace(/[^0-9]/g, "");
+    return digits ? parseInt(digits, 10) : 0;
+  }
+
+  function clampSliderVal(v) {
+    return Math.min(PRICE_SLIDER_MAX, Math.max(0, v));
+  }
+
+  function updatePriceSliderVisual() {
+    if (!priceSliderMin || !priceSliderMax || !priceSliderRange) return;
+    var minV = clampSliderVal(parseInt(priceSliderMin.value, 10) || 0);
+    var maxV = clampSliderVal(parseInt(priceSliderMax.value, 10) || 0);
+    var minPct = (minV / PRICE_SLIDER_MAX) * 100;
+    var maxPct = (maxV / PRICE_SLIDER_MAX) * 100;
+    priceSliderRange.style.left = minPct + "%";
+    priceSliderRange.style.right = (100 - maxPct) + "%";
+  }
+
+  function syncFieldsFromSlider() {
+    if (!priceSliderMin || !priceSliderMax) return;
+    var minV = parseInt(priceSliderMin.value, 10) || 0;
+    var maxV = parseInt(priceSliderMax.value, 10) || 0;
+    if (priceInputMin) priceInputMin.value = formatRibuan(minV);
+    if (priceInputMax) priceInputMax.value = formatRibuan(maxV);
+    updatePriceSliderVisual();
+  }
+
+  if (priceSliderMin && priceSliderMax) {
+    priceSliderMin.addEventListener("input", function () {
+      var minV = parseInt(priceSliderMin.value, 10) || 0;
+      var maxV = parseInt(priceSliderMax.value, 10) || 0;
+      if (minV > maxV) priceSliderMin.value = maxV;
+      syncFieldsFromSlider();
+    });
+    priceSliderMax.addEventListener("input", function () {
+      var minV = parseInt(priceSliderMin.value, 10) || 0;
+      var maxV = parseInt(priceSliderMax.value, 10) || 0;
+      if (maxV < minV) priceSliderMax.value = minV;
+      syncFieldsFromSlider();
+    });
+    updatePriceSliderVisual();
+  }
+
+  function bindPriceField(inputEl, isMin) {
+    if (!inputEl) return;
+
+    inputEl.addEventListener("keypress", function (e) {
+      // hanya izinkan tombol angka (huruf/simbol diblok langsung saat diketik)
+      if (e.key.length === 1 && !/[0-9]/.test(e.key)) {
+        e.preventDefault();
+      }
+    });
+
+    inputEl.addEventListener("paste", function (e) {
+      e.preventDefault();
+      var text = (e.clipboardData || window.clipboardData).getData("text");
+      inputEl.value = formatRibuan(parseAngka(text));
+    });
+
+    inputEl.addEventListener("input", function () {
+      var caretFromEnd = inputEl.value.length - (inputEl.selectionStart || inputEl.value.length);
+      var num = parseAngka(inputEl.value);
+      inputEl.value = formatRibuan(num);
+      var newPos = Math.max(0, inputEl.value.length - caretFromEnd);
+      try { inputEl.setSelectionRange(newPos, newPos); } catch (err) {}
+
+      var sliderVal = clampSliderVal(num);
+      if (isMin && priceSliderMin) {
+        priceSliderMin.value = sliderVal;
+        if (priceSliderMax && parseInt(priceSliderMax.value, 10) < sliderVal) priceSliderMax.value = sliderVal;
+      } else if (!isMin && priceSliderMax) {
+        priceSliderMax.value = sliderVal;
+        if (priceSliderMin && parseInt(priceSliderMin.value, 10) > sliderVal) priceSliderMin.value = sliderVal;
+      }
+      updatePriceSliderVisual();
+    });
+
+    inputEl.addEventListener("blur", function () {
+      var minNum = parseAngka(priceInputMin ? priceInputMin.value : "0");
+      var maxNum = parseAngka(priceInputMax ? priceInputMax.value : String(PRICE_SLIDER_MAX));
+      if (minNum > maxNum) {
+        if (isMin) {
+          maxNum = minNum;
+          if (priceInputMax) priceInputMax.value = formatRibuan(maxNum);
+          if (priceSliderMax) priceSliderMax.value = clampSliderVal(maxNum);
+        } else {
+          minNum = maxNum;
+          if (priceInputMin) priceInputMin.value = formatRibuan(minNum);
+          if (priceSliderMin) priceSliderMin.value = clampSliderVal(minNum);
+        }
+        updatePriceSliderVisual();
+      }
+    });
+  }
+
+  bindPriceField(priceInputMin, true);
+  bindPriceField(priceInputMax, false);
+
+  function getCustomPriceRange() {
+    var minNum = parseAngka(priceInputMin ? priceInputMin.value : "0");
+    var maxNum = parseAngka(priceInputMax ? priceInputMax.value : String(PRICE_SLIDER_MAX));
+    if (minNum > maxNum) { var tmp = minNum; minNum = maxNum; maxNum = tmp; }
+    if (minNum <= 0 && maxNum >= PRICE_SLIDER_MAX) return "all";
+    return minNum + "-" + maxNum;
+  }
+
+  function resetPriceSlider() {
+    if (priceSliderMin) priceSliderMin.value = 0;
+    if (priceSliderMax) priceSliderMax.value = PRICE_SLIDER_MAX;
+    if (priceInputMin) priceInputMin.value = formatRibuan(0);
+    if (priceInputMax) priceInputMax.value = formatRibuan(PRICE_SLIDER_MAX);
+    updatePriceSliderVisual();
+  }
+
   if (applyBtn) {
     applyBtn.addEventListener("click", function () {
       var checkedCategories = Array.prototype.slice
         .call(document.querySelectorAll('input[name="category"]:checked'))
         .map(function (el) { return el.value; });
-      var checkedPrice = document.querySelector('input[name="price"]:checked');
 
       state.categories = checkedCategories;
-      state.priceRange = checkedPrice ? checkedPrice.value : "all";
+      state.priceRange = getCustomPriceRange();
 
       if (checkedCategories.length === 1) {
         updateCategoryTabsUI(checkedCategories[0]);
@@ -512,8 +654,8 @@
 
   function resetAllFilters() {
     document.querySelectorAll('input[name="category"]').forEach(function (el) { el.checked = false; });
-    var allPriceRadio = document.querySelector('input[name="price"][value="all"]');
-    if (allPriceRadio) allPriceRadio.checked = true;
+    resetPriceSlider();
+    setSort("terbaru");
 
     state.categories = [];
     state.priceRange = "all";

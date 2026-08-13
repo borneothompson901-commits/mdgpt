@@ -140,14 +140,20 @@
   }
 
   function setCtaLoggedIn(isLoggedIn) {
+    var ctaBanner = $("#affCtaBanner");
     var guestText = $("#affCtaGuestText");
     var loggedInText = $("#affCtaLoggedInText");
     var joinBtn = $("#affJoinCtaBtn");
     var contactBtn = $("#affContactCtaBtn");
+
+    // Saat user sudah login, CTA card dihapus (disembunyikan) sepenuhnya.
+    if (ctaBanner) ctaBanner.classList.toggle("is-hidden", isLoggedIn);
+
     if (guestText) guestText.classList.toggle("is-hidden", isLoggedIn);
     if (joinBtn) joinBtn.classList.toggle("is-hidden", isLoggedIn);
-    if (loggedInText) loggedInText.classList.toggle("is-hidden", !isLoggedIn);
-    if (contactBtn) contactBtn.classList.toggle("is-hidden", !isLoggedIn);
+    // Varian "Selamat Datang! / Hubungi Kami" tidak lagi ditampilkan.
+    if (loggedInText) loggedInText.classList.add("is-hidden");
+    if (contactBtn) contactBtn.classList.add("is-hidden");
   }
 
   function renderDashboard(affiliate, viaSession) {

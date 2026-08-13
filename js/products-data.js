@@ -23,6 +23,7 @@
       title: row.title,
       seed: row.seed,
       sold: row.sold,
+      stock: row.stock,
       rating: Number(row.rating),
       shortDesc: row.short_desc,
       description: row.description,

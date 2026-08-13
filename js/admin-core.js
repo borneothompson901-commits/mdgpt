@@ -329,6 +329,16 @@
     return j.path || j.url || j.publicpath || j.filepath;
   }
 
+  function toastIcon(type) {
+    if (type === "success") {
+      return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5l-6.2 7L2.5 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    }
+    if (type === "error") {
+      return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l7 12.5H1L8 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 6.4v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="11.6" r="0.9" fill="currentColor"/></svg>';
+    }
+    return "";
+  }
+
   function toast(msg, type) {
     var el = document.getElementById("appToast");
     if (!el) {
@@ -337,7 +347,9 @@
       el.className = "toast";
       document.body.appendChild(el);
     }
-    el.textContent = msg;
+    var icon = toastIcon(type);
+    el.innerHTML = (icon ? '<span class="toast__icon">' + icon + '</span>' : '') + '<span class="toast__msg"></span>';
+    el.querySelector(".toast__msg").textContent = msg;
     el.className = "toast show" + (type ? " " + type : "");
     clearTimeout(el._t);
     el._t = setTimeout(function () { el.className = "toast"; }, 2600);

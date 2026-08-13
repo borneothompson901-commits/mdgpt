@@ -907,6 +907,110 @@ body.aff-scroll-lock {
   color: rgba(255, 255, 255, 0.8);
 }
 
+.aff-faq {
+  margin-top: 4px;
+}
+
+.aff-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aff-faq-item {
+  border: 1px solid rgba(169, 26, 182, 0.14);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.aff-faq-item.is-open {
+  border-color: var(--cat-accent);
+}
+
+.aff-faq-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.aff-faq-trigger__q {
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-headline);
+}
+
+.aff-faq-trigger__icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(169, 26, 182, 0.1);
+  color: var(--cat-accent);
+  transition: transform 0.25s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.aff-faq-item.is-open .aff-faq-trigger__icon {
+  transform: rotate(180deg);
+  background: var(--cat-accent);
+  color: var(--white);
+}
+
+.aff-faq-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+
+.aff-faq-panel__inner {
+  padding: 0 16px 16px;
+}
+
+.aff-faq-panel__inner p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.65;
+  color: var(--color-muted);
+}
+
+@media (max-width: 480px) {
+  .aff-faq-trigger {
+    padding: 12px 14px;
+  }
+
+  .aff-faq-trigger__q {
+    font-size: 0.82rem;
+  }
+
+  .aff-faq-trigger__icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .aff-faq-panel__inner {
+    padding: 0 14px 14px;
+  }
+
+  .aff-faq-panel__inner p {
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+}
+
 .aff-link-card__panel {
   display: flex;
   align-items: center;
@@ -1138,7 +1242,8 @@ body.aff-scroll-lock {
   }
 
   .aff-stats,
-  .aff-card--chart {
+  .aff-card--chart,
+  .aff-faq {
     grid-column: 1 / -1;
   }
 

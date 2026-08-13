@@ -1039,6 +1039,17 @@ body.aff-scroll-lock {
   text-transform: uppercase;
 }
 
+.aff-chart-labels span.is-hidden-label {
+  visibility: hidden;
+}
+
+.aff-chart-empty {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
 .aff-toast {
   position: fixed;
   left: 50%;

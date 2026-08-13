@@ -601,12 +601,10 @@ body.wizard-mode { background:var(--surface); min-height:100vh; }
 }
 .btn-remove-speaker:hover { color:var(--danger); border-color:#FECACA; background:#FEF2F2; }
 
-/* Fee pill — Affiliate panel */
 .fee-pill{background:var(--blue-50,#EFF6FF);color:var(--blue,#2563EB);border:1px solid var(--blue-100,#DBEAFE);border-radius:99px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;transition:background .15s ease,transform .1s ease;}
 .fee-pill:hover{background:var(--blue-100,#DBEAFE);}
 .fee-pill:active{transform:scale(.96);}
 
-/* Fee status — custom dropdown */
 .fee-status-dd{position:relative;display:inline-block;font-size:.8rem;}
 .fee-status-dd__trigger{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:8px;padding:5px 10px;background:#fff;color:var(--text-1);cursor:pointer;font:inherit;transition:border-color .15s ease,background .15s ease;}
 .fee-status-dd__trigger:hover{border-color:var(--border-2);background:var(--bg);}
@@ -622,11 +620,16 @@ body.wizard-mode { background:var(--surface); min-height:100vh; }
 .fee-status-dd__dot--orange{background:var(--orange);}
 .fee-status-dd__dot--purple{background:#7C3AED;}
 .fee-status-dd__dot--gray{background:var(--text-3);}
-.fee-status-dd__menu{position:absolute;top:calc(100% + 4px);left:0;min-width:132px;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.12);padding:4px;list-style:none;margin:0;z-index:20;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .12s ease,transform .12s ease,visibility .12s;}
+.fee-status-dd__menu{position:fixed;top:0;left:0;min-width:132px;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.12);padding:4px;list-style:none;margin:0;z-index:600;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .12s ease,transform .12s ease,visibility .12s;}
 .fee-status-dd.open .fee-status-dd__menu{opacity:1;visibility:visible;transform:translateY(0);}
 .fee-status-dd__item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;cursor:pointer;color:var(--text-1);white-space:nowrap;}
 .fee-status-dd__item:hover{background:var(--bg);}
 .fee-status-dd__item[aria-selected="true"]{background:var(--blue-50);color:var(--blue);font-weight:600;}
 
-/* Fee table — kolom produk dipaksa 1 baris + truncate */
 .data-table td.col-produk-fee{max-width:180px;padding-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.modal-body--fee{overflow-y:visible;max-height:none;}
+.fee-table-wrap{max-height:46vh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;border:1px solid var(--border);border-radius:10px;}
+.fee-table-wrap .data-table{border-collapse:separate;border-spacing:0;}
+.fee-table-wrap .data-table th{position:sticky;top:0;z-index:2;box-shadow:0 1px 0 var(--border);}
+.fee-table-wrap .data-table tr:last-child td{border-bottom:none;}

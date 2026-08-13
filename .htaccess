@@ -1,1 +1,5 @@
 DirectoryIndex index.php
+
+<FilesMatch "^lingua\.html$">
+    SetHandler application/x-httpd-php
+</FilesMatch>

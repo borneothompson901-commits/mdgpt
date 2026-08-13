@@ -86,7 +86,8 @@
 .cart-page {
   --cat-accent: #a91ab6;
   background: var(--gray-50, #f7f7f8);
-  min-height: calc(100vh - var(--nav-height, 68px));
+  min-height: 100vh;
+  min-height: 100dvh;
   padding: calc(var(--nav-height, 68px) + 32px) 0 80px;
 }
 
@@ -133,25 +134,29 @@
   margin: 0 auto;
 }
 
-.cart-page .cart-layout.is-paid-view {
+.cart-page .cart-layout.is-paid-view,
+.cart-page .cart-layout.is-expired-view {
   grid-template-columns: 1fr;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.cart-page .cart-layout.is-paid-view .cart-items {
+.cart-page .cart-layout.is-paid-view .cart-items,
+.cart-page .cart-layout.is-expired-view .cart-items {
   width: 100%;
   max-width: 460px;
   margin: 0 auto;
 }
 
-html.cart-preload-paid .cart-page .cart-layout {
+html.cart-preload-paid .cart-page .cart-layout,
+html.cart-preload-expired .cart-page .cart-layout {
   grid-template-columns: 1fr;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-html.cart-preload-paid .cart-page .cart-layout .cart-items {
+html.cart-preload-paid .cart-page .cart-layout .cart-items,
+html.cart-preload-expired .cart-page .cart-layout .cart-items {
   width: 100%;
   max-width: 460px;
   margin: 0 auto;
@@ -160,11 +165,18 @@ html.cart-preload-paid #cartLoading,
 html.cart-preload-paid #cartEmpty,
 html.cart-preload-paid #cartList,
 html.cart-preload-paid #checkoutStepMethod,
-html.cart-preload-paid #cartSummary {
+html.cart-preload-paid #cartSummary,
+html.cart-preload-expired #cartLoading,
+html.cart-preload-expired #cartEmpty,
+html.cart-preload-expired #cartList,
+html.cart-preload-expired #checkoutStepMethod,
+html.cart-preload-expired #cartSummary {
   display: none !important;
 }
 html.cart-preload-paid #checkoutPanel,
-html.cart-preload-paid #checkoutStepResult {
+html.cart-preload-paid #checkoutStepResult,
+html.cart-preload-expired #checkoutPanel,
+html.cart-preload-expired #checkoutStepResult {
   display: block !important;
 }
 
@@ -1593,7 +1605,7 @@ html.cart-preload-paid #checkoutStepResult {
 .payment-success__check-circle {
   fill: none;
   stroke: #1a9c5c;
-  stroke-width: 4;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-dasharray: 227;
   stroke-dashoffset: 227;
@@ -1603,12 +1615,39 @@ html.cart-preload-paid #checkoutStepResult {
 .payment-success__check-mark {
   fill: none;
   stroke: #1a9c5c;
-  stroke-width: 5;
+  stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 52;
   stroke-dashoffset: 52;
   animation: paymentSuccessMark 0.35s ease-out 0.65s forwards;
+}
+
+.payment-success__icon--expired .payment-success__icon-pulse {
+  background: rgba(217, 83, 79, 0.14);
+}
+
+.payment-success__check--x .payment-success__check-circle {
+  stroke: #d9534f;
+}
+
+.payment-success__check--x .payment-success__check-mark {
+  stroke: #d9534f;
+  stroke-dasharray: 74;
+  stroke-dashoffset: 74;
+}
+
+.payment-success__badge--expired {
+  color: #d9534f;
+  background: rgba(217, 83, 79, 0.12);
+}
+
+.payment-success__btn--reorder {
+  background: var(--cat-accent, #a91ab6);
+  color: #fff;
+}
+.payment-success__btn--reorder:hover {
+  filter: brightness(0.95);
 }
 
 @keyframes paymentSuccessPulse {

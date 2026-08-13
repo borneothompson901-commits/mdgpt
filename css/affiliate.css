@@ -162,6 +162,45 @@
   margin: 0;
 }
 
+.aff-cta-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 22px 24px;
+  border-radius: 18px;
+  background: linear-gradient(120deg, var(--cat-accent), #6f0e94 120%);
+  box-shadow: 0 12px 28px -14px rgba(169, 26, 182, 0.55);
+}
+
+.aff-cta-banner.is-hidden {
+  display: none;
+}
+
+.aff-cta-banner__title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--white);
+  margin: 0 0 4px;
+}
+
+.aff-cta-banner__sub {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+@media (min-width: 860px) {
+  .aff-cta-banner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 26px 32px;
+  }
+}
+
 .aff-auth {
   display: none;
   margin-bottom: 24px;
@@ -178,6 +217,7 @@
    Same URL, everything else hidden, navbar stays, card centered. */
 body.aff-auth-page .aff-profile-card,
 body.aff-auth-page .aff-benefits,
+body.aff-auth-page .aff-cta-banner,
 body.aff-auth-page .aff-pre-faq,
 body.aff-auth-page .aff-dashboard,
 body.aff-auth-page .aff-logout-btn {
@@ -1061,51 +1101,85 @@ body.aff-scroll-lock {
 }
 
 .aff-pre-faq {
-  max-width: 900px;
-  margin: 24px auto 0;
-  background: var(--white);
-  border: 1px solid rgba(169, 26, 182, 0.14);
-  border-radius: 16px;
-  padding: 24px 22px;
+  margin: 8px 0 0;
+  padding: 24px 0 0;
+  border-top: 1px solid rgba(169, 26, 182, 0.14);
 }
 
 .aff-pre-faq.is-hidden {
   display: none;
 }
 
+.aff-pre-faq__head {
+  margin-bottom: 16px;
+}
+
+.aff-pre-faq__title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-headline);
+  margin: 0;
+}
+
+.aff-faq-list--grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 860px) {
+  .aff-faq-list--grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 20px;
+    align-items: start;
+  }
+}
+
 .aff-join-cta {
   width: 100%;
-  display: block;
-  margin-top: 18px;
-  padding: 15px 20px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px 24px;
   border: none;
-  border-radius: 10px;
-  background: var(--cat-accent);
-  color: var(--white);
+  border-radius: var(--radius-pill, 999px);
+  background: var(--white);
+  color: var(--cat-accent);
   font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: 0.01em;
+  white-space: nowrap;
   cursor: pointer;
+  box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.35);
   transition: filter 0.15s ease, transform 0.1s ease;
 }
 
 .aff-join-cta:hover {
-  filter: brightness(1.08);
+  filter: brightness(0.96);
 }
 
 .aff-join-cta:active {
   transform: translateY(1px);
 }
 
+@media (min-width: 860px) {
+  .aff-join-cta {
+    width: auto;
+    padding: 16px 28px;
+  }
+}
+
 @media (max-width: 480px) {
   .aff-pre-faq {
-    padding: 20px 16px;
-    margin-top: 20px;
+    padding: 20px 0 0;
+    margin-top: 8px;
   }
 
-  .aff-join-cta {
-    padding: 14px 16px;
-    font-size: 0.9rem;
+  .aff-cta-banner {
+    padding: 20px;
   }
 }
 

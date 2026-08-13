@@ -877,6 +877,36 @@ body.aff-scroll-lock {
   color: var(--color-muted);
 }
 
+.aff-stat-card--hero {
+  background: linear-gradient(135deg, #2563eb, #a91ab6);
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.aff-stat-card--hero::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  top: -30px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.aff-stat-card--hero .aff-stat-card__value {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+}
+
+.aff-stat-card--hero .aff-stat-card__label {
+  position: relative;
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .aff-link-card__panel {
   display: flex;
   align-items: center;

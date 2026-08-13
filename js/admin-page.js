@@ -13,16 +13,25 @@
     var searchInput = document.getElementById("searchInput");
 
     var PAGE_TITLES = { overview: "Overview", produk: "Produk", transaksi: "Transaksi", affiliate: "Affiliate", website: "Website" };
-    document.querySelectorAll(".nav-item[data-page]").forEach(function (link) {
-      link.addEventListener("click", function (e) {
-        e.preventDefault();
-        var page = link.dataset.page;
-        document.querySelectorAll(".nav-item[data-page]").forEach(function (l) { l.classList.toggle("active", l === link); });
-        document.querySelectorAll(".page-section[data-page-section]").forEach(function (sec) {
-          sec.hidden = sec.dataset.pageSection !== page;
-        });
-        var bc = document.getElementById("bcCurrent");
-        if (bc) bc.textContent = PAGE_TITLES[page] || page;
+    var ACTIVE_PAGE_KEY = "linguahub_active_page";
+
+    function activatePage(page, opts) {
+      opts = opts || {};
+      var navLinks = document.querySelectorAll(".nav-item[data-page]");
+      var targetLink = null;
+      navLinks.forEach(function (l) { if (l.dataset.page === page) targetLink = l; });
+      if (!targetLink) return false;
+
+      navLinks.forEach(function (l) { l.classList.toggle("active", l === targetLink); });
+      document.querySelectorAll(".page-section[data-page-section]").forEach(function (sec) {
+        sec.hidden = sec.dataset.pageSection !== page;
+      });
+      var bc = document.getElementById("bcCurrent");
+      if (bc) bc.textContent = PAGE_TITLES[page] || page;
+
+      try { sessionStorage.setItem(ACTIVE_PAGE_KEY, page); } catch (err) {}
+
+      if (!opts.silent) {
         var sidebar = document.getElementById("sidebar");
         var overlay = document.getElementById("overlay");
         if (sidebar && sidebar.classList.contains("open")) {
@@ -30,8 +39,22 @@
           if (overlay) overlay.classList.remove("open");
         }
         window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      return true;
+    }
+
+    document.querySelectorAll(".nav-item[data-page]").forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        activatePage(link.dataset.page);
       });
     });
+
+    (function restoreActivePage() {
+      var saved;
+      try { saved = sessionStorage.getItem(ACTIVE_PAGE_KEY); } catch (err) { saved = null; }
+      if (saved) activatePage(saved, { silent: true });
+    })();
 
     var iconBox = function () {
       return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 11l3.5-3.5 2.5 2.5L11 6.5l3.5 3.5" stroke="currentColor" stroke-width="1.2"/></svg>';

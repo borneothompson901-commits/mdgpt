@@ -603,6 +603,136 @@ body {
    flex-shrink: 0;
 }
 
+.price-slider {
+   position: relative;
+   height: 32px;
+   margin-bottom: 6px;
+}
+
+.price-slider__track {
+   position: absolute;
+   top: 50%;
+   left: 0;
+   right: 0;
+   height: 4px;
+   transform: translateY(-50%);
+   background: var(--gray-200);
+   border-radius: var(--radius-pill);
+}
+
+.price-slider__range {
+   position: absolute;
+   top: 0;
+   height: 100%;
+   background: var(--gradient, var(--brand));
+   border-radius: var(--radius-pill);
+}
+
+.price-slider__input {
+   position: absolute;
+   top: 50%;
+   left: 0;
+   width: 100%;
+   margin: 0;
+   transform: translateY(-50%);
+   appearance: none;
+   -webkit-appearance: none;
+   background: transparent;
+   pointer-events: none;
+}
+
+.price-slider__input::-webkit-slider-runnable-track {
+   -webkit-appearance: none;
+   height: 4px;
+   background: transparent;
+}
+
+.price-slider__input::-moz-range-track {
+   height: 4px;
+   background: transparent;
+   border: none;
+}
+
+.price-slider__input::-webkit-slider-thumb {
+   -webkit-appearance: none;
+   pointer-events: auto;
+   width: 18px;
+   height: 18px;
+   border-radius: 50%;
+   background: #fff;
+   border: 3px solid var(--brand);
+   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+   cursor: pointer;
+   margin-top: 0;
+}
+
+.price-slider__input::-moz-range-thumb {
+   pointer-events: auto;
+   width: 18px;
+   height: 18px;
+   border-radius: 50%;
+   background: #fff;
+   border: 3px solid var(--brand);
+   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+   cursor: pointer;
+}
+
+.price-slider__input--min {
+   z-index: 3;
+}
+
+.price-slider__input--max {
+   z-index: 4;
+}
+
+.price-fields {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   margin-top: 12px;
+}
+
+.price-field {
+   flex: 1;
+   display: flex;
+   align-items: center;
+   gap: 6px;
+   height: 40px;
+   padding: 0 12px;
+   border: 1px solid var(--border);
+   border-radius: 10px;
+   background: var(--gray-100);
+   transition: border-color var(--transition);
+}
+
+.price-field:focus-within {
+   border-color: var(--brand);
+}
+
+.price-field__prefix {
+   font-size: 13px;
+   font-weight: 600;
+   color: var(--color-muted);
+   flex-shrink: 0;
+}
+
+.price-field__input {
+   flex: 1;
+   min-width: 0;
+   border: none;
+   background: transparent;
+   font-size: 14px;
+   font-weight: 600;
+   color: var(--gray-900);
+   outline: none;
+}
+
+.price-fields__sep {
+   font-size: 13px;
+   color: var(--color-muted);
+   flex-shrink: 0;
+}
+
 .filter-drawer__footer {
    flex-shrink: 0;
    display: flex;

@@ -1240,7 +1240,7 @@
     setVisible(checkoutBtnSectionEl, true);
     setNavTitle("Keranjang Belanja");
     if (cartPageEl) cartPageEl.classList.remove("is-checkout-view");
-    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view");
+    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view", "is-expired-view");
     stopCountdown();
     stopStatusPoll();
     renderCart();
@@ -1257,7 +1257,7 @@
     hideCheckoutError();
     closeAllAccordionPanels();
     if (cartPageEl) cartPageEl.classList.add("is-checkout-view");
-    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view");
+    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view", "is-expired-view");
     stopCountdown();
     stopStatusPoll();
     renderCart();
@@ -1347,20 +1347,38 @@
     stopCountdown();
     stopStatusPoll();
     if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view");
-    setVisible(cartSummaryEl, true);
+    if (cartLayoutEl) cartLayoutEl.classList.add("is-expired-view");
+    setVisible(cartSummaryEl, false);
+
     var orderId = getResultOrderId();
-    var waHref = adminWhatsappLink(
-      "Halo admin, saya mau tanya soal pembayaran order " + orderId + " yang sudah kadaluarsa. Saya sudah terlanjur transfer/bayar."
-    );
 
     checkoutResultContent.innerHTML =
-      '<div class="payment-result__box payment-result__box--expired">' +
-        '<p class="payment-result__label">Waktu Pembayaran Habis</p>' +
-        '<p class="payment-result__note">Sesi pembayaran untuk pesanan ini sudah berakhir dan otomatis dibatalkan. Kalau kamu sudah terlanjur transfer atau bayar, jangan khawatir — langsung hubungi admin ya, biar segera dibantu dicek.</p>' +
-        '<p class="payment-result__order-id">Order ID: ' + orderId + '</p>' +
-      '</div>' +
-      '<a class="payment-result__ewallet-btn payment-result__wa-btn" href="' + waHref + '" target="_blank" rel="noopener">Hubungi Admin (WhatsApp)</a>' +
-      '<button type="button" class="checkout-reorder-btn" id="expiredReorderBtn">Pesan Ulang</button>';
+      '<div class="payment-success">' +
+        '<div class="payment-success__icon payment-success__icon--expired">' +
+          '<span class="payment-success__icon-pulse"></span>' +
+          '<svg class="payment-success__check payment-success__check--x" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">' +
+            '<circle class="payment-success__check-circle" cx="40" cy="40" r="36"/>' +
+            '<path class="payment-success__check-mark" d="M27 27L53 53M53 27L27 53"/>' +
+          '</svg>' +
+        '</div>' +
+        '<h2 class="payment-success__title">Waktu Pembayaran Habis</h2>' +
+        '<p class="payment-success__subtitle">Sesi pembayaran untuk pesanan ini sudah berakhir dan otomatis dibatalkan.</p>' +
+        '<div class="payment-success__card">' +
+          '<div class="payment-success__row">' +
+            '<span class="payment-success__row-label">Order ID</span>' +
+            '<span class="payment-success__row-value">' + orderId + '</span>' +
+          '</div>' +
+          '<div class="payment-success__row">' +
+            '<span class="payment-success__row-label">Status</span>' +
+            '<span class="payment-success__badge payment-success__badge--expired">Kadaluarsa</span>' +
+          '</div>' +
+        '</div>' +
+        '<p class="payment-success__note">Kalau kamu sudah terlanjur transfer atau bayar, langsung hubungi admin ya biar segera dibantu dicek.</p>' +
+        '<div class="payment-success__actions">' +
+          '<button type="button" class="payment-success__btn payment-success__btn--reorder" id="expiredReorderBtn">Order Ulang</button>' +
+          '<button type="button" class="payment-success__btn payment-success__btn--ghost" id="expiredHomeBtn">Halaman Utama</button>' +
+        '</div>' +
+      '</div>';
 
     var reorderBtn = document.getElementById("expiredReorderBtn");
     if (reorderBtn) {
@@ -1369,11 +1387,20 @@
         window.location.href = "../lingua/index.html";
       });
     }
+
+    var homeBtn = document.getElementById("expiredHomeBtn");
+    if (homeBtn) {
+      homeBtn.addEventListener("click", function () {
+        writeCheckoutState(null);
+        window.location.href = "../lingua.html";
+      });
+    }
   }
 
   function renderPaidCard() {
     stopCountdown();
     stopStatusPoll();
+    if (cartLayoutEl) cartLayoutEl.classList.remove("is-expired-view");
     if (cartLayoutEl) cartLayoutEl.classList.add("is-paid-view");
     setVisible(cartSummaryEl, false);
 
@@ -1420,7 +1447,7 @@
   }
 
   function renderPendingCard() {
-    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view");
+    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view", "is-expired-view");
     setVisible(cartSummaryEl, true);
     var method = checkoutState.method;
     var data = checkoutState.resultData || {};

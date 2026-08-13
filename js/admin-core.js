@@ -214,6 +214,24 @@
       return rows[0];
     },
 
+    async getWebsiteContent(section) {
+      var res = await fetch(SUPABASE_URL + "/rest/v1/lingua_site_content?section=eq." + encodeURIComponent(section) + "&select=data", { headers: SUPABASE_HEADERS });
+      if (!res.ok) throw new Error("Gagal memuat konten website (" + res.status + ")");
+      var rows = await res.json();
+      return rows[0] ? rows[0].data : null;
+    },
+    async saveWebsiteContent(section, data) {
+      var headers = await writeHeaders({ Prefer: "resolution=merge-duplicates,return=representation" });
+      var res = await fetch(SUPABASE_URL + "/rest/v1/lingua_site_content?on_conflict=section", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify([{ section: section, data: data, updated_at: new Date().toISOString() }])
+      });
+      if (!res.ok) throw new Error("Gagal menyimpan konten website (" + res.status + "): " + (await res.text()));
+      var rows = await res.json();
+      return rows[0];
+    },
+
     async getAffiliateConfig() {
       var res = await fetch(SUPABASE_URL + "/rest/v1/affiliate_config?select=*&limit=1", { headers: SUPABASE_HEADERS });
       if (!res.ok) throw new Error("Gagal memuat pengaturan affiliate (" + res.status + ")");

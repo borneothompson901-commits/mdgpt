@@ -46,6 +46,35 @@
     ]
   };
 
+  var SECTION_KEYS = {
+    bannerUtama: "banner_utama",
+    bannerCards: "banner_cards",
+    bannerAffiliate: "banner_affiliate",
+    cardAffiliate: "card_affiliate",
+    faqAffiliate: "faq_affiliate",
+    syaratKetentuan: "syarat_ketentuan"
+  };
+
+  function persist(stateKey) {
+    var section = SECTION_KEYS[stateKey];
+    if (!section) return;
+    AdminShared.db.saveWebsiteContent(section, state[stateKey]).catch(function (e) {
+      AdminShared.toast(e.message || "Gagal menyimpan ke server", "error");
+    });
+  }
+
+  function loadFromServer() {
+    Object.keys(SECTION_KEYS).forEach(function (stateKey) {
+      AdminShared.db.getWebsiteContent(SECTION_KEYS[stateKey]).then(function (data) {
+        if (data == null) return;
+        if (Array.isArray(state[stateKey]) && Array.isArray(data) && data.length === 0) return;
+        state[stateKey] = data;
+        if (stateKey === "syaratKetentuan") syaratSeq = state.syaratKetentuan.length;
+        renderAll();
+      }).catch(function () {  });
+    });
+  }
+
   var editingType = null;
   var editingId = null;
   var deletingId = null;
@@ -276,16 +305,19 @@
       state.bannerUtama.headline2 = headline2Input.value.trim();
       state.bannerUtama.subheadline = subheadlineInput.value.trim();
       renderBannerUtama();
+      persist("bannerUtama");
     } else if (editingType === "bannerCard") {
       var card = findCard(state.bannerCards, editingId);
       if (!card) return;
       card.headline = headlineInput.value.trim();
       card.subheadline = subheadlineInput.value.trim();
       renderBannerCards();
+      persist("bannerCards");
     } else if (editingType === "bannerAffiliate") {
       state.bannerAffiliate.headline = headlineInput.value.trim();
       state.bannerAffiliate.subheadline = subheadlineInput.value.trim();
       renderBannerAffiliate();
+      persist("bannerAffiliate");
     } else if (editingType === "cardAffiliate") {
       var affCard = findCard(state.cardAffiliate, editingId);
       if (!affCard) return;
@@ -293,18 +325,21 @@
       affCard.headline = headlineInput.value.trim();
       affCard.subheadline = subheadlineInput.value.trim();
       renderCardAffiliate();
+      persist("cardAffiliate");
     } else if (editingType === "faq") {
       var faqItem = findCard(state.faqAffiliate, editingId);
       if (!faqItem) return;
       faqItem.judul = judulInput.value.trim();
       faqItem.isi = isiInput.value.trim();
       renderFaqAffiliate();
+      persist("faqAffiliate");
     } else if (editingType === "syarat") {
       var syaratItem = findCard(state.syaratKetentuan, editingId);
       if (!syaratItem) return;
       syaratItem.headline = headlineInput.value.trim();
       syaratItem.subheadline = subheadlineLargeInput.value.trim();
       renderSyarat();
+      persist("syaratKetentuan");
     } else {
       return;
     }
@@ -338,6 +373,7 @@
     if (!deletingId) return;
     state.syaratKetentuan = state.syaratKetentuan.filter(function (x) { return x.id !== deletingId; });
     renderSyarat();
+    persist("syaratKetentuan");
     AdminShared.toast("Poin berhasil dihapus");
     closeDeleteModal();
   }
@@ -367,4 +403,5 @@
   deleteModal.addEventListener("click", function (e) { if (e.target === deleteModal) closeDeleteModal(); });
 
   renderAll();
+  loadFromServer();
 })();

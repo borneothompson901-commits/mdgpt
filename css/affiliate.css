@@ -846,28 +846,33 @@ body.aff-scroll-lock {
 
 .aff-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 
 .aff-stat-card {
   background: var(--white);
   border: 1px solid rgba(169, 26, 182, 0.14);
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px 20px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .aff-stat-card__value {
-  font-size: 1.6rem;
+  order: 2;
+  font-size: 1.4rem;
   font-weight: 800;
   color: var(--cat-accent);
+  white-space: nowrap;
 }
 
 .aff-stat-card__label {
-  font-size: 0.78rem;
+  order: 1;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--color-muted);
 }
@@ -990,33 +995,44 @@ body.aff-scroll-lock {
 }
 
 .aff-chart {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 8px;
-  height: 130px;
   padding-top: 8px;
 }
 
-.aff-chart-bar {
-  flex: 1 1 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  height: 100%;
-}
-
-.aff-chart-bar__col {
+.aff-chart-svg {
+  display: block;
   width: 100%;
-  max-width: 26px;
-  border-radius: 6px 6px 3px 3px;
-  background: linear-gradient(180deg, var(--grad-2, #b104ff), var(--grad-1, #a91ab6));
-  min-height: 4px;
+  height: 130px;
 }
 
-.aff-chart-bar__day {
+.aff-chart-line {
+  fill: none;
+  stroke: var(--cat-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.aff-chart-area {
+  stroke: none;
+  fill: rgba(169, 26, 182, 0.08);
+}
+
+.aff-chart-dot {
+  fill: var(--white);
+  stroke: var(--cat-accent);
+  stroke-width: 2;
+}
+
+.aff-chart-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.aff-chart-labels span {
+  flex: 1 1 0;
+  text-align: center;
   font-size: 0.68rem;
   font-weight: 700;
   color: var(--color-muted);
@@ -1083,5 +1099,26 @@ body.aff-scroll-lock {
   .aff-stats,
   .aff-card--chart {
     grid-column: 1 / -1;
+  }
+
+  .aff-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .aff-stat-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 4px;
+  }
+
+  .aff-stat-card__value {
+    order: 0;
+    font-size: 1.6rem;
+  }
+
+  .aff-stat-card__label {
+    order: 0;
   }
 }

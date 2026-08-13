@@ -602,6 +602,11 @@
     kurirHiddenEl.value = "";
     state.ongkirServiceCode = "";
     if (ongkirHintEl) setVisible(ongkirHintEl, false);
+    if (cekOngkirBtn) {
+      cekOngkirBtn.disabled = false;
+      cekOngkirBtn.textContent = "Cek Ongkir";
+      setVisible(cekOngkirBtn, true);
+    }
     showAllKurirGroups();
     if (!kurirListEl) return;
     setVisible(kurirListEl, false);
@@ -996,6 +1001,7 @@
 
       cekOngkirBtn.disabled = true;
       cekOngkirBtn.textContent = "Mengecek ongkir...";
+      setVisible(cekOngkirBtn, false);
 
       var payload = {
         destination_id: destinationIdEl.value,

@@ -185,12 +185,32 @@
         </div>
 
         <div class="filter-group">
+          <h4 class="filter-group__title">Urutkan</h4>
+          <label class="filter-radio"><input type="radio" name="sortOption" value="terbaru" checked /><span>Terbaru</span></label>
+          <label class="filter-radio"><input type="radio" name="sortOption" value="terlaris-desc" /><span>Terlaris</span></label>
+          <label class="filter-radio"><input type="radio" name="sortOption" value="termurah" /><span>Harga</span></label>
+        </div>
+
+        <div class="filter-group">
           <h4 class="filter-group__title">Rentang Harga</h4>
-          <label class="filter-radio"><input type="radio" name="price" value="all" checked /><span>Semua Harga</span></label>
-          <label class="filter-radio"><input type="radio" name="price" value="0-100000" /><span>Di bawah Rp100.000</span></label>
-          <label class="filter-radio"><input type="radio" name="price" value="100000-200000" /><span>Rp100.000 &ndash; Rp200.000</span></label>
-          <label class="filter-radio"><input type="radio" name="price" value="200000-300000" /><span>Rp200.000 &ndash; Rp300.000</span></label>
-          <label class="filter-radio"><input type="radio" name="price" value="300000-999999999" /><span>Di atas Rp300.000</span></label>
+          <div class="price-slider" id="priceSlider">
+            <div class="price-slider__track">
+              <div class="price-slider__range" id="priceSliderRange"></div>
+            </div>
+            <input type="range" class="price-slider__input price-slider__input--min" id="priceSliderMin" min="0" max="10000000" step="10000" value="0" aria-label="Harga minimum" />
+            <input type="range" class="price-slider__input price-slider__input--max" id="priceSliderMax" min="0" max="10000000" step="10000" value="10000000" aria-label="Harga maksimum" />
+          </div>
+          <div class="price-fields">
+            <label class="price-field">
+              <span class="price-field__prefix">Rp</span>
+              <input type="text" inputmode="numeric" autocomplete="off" class="price-field__input" id="priceInputMin" value="0" aria-label="Harga minimum kustom" />
+            </label>
+            <span class="price-fields__sep">s/d</span>
+            <label class="price-field">
+              <span class="price-field__prefix">Rp</span>
+              <input type="text" inputmode="numeric" autocomplete="off" class="price-field__input" id="priceInputMax" value="10.000.000" aria-label="Harga maksimum kustom" />
+            </label>
+          </div>
         </div>
       </div>
 

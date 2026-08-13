@@ -1483,3 +1483,37 @@
   color: var(--gray-600, #555);
   line-height: 1.6;
 }
+
+.payment-result__box--expired {
+  border-style: solid;
+  border-color: rgba(217, 83, 79, 0.35);
+  background: rgba(217, 83, 79, 0.05);
+}
+
+.payment-result__box--success {
+  border-style: solid;
+  border-color: rgba(26, 156, 92, 0.35);
+  background: rgba(26, 156, 92, 0.06);
+}
+
+.payment-result__box--expired .payment-result__label {
+  color: #d9534f;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.payment-result__box--success .payment-result__label {
+  color: #1a9c5c;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.payment-result__wa-btn {
+  display: block;
+  text-align: center;
+  margin: 0 0 10px;
+}
+
+.payment-result__home-btn {
+  background: var(--cat-accent, #a91ab6);
+}

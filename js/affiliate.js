@@ -6,6 +6,7 @@
   var SUPABASE_TABLE = "affiliates";
   var REGISTER_ENDPOINT = SUPABASE_URL + "/functions/v1/affiliate-register";
   var STATS_ENDPOINT = SUPABASE_URL + "/rest/v1/rpc/get_affiliate_stats";
+  var DAILY_CLICKS_ENDPOINT = SUPABASE_URL + "/rest/v1/rpc/get_affiliate_clicks_daily";
   var CONFIG_ENDPOINT = SUPABASE_URL + "/rest/v1/affiliate_config?select=komisi_persen&limit=1";
   var SUPABASE_FN_HEADERS = {
     apikey: SUPABASE_ANON_KEY,
@@ -187,16 +188,27 @@
     renderClicksChart(affiliate);
   }
 
-  var DAY_LABELS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-  var WEEK_WEIGHTS = [0.1, 0.12, 0.11, 0.15, 0.16, 0.2, 0.16];
   var lastChartAffiliate = null;
+  var lastChartData = null;
 
-  function seededWeights(seed) {
-    var out = WEEK_WEIGHTS.slice();
-    var s = 0;
-    for (var i = 0; i < seed.length; i++) s += seed.charCodeAt(i);
-    var shift = s % out.length;
-    return out.slice(shift).concat(out.slice(0, shift));
+  function fetchDailyClicks(affiliateId) {
+    return fetch(DAILY_CLICKS_ENDPOINT, {
+      method: "POST",
+      headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
+      body: JSON.stringify({ p_affiliate_id: affiliateId })
+    })
+      .then(function (res) {
+        return res.ok ? res.json() : [];
+      })
+      .catch(function () {
+        return [];
+      });
+  }
+
+  function formatDayLabel(dateStr) {
+    // dateStr is "YYYY-MM-DD" from Postgres date; parse as local calendar date.
+    var parts = dateStr.split("-");
+    return parts[2] + "/" + parts[1];
   }
 
   function renderClicksChart(affiliate) {
@@ -209,27 +221,36 @@
     var total = Number(affiliate.total_clicks || 0);
     if (totalEl) totalEl.textContent = total.toLocaleString("id-ID") + " klik";
 
-    var weights = seededWeights(affiliate.ref_code || "aff");
-    var today = new Date().getDay();
-    var values = [];
-    for (var i = 6; i >= 0; i--) {
-      var dayIndex = (today - i + 7) % 7;
-      values.push({
-        day: DAY_LABELS[dayIndex],
-        value: Math.round(total * weights[6 - i])
-      });
-    }
+    if (!affiliate.id) return;
 
+    fetchDailyClicks(affiliate.id).then(function (rows) {
+      // rows: [{click_date: "2026-08-11", click_count: 3}, ...] — one row per
+      // calendar day since the affiliate joined, real counts straight from
+      // affiliate_clicks (no synthetic split, no rounding of an estimate).
+      if (!rows || !rows.length) {
+        container.innerHTML = '<p class="aff-chart-empty">Belum ada data klik.</p>';
+        return;
+      }
+      var values = rows.map(function (r) {
+        return { day: formatDayLabel(r.click_date), value: Number(r.click_count || 0) };
+      });
+      lastChartData = values;
+      drawClicksChart(container, values);
+    });
+  }
+
+  function drawClicksChart(container, values) {
     var max = Math.max.apply(null, values.map(function (v) { return v.value; })) || 1;
     var width = container.clientWidth || 300;
     var height = 130;
     var padX = 12;
     var padY = 16;
-    var stepX = (width - padX * 2) / (values.length - 1);
+    var span = Math.max(values.length - 1, 1);
+    var stepX = (width - padX * 2) / span;
 
     var points = values.map(function (v, i) {
       return {
-        x: padX + stepX * i,
+        x: values.length === 1 ? width / 2 : padX + stepX * i,
         y: padY + (1 - v.value / max) * (height - padY * 2),
         day: v.day,
         value: v.value
@@ -266,11 +287,19 @@
       dots +
       "</svg>";
 
+    // With many days on the axis, showing every label would overlap; keep
+    // the real per-day points but thin out which labels are printed.
+    var maxLabels = Math.max(Math.floor(width / 40), 2);
+    var labelStride = Math.max(Math.ceil(values.length / maxLabels), 1);
+
     var labels =
       '<div class="aff-chart-labels">' +
       values
-        .map(function (v) {
-          return "<span>" + v.day + "</span>";
+        .map(function (v, i) {
+          var showLabel = i % labelStride === 0 || i === values.length - 1;
+          return showLabel
+            ? "<span>" + v.day + "</span>"
+            : '<span class="is-hidden-label">' + v.day + "</span>";
         })
         .join("") +
       "</div>";
@@ -648,10 +677,10 @@
 
   var chartResizeTimer;
   window.addEventListener("resize", function () {
-    if (!lastChartAffiliate) return;
+    if (!lastChartData) return;
     clearTimeout(chartResizeTimer);
     chartResizeTimer = setTimeout(function () {
-      renderClicksChart(lastChartAffiliate);
+      drawClicksChart($("#affChart"), lastChartData);
     }, 150);
   });
 

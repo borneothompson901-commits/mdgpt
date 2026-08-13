@@ -146,12 +146,10 @@
     var joinBtn = $("#affJoinCtaBtn");
     var contactBtn = $("#affContactCtaBtn");
 
-    // Saat user sudah login, CTA card dihapus (disembunyikan) sepenuhnya.
     if (ctaBanner) ctaBanner.classList.toggle("is-hidden", isLoggedIn);
 
     if (guestText) guestText.classList.toggle("is-hidden", isLoggedIn);
     if (joinBtn) joinBtn.classList.toggle("is-hidden", isLoggedIn);
-    // Varian "Selamat Datang! / Hubungi Kami" tidak lagi ditampilkan.
     if (loggedInText) loggedInText.classList.add("is-hidden");
     if (contactBtn) contactBtn.classList.add("is-hidden");
   }
@@ -229,7 +227,6 @@
   }
 
   function formatDayLabel(dateStr) {
-    // dateStr is "YYYY-MM-DD" from Postgres date; parse as local calendar date.
     var parts = dateStr.split("-");
     return parts[2] + "/" + parts[1];
   }
@@ -247,9 +244,7 @@
     if (!affiliate.id) return;
 
     fetchDailyClicks(affiliate.id).then(function (rows) {
-      // rows: [{click_date: "2026-08-11", click_count: 3}, ...] — one row per
-      // calendar day since the affiliate joined, real counts straight from
-      // affiliate_clicks (no synthetic split, no rounding of an estimate).
+
       if (!rows || !rows.length) {
         container.innerHTML = '<p class="aff-chart-empty">Belum ada data klik.</p>';
         return;
@@ -309,9 +304,7 @@
       '<path class="aff-chart-line" d="' + linePath + '"></path>' +
       dots +
       "</svg>";
-
-    // With many days on the axis, showing every label would overlap; keep
-    // the real per-day points but thin out which labels are printed.
+    
     var maxLabels = Math.max(Math.floor(width / 40), 2);
     var labelStride = Math.max(Math.ceil(values.length / maxLabels), 1);
 

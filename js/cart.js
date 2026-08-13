@@ -908,11 +908,26 @@
             reconcileShippingVisibility();
 
             if (draft.kurir && draft.kurir.courier) {
-              var group = kurirListEl.querySelector('.cart-kurir-group[data-courier-group="' + draft.kurir.courier + '"]');
-              if (group) {
-                var courierName = COURIER_NAMES[draft.kurir.courier] || draft.kurir.courier;
-                selectPaket(group, draft.kurir.courier, courierName, draft.kurir.serviceCode, draft.kurir.cost, draft.kurir.etd, { silent: true });
-              }
+              if (cekOngkirBtn) setVisible(cekOngkirBtn, false);
+              runOngkirCheck().then(function (byCourierResult) {
+                var courier = draft.kurir.courier;
+                var group = kurirListEl.querySelector('.cart-kurir-group[data-courier-group="' + courier + '"]');
+                if (!group) return;
+
+                var courierName = COURIER_NAMES[courier] || courier;
+                var result = byCourierResult[courier];
+                var services = result && result.data && Array.isArray(result.data.services) ? result.data.services : [];
+                var matched = services.filter(function (svc) {
+                  return svc.service === draft.kurir.serviceCode;
+                })[0] || services[0];
+
+                if (matched) {
+                  selectPaket(group, courier, courierName, matched.service, matched.cost, matched.etd, { silent: true });
+                } else {
+                  selectPaket(group, courier, courierName, draft.kurir.serviceCode, draft.kurir.cost, draft.kurir.etd, { silent: true });
+                }
+                updateCheckoutState();
+              });
             }
             updateCheckoutState();
           });
@@ -961,6 +976,120 @@
     });
   }
 
+  function runOngkirCheck() {
+    var weight = window.CartStore.getTotalWeight();
+    if (weight <= 0) weight = 1000;
+
+    var couriers = Object.keys(COURIER_NAMES);
+    var groups = kurirListEl ? kurirListEl.querySelectorAll(".cart-kurir-group") : [];
+
+    state.ongkirChecked = false;
+    ongkirNoteEl.hidden = true;
+    ongkirNoteEl.style.color = "";
+    kurirHiddenEl.value = "";
+    setVisible(kurirListEl, true);
+    showAllKurirGroups();
+    groups.forEach(function (group) {
+      var item = group.querySelector(".cart-kurir-item");
+      var panel = group.querySelector("[data-paket-panel]");
+      item.classList.remove("is-selected", "is-unavailable");
+      item.classList.add("is-loading");
+      item.setAttribute("aria-expanded", "false");
+      if (panel) {
+        panel.classList.remove("is-open");
+        var list = panel.querySelector("[data-paket-list]");
+        if (list) list.innerHTML = "";
+      }
+      var costEl = item.querySelector("[data-cost]");
+      if (costEl) costEl.textContent = "Mengecek...";
+    });
+
+    var payload = {
+      destination_id: destinationIdEl.value,
+      weight: weight,
+      couriers: couriers
+    };
+
+    var ongkirRequest = fetch(ONGKIR_ENDPOINT, {
+      method: "POST",
+      headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
+      body: JSON.stringify(payload)
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var byCourier = (data && data.results) || {};
+        return couriers.map(function (courier) {
+          var entry = byCourier[courier] || null;
+          if (entry && Array.isArray(entry.services)) {
+            entry.services.forEach(function (svc) {
+              svc.cost = terapkanTarifOngkir(svc.cost);
+            });
+          }
+          return { courier: courier, data: entry };
+        });
+      })
+      .catch(function () {
+        return couriers.map(function (courier) {
+          return { courier: courier, data: null };
+        });
+      });
+
+    return ongkirRequest.then(function (results) {
+      var cheapest = null;
+      var byCourierResult = {};
+
+      results.forEach(function (result) {
+        byCourierResult[result.courier] = result;
+        var group = kurirListEl.querySelector('.cart-kurir-group[data-courier-group="' + result.courier + '"]');
+        if (!group) return;
+        var item = group.querySelector(".cart-kurir-item");
+        item.classList.remove("is-loading");
+
+        var costEl = item.querySelector("[data-cost]");
+        var data = result.data;
+        var courierName = COURIER_NAMES[result.courier] || result.courier;
+        var services = data && Array.isArray(data.services) ? data.services : [];
+
+        if (!data || !services.length) {
+          item.classList.add("is-unavailable");
+          if (costEl) costEl.textContent = "Tidak tersedia";
+          renderPaketList(group, result.courier, courierName, []);
+          return;
+        }
+
+        renderPaketList(group, result.courier, courierName, services);
+
+        var courierCheapest = services[0];
+        if (costEl) costEl.textContent = "mulai " + formatRupiah(courierCheapest.cost);
+
+        if (!cheapest || courierCheapest.cost < cheapest.cost) {
+          cheapest = {
+            group: group,
+            courier: result.courier,
+            courierName: courierName,
+            service: courierCheapest.service,
+            cost: courierCheapest.cost,
+            etd: courierCheapest.etd
+          };
+        }
+      });
+
+      if (cheapest) {
+        showOngkirNote(
+          "Termurah: " + cheapest.courierName + " " + formatRupiah(cheapest.cost) + ". Silakan pilih ekspedisi.",
+          "success"
+        );
+      } else {
+        showOngkirNote("Gagal ambil ongkir, coba lagi.", "error");
+      }
+
+      updateTotals();
+      updateCheckoutState();
+
+      return byCourierResult;
+    });
+  }
+
   if (cekOngkirBtn) {
     cekOngkirBtn.addEventListener("click", function () {
       if (!hasValidDestination()) {
@@ -972,121 +1101,14 @@
 
       if (ongkirHintEl) setVisible(ongkirHintEl, false);
 
-      var weight = window.CartStore.getTotalWeight();
-      if (weight <= 0) weight = 1000;
-
-      var couriers = Object.keys(COURIER_NAMES);
-      var groups = kurirListEl ? kurirListEl.querySelectorAll(".cart-kurir-group") : [];
-
-      state.ongkirChecked = false;
-      ongkirNoteEl.hidden = true;
-      ongkirNoteEl.style.color = "";
-      kurirHiddenEl.value = "";
-      setVisible(kurirListEl, true);
-      showAllKurirGroups();
-      groups.forEach(function (group) {
-        var item = group.querySelector(".cart-kurir-item");
-        var panel = group.querySelector("[data-paket-panel]");
-        item.classList.remove("is-selected", "is-unavailable");
-        item.classList.add("is-loading");
-        item.setAttribute("aria-expanded", "false");
-        if (panel) {
-          panel.classList.remove("is-open");
-          var list = panel.querySelector("[data-paket-list]");
-          if (list) list.innerHTML = "";
-        }
-        var costEl = item.querySelector("[data-cost]");
-        if (costEl) costEl.textContent = "Mengecek...";
-      });
-
       cekOngkirBtn.disabled = true;
       cekOngkirBtn.textContent = "Mengecek ongkir...";
       setVisible(cekOngkirBtn, false);
 
-      var payload = {
-        destination_id: destinationIdEl.value,
-        weight: weight,
-        couriers: couriers
-      };
-
-      var ongkirRequest = fetch(ONGKIR_ENDPOINT, {
-        method: "POST",
-        headers: Object.assign({ "Content-Type": "application/json" }, SUPABASE_FN_HEADERS),
-        body: JSON.stringify(payload)
-      })
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          var byCourier = (data && data.results) || {};
-          return couriers.map(function (courier) {
-            var entry = byCourier[courier] || null;
-            if (entry && Array.isArray(entry.services)) {
-              entry.services.forEach(function (svc) {
-                svc.cost = terapkanTarifOngkir(svc.cost);
-              });
-            }
-            return { courier: courier, data: entry };
-          });
-        })
-        .catch(function () {
-          return couriers.map(function (courier) {
-            return { courier: courier, data: null };
-          });
-        });
-
-      ongkirRequest.then(function (results) {
-        var cheapest = null;
-
-        results.forEach(function (result) {
-          var group = kurirListEl.querySelector('.cart-kurir-group[data-courier-group="' + result.courier + '"]');
-          if (!group) return;
-          var item = group.querySelector(".cart-kurir-item");
-          item.classList.remove("is-loading");
-
-          var costEl = item.querySelector("[data-cost]");
-          var data = result.data;
-          var courierName = COURIER_NAMES[result.courier] || result.courier;
-          var services = data && Array.isArray(data.services) ? data.services : [];
-
-          if (!data || !services.length) {
-            item.classList.add("is-unavailable");
-            if (costEl) costEl.textContent = "Tidak tersedia";
-            renderPaketList(group, result.courier, courierName, []);
-            return;
-          }
-
-          renderPaketList(group, result.courier, courierName, services);
-
-          var courierCheapest = services[0];
-          if (costEl) costEl.textContent = "mulai " + formatRupiah(courierCheapest.cost);
-
-          if (!cheapest || courierCheapest.cost < cheapest.cost) {
-            cheapest = {
-              group: group,
-              courier: result.courier,
-              courierName: courierName,
-              service: courierCheapest.service,
-              cost: courierCheapest.cost,
-              etd: courierCheapest.etd
-            };
-          }
-        });
-
-        if (cheapest) {
-          showOngkirNote(
-            "Termurah: " + cheapest.courierName + " " + formatRupiah(cheapest.cost) + ". Silakan pilih ekspedisi.",
-            "success"
-          );
-        } else {
-          showOngkirNote("Gagal ambil ongkir, coba lagi.", "error");
-        }
-
-        updateTotals();
-        updateCheckoutState();
-      })
-        .finally(function () {
-          cekOngkirBtn.disabled = false;
-          cekOngkirBtn.textContent = "Cek Ongkir";
-        });
+      runOngkirCheck().finally(function () {
+        cekOngkirBtn.disabled = false;
+        cekOngkirBtn.textContent = "Cek Ongkir";
+      });
     });
   }
 

@@ -1404,6 +1404,10 @@
     if (cartLayoutEl) cartLayoutEl.classList.add("is-paid-view");
     setVisible(cartSummaryEl, false);
 
+    if (window.CartStore && typeof window.CartStore.clearCart === "function") {
+      window.CartStore.clearCart();
+    }
+
     var orderId = getResultOrderId();
     var waHref = adminWhatsappLink(
       "Halo admin, pembayaran order " + orderId + " sudah berhasil. Mohon info selanjutnya ya."

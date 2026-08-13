@@ -168,17 +168,12 @@
       linkUrl.textContent = refUrl;
       linkUrl.dataset.url = refUrl;
     }
-    var infoName = $("#affInfoName");
-    if (infoName) infoName.textContent = affiliate.name || "—";
     var infoEmail = $("#affInfoEmail");
     if (infoEmail) infoEmail.textContent = affiliate.email || "—";
     var infoWa = $("#affInfoWa");
     if (infoWa) infoWa.textContent = affiliate.whatsapp ? "+" + affiliate.whatsapp : "—";
     var infoCommission = $("#affInfoCommission");
     if (infoCommission) {
-      // Always show the current global commission rate (kept in sync via
-      // loadCommissionConfig), not affiliate.commission_rate, which is a
-      // one-time snapshot taken at signup and never reflects later changes.
       infoCommission.textContent = currentCommissionPersen + "%";
     }
 
@@ -223,25 +218,60 @@
     }
 
     var max = Math.max.apply(null, values.map(function (v) { return v.value; })) || 1;
+    var width = 300;
+    var height = 120;
+    var padX = 10;
+    var padY = 14;
+    var stepX = (width - padX * 2) / (values.length - 1);
 
-    container.innerHTML = "";
-    values.forEach(function (v) {
-      var bar = document.createElement("div");
-      bar.className = "aff-chart-bar";
-
-      var col = document.createElement("div");
-      col.className = "aff-chart-bar__col";
-      col.style.height = Math.max(4, Math.round((v.value / max) * 100)) + "%";
-      col.title = v.day + ": " + v.value + " klik";
-
-      var label = document.createElement("span");
-      label.className = "aff-chart-bar__day";
-      label.textContent = v.day;
-
-      bar.appendChild(col);
-      bar.appendChild(label);
-      container.appendChild(bar);
+    var points = values.map(function (v, i) {
+      return {
+        x: padX + stepX * i,
+        y: padY + (1 - v.value / max) * (height - padY * 2),
+        day: v.day,
+        value: v.value
+      };
     });
+
+    var linePath = points
+      .map(function (p, i) {
+        return (i === 0 ? "M" : "L") + p.x.toFixed(1) + "," + p.y.toFixed(1);
+      })
+      .join(" ");
+
+    var baseline = (height - padY).toFixed(1);
+    var areaPath =
+      linePath +
+      " L" + points[points.length - 1].x.toFixed(1) + "," + baseline +
+      " L" + points[0].x.toFixed(1) + "," + baseline +
+      " Z";
+
+    var dots = points
+      .map(function (p) {
+        return (
+          '<circle class="aff-chart-dot" vector-effect="non-scaling-stroke" cx="' + p.x.toFixed(1) +
+          '" cy="' + p.y.toFixed(1) + '" r="3"><title>' + p.day + ": " + p.value + " klik</title></circle>"
+        );
+      })
+      .join("");
+
+    var svg =
+      '<svg class="aff-chart-svg" viewBox="0 0 ' + width + " " + height + '" preserveAspectRatio="none">' +
+      '<path class="aff-chart-area" d="' + areaPath + '"></path>' +
+      '<path class="aff-chart-line" vector-effect="non-scaling-stroke" d="' + linePath + '"></path>' +
+      dots +
+      "</svg>";
+
+    var labels =
+      '<div class="aff-chart-labels">' +
+      values
+        .map(function (v) {
+          return "<span>" + v.day + "</span>";
+        })
+        .join("") +
+      "</div>";
+
+    container.innerHTML = svg + labels;
   }
 
   function fetchOwnAffiliateRow() {

@@ -11,6 +11,22 @@
 </head>
 <body>
 
+<script>
+  (function () {
+    var ALLOWED_PAGES = ["overview", "produk", "transaksi", "affiliate", "website"];
+    var raw = (location.hash || "").replace("#", "");
+    var target = ALLOWED_PAGES.indexOf(raw) !== -1 ? raw : "overview";
+    window.__lghInitialPage = target;
+
+    var style = document.createElement("style");
+    style.id = "lghPanelBootStyle";
+    style.textContent =
+      "[data-page-section]{display:none !important;}" +
+      "[data-page-section=\"" + target + "\"]{display:block !important;}";
+    document.head.appendChild(style);
+  })();
+</script>
+
 <div class="overlay" id="overlay"></div>
 
 <aside class="sidebar" id="sidebar">
@@ -33,34 +49,34 @@
   <nav class="sidebar-nav">
     <ul>
       <li>
-        <a href="#" class="nav-item active" data-page="overview">
+        <a href="#overview" class="nav-item active" data-page="overview">
           <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2.5h4.5v4.5H2v-4.5zM9.5 2.5H14v4.5H9.5v-4.5zM2 9h4.5v4.5H2V9zM9.5 9H14v4.5H9.5V9z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>
           <span class="nav-text">Overview</span>
         </a>
       </li>
       <li>
-        <a href="#" class="nav-item" data-page="produk">
+        <a href="#produk" class="nav-item" data-page="produk">
           <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5.2l6-3.2 6 3.2v5.6l-6 3.2-6-3.2V5.2z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M2 5.2L8 8.4l6-3.2M8 8.4v6" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>
           <span class="nav-text">Produk</span>
           <span class="nav-count" id="navProdukCount">0</span>
         </a>
       </li>
       <li>
-        <a href="#" class="nav-item" data-page="transaksi">
+        <a href="#transaksi" class="nav-item" data-page="transaksi">
           <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3" width="13" height="10" rx="1.4" stroke="currentColor" stroke-width="1.35"/><path d="M1.5 6.2h13" stroke="currentColor" stroke-width="1.35"/><path d="M4 9.3h3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg>
           <span class="nav-text">Transaksi</span>
           <span class="nav-count" id="navTransaksiCount">0</span>
         </a>
       </li>
       <li>
-        <a href="#" class="nav-item" data-page="affiliate">
+        <a href="#affiliate" class="nav-item" data-page="affiliate">
           <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="5" r="2.3" stroke="currentColor" stroke-width="1.35"/><path d="M1 13.5C1 11.015 3.015 9 5.5 9S10 11.015 10 13.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/><circle cx="12" cy="5.5" r="1.8" stroke="currentColor" stroke-width="1.2" opacity=".55"/><path d="M14.5 13c0-1.7-1.12-3.1-2.5-3.1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".55"/></svg>
           <span class="nav-text">Affiliate</span>
           <span class="nav-count" id="navAffiliateCount">0</span>
         </a>
       </li>
       <li>
-        <a href="#" class="nav-item" data-page="website">
+        <a href="#website" class="nav-item" data-page="website">
           <svg class="ni" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.35"/><path d="M2 8h12M8 2c1.7 1.7 2.7 3.8 2.7 6s-1 4.3-2.7 6c-1.7-1.7-2.7-3.8-2.7-6s1-4.3 2.7-6z" stroke="currentColor" stroke-width="1.35"/></svg>
           <span class="nav-text">Website</span>
         </a>

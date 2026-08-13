@@ -1625,6 +1625,7 @@
         name: snap.customerName || "Pelanggan",
         phone: snap.phone
       },
+      shipping: snap.shipping || undefined,
       ref_code: refCode || undefined
     };
 
@@ -1759,6 +1760,25 @@
         };
       });
 
+      var shippingSnapshot = null;
+      if (window.CartStore.needsShipping()) {
+        shippingSnapshot = {
+          address: {
+            province: provinceDd && provinceDd.value ? { id: provinceDd.value, label: provinceDd.label } : null,
+            city: cityDd && cityDd.value ? { id: cityDd.value, label: cityDd.label } : null,
+            district: districtDd && districtDd.value ? { id: districtDd.value, label: districtDd.label } : null,
+            subdistrict: subdistrictDd && subdistrictDd.value ? { id: subdistrictDd.value, label: subdistrictDd.label } : null,
+            addressDetail: addressDetailEl ? addressDetailEl.value.trim() : ""
+          },
+          courier: kurirHiddenEl ? kurirHiddenEl.value : "",
+          courierName: COURIER_NAMES[kurirHiddenEl ? kurirHiddenEl.value : ""] || (kurirHiddenEl ? kurirHiddenEl.value : ""),
+          serviceCode: state.ongkirServiceCode,
+          serviceName: state.ongkirService,
+          cost: state.ongkir,
+          etd: state.ongkirEtd
+        };
+      }
+
       checkoutState = {
         step: "method",
         method: "",
@@ -1771,7 +1791,8 @@
           layanan: breakdown.layanan,
           pajak: breakdown.pajak,
           customerName: name,
-          phone: phone
+          phone: phone,
+          shipping: shippingSnapshot
         },
         createdAt: Date.now()
       };

@@ -146,6 +146,9 @@
     var benefits = $("#affBenefits");
     if (benefits) benefits.classList.add("is-hidden");
 
+    var preFaq = $("#affPreFaqSection");
+    if (preFaq) preFaq.classList.add("is-hidden");
+
     var dash = $("#affDashboard");
     if (dash) dash.classList.add("is-visible");
 

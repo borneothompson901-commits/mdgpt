@@ -99,19 +99,42 @@
     return n;
   }
 
+  // Real stock ceiling, on top of the generic 1-99 clamp above. Returns
+  // Infinity when stock isn't tracked (digital products) or PRODUCTS_DATA
+  // hasn't loaded yet — in that case the server still re-validates at
+  // checkout, so this is a UX nicety, not the source of truth.
+  function stockLimitFor(id, variantKey) {
+    if (!global.PRODUCTS_DATA || typeof global.PRODUCTS_DATA.getById !== "function") return Infinity;
+    var product = global.PRODUCTS_DATA.getById(id);
+    if (!product) return Infinity;
+    if (variantKey && product.variantPricing) {
+      var pricing = product.variantPricing[variantKey];
+      if (pricing && typeof pricing.stock === "number") return pricing.stock;
+    }
+    if (typeof product.stock === "number") return product.stock;
+    return Infinity;
+  }
+
+  function clampQtyToStock(value, id, variantKey, fallback) {
+    var qty = clampQty(value, fallback);
+    var limit = stockLimitFor(id, variantKey);
+    if (limit < qty) return Math.max(limit, 0);
+    return qty;
+  }
+
   function sameItem(a, b) {
     return String(a.id) === String(b.id) && String(a.variantKey || "") === String(b.variantKey || "");
   }
 
   function addItem(product, qty) {
-    qty = clampQty(qty, QTY_MIN);
+    qty = clampQtyToStock(qty, product.id, product.variantKey, QTY_MIN);
     var cart = readCart();
     var existing = null;
     for (var i = 0; i < cart.length; i++) {
       if (sameItem(cart[i], product)) { existing = cart[i]; break; }
     }
     if (existing) {
-      existing.qty = clampQty(existing.qty + qty, QTY_MIN);
+      existing.qty = clampQtyToStock(existing.qty + qty, product.id, product.variantKey, QTY_MIN);
     } else {
       var meta = resolveProductMeta(product);
       var item = {
@@ -139,7 +162,7 @@
     cart.forEach(function (it) {
       if (!sameItem(it, { id: id, variantKey: variantKey })) { next.push(it); return; }
       if (!isNaN(rawQty) && rawQty > 0) {
-        it.qty = clampQty(rawQty, QTY_MIN);
+        it.qty = clampQtyToStock(rawQty, id, variantKey, QTY_MIN);
         next.push(it);
       }
     });

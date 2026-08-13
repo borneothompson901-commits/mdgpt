@@ -488,6 +488,13 @@
 
   var QTY_MIN = 1;
   var QTY_MAX = 99;
+  // Cap by real stock for non-variant physical products (variant stock is
+  // handled separately inside the variant modal). Digital/untracked stock
+  // (null) keeps the default 99 cap.
+  var hasVariants = Array.isArray(product.variantGroups) && product.variantGroups.length > 0;
+  if (!hasVariants && typeof product.stock === "number") {
+    QTY_MAX = Math.max(0, Math.min(QTY_MAX, product.stock));
+  }
   var qtyInput = document.getElementById("pdQtyInput");
   var qtyMinus = document.getElementById("pdQtyMinus");
   var qtyPlus = document.getElementById("pdQtyPlus");

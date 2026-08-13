@@ -163,6 +163,7 @@
 }
 
 .aff-auth {
+  display: none;
   margin-bottom: 24px;
   padding: 20px 14px;
   border-radius: 24px;
@@ -173,8 +174,34 @@
   display: none;
 }
 
+/* Full-page auth mode: triggered by "Daftar/Log-in Sekarang" CTA.
+   Same URL, everything else hidden, navbar stays, card centered. */
+body.aff-auth-page .aff-profile-card,
+body.aff-auth-page .aff-benefits,
+body.aff-auth-page .aff-pre-faq,
+body.aff-auth-page .aff-dashboard,
+body.aff-auth-page .aff-logout-btn {
+  display: none !important;
+}
+
+body.aff-auth-page .aff-wrap {
+  padding-top: 0;
+}
+
+body.aff-auth-page .aff-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--nav-height, 68px));
+  margin: 0;
+  background: none;
+  padding: 24px 14px;
+}
+
 .aff-auth-card {
+  position: relative;
   max-width: 900px;
+  width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
@@ -182,6 +209,28 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 24px 60px -28px rgba(43, 3, 54, 0.45);
+}
+
+.aff-auth-back {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--white);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.aff-auth-back:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .aff-auth-visual {

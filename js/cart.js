@@ -760,6 +760,7 @@
     }
 
     focusKurirGroup(courier);
+    setVisible(kurirListEl, true);
     updateTotals();
     updateCheckoutState();
     saveShippingDraft();

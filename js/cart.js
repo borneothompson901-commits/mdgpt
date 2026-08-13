@@ -1581,8 +1581,6 @@
           serverExpiry = new Date(result.data.qr.expiryAt).getTime();
         }
 
-        // Batas waktu tampilan selalu 15 menit dari sekarang, kecuali sesi
-        // dari Pivot sendiri ternyata lebih pendek dari itu.
         var uiExpiry = Date.now() + COUNTDOWN_MS;
         if (serverExpiry && serverExpiry > Date.now() && serverExpiry < uiExpiry) {
           uiExpiry = serverExpiry;

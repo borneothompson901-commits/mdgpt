@@ -276,7 +276,7 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
 .data-table--website th:last-child, .data-table--website td:last-child { width:1%; white-space:nowrap; text-align:right; }
 .data-table--website td.row-actions .actions { justify-content:flex-end; }
 .data-table--website thead th { background:var(--blue); color:rgba(255,255,255,.85); }
-.data-table--website thead th:last-child { position:relative; }
+.data-table--website thead th:last-child { position:relative; overflow:hidden; }
 .data-table--website thead th:last-child::after { content:""; position:absolute; top:-18px; right:-14px; width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,.18); pointer-events:none; }
 .data-table--website thead th:last-child::before { content:""; position:absolute; bottom:-14px; right:26px; width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,.12); pointer-events:none; }
 .website-section { margin-bottom:20px; }

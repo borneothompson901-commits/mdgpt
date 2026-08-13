@@ -213,8 +213,6 @@
   display: none;
 }
 
-/* Full-page auth mode: triggered by "Daftar/Log-in Sekarang" CTA.
-   Same URL, everything else hidden, navbar stays, card centered. */
 body.aff-auth-page .aff-profile-card,
 body.aff-auth-page .aff-benefits,
 body.aff-auth-page .aff-cta-banner,
@@ -224,57 +222,48 @@ body.aff-auth-page .aff-logout-btn {
   display: none !important;
 }
 
+body.aff-auth-page,
+html:has(body.aff-auth-page) {
+  height: 100%;
+  overflow: hidden;
+}
+
 body.aff-auth-page .aff-wrap {
+  height: calc(100vh - var(--nav-height, 68px));
   padding-top: 0;
+  overflow: hidden;
 }
 
 body.aff-auth-page .aff-auth {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - var(--nav-height, 68px));
+  height: 100%;
   margin: 0;
-  background: none;
   padding: 24px 14px;
+  background:
+    radial-gradient(720px 420px at 12% 8%, rgba(169, 26, 182, 0.16), transparent 60%),
+    radial-gradient(680px 460px at 88% 92%, rgba(177, 4, 255, 0.14), transparent 60%),
+    linear-gradient(160deg, #f6ecfb 0%, #eef1fd 55%, #eaf4ff 100%);
 }
 
 .aff-auth-card {
   position: relative;
   max-width: 900px;
   width: 100%;
+  max-height: 100%;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 24px 60px -28px rgba(43, 3, 54, 0.45);
 }
 
-.aff-auth-back {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  z-index: 2;
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  color: var(--white);
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.aff-auth-back:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
 .aff-auth-visual {
   position: relative;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -338,7 +327,9 @@ body.aff-auth-page .aff-auth {
 .aff-auth-panel {
   background: var(--white);
   padding: 24px 24px;
-  min-height: 448px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -445,11 +436,11 @@ body.aff-auth-page .aff-auth {
   }
 
   .aff-auth-card {
-    grid-template-columns: 1fr 1.15fr;
+    flex-direction: row;
   }
 
   .aff-auth-visual {
-    min-height: 476px;
+    flex-basis: 42%;
     padding: 40px;
   }
 
@@ -458,8 +449,8 @@ body.aff-auth-page .aff-auth {
   }
 
   .aff-auth-panel {
+    flex-basis: 58%;
     padding: 36px 56px;
-    min-height: 476px;
     justify-content: center;
   }
 }

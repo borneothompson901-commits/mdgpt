@@ -162,7 +162,7 @@
         '<td class="col-email" title="' + escapeHtml(a.email || "") + '">' + escapeHtml(truncateEmail(a.email)) + '</td>' +
         '<td>' + (parseInt(a.total_clicks, 10) || 0) + '</td>' +
         '<td>' + (parseInt(a.total_orders, 10) || 0) + '</td>' +
-        '<td class="col-fee">' + rupiah(a.total_commission) + '</td>' +
+        '<td class="col-fee"><button type="button" class="fee-pill" data-fee="' + a.id + '" data-name="' + escapeHtml(a.name || a.email || "") + '">' + rupiah(a.total_commission) + '</button></td>' +
         '<td><div class="wa-cell">' +
           (a.whatsapp ? '<button type="button" class="btn-icon wa-action" data-wa="' + escapeHtml(a.whatsapp) + '" title="Salin nomor WhatsApp">' + iconCopy() + '</button>' : '<span>—</span>') +
         '</div></td>' +
@@ -187,6 +187,9 @@
     });
     tbody.querySelectorAll("[data-del]").forEach(function (btn) {
       btn.addEventListener("click", function () { openDeleteModal(btn.dataset.del, btn.dataset.name); });
+    });
+    tbody.querySelectorAll("[data-fee]").forEach(function (btn) {
+      btn.addEventListener("click", function () { openFeeModal(btn.dataset.fee, btn.dataset.name); });
     });
   }
 
@@ -380,6 +383,86 @@
       deleteConfirmBtn.textContent = "Hapus";
     }
   });
+
+  var feeModal = document.getElementById("feeModal");
+  var feeModalTitle = document.getElementById("feeModalTitle");
+  var feeOrdersTbody = document.getElementById("feeOrdersTbody");
+  var feeOrdersEmpty = document.getElementById("feeOrdersEmpty");
+  var feeStatusMap = { AVAILABLE: "Available", CANCEL: "Cancel", REFUND: "Refund", CLAIM: "Claim", PENDING: "Pending" };
+
+  function fmtTanggal(iso) {
+    var d = new Date(iso);
+    return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+  }
+
+  function produkSummary(items) {
+    return (Array.isArray(items) ? items : []).map(function (it) {
+      return (it.title || "-") + " x" + (parseInt(it.qty, 10) || 1);
+    }).join(", ");
+  }
+
+  function feeStatusOptions(current) {
+    var opts = ["AVAILABLE", "CANCEL", "REFUND", "CLAIM"];
+    var html = "";
+    if (current === "PENDING") html += '<option value="PENDING" selected disabled>Pending</option>';
+    opts.forEach(function (s) {
+      html += '<option value="' + s + '"' + (s === current ? " selected" : "") + '>' + feeStatusMap[s] + '</option>';
+    });
+    return html;
+  }
+
+  function renderFeeOrders(orders) {
+    feeOrdersTbody.innerHTML = orders.map(function (o) {
+      return '<tr data-order-row="' + o.id + '">' +
+        '<td>' + fmtTanggal(o.created_at) + '</td>' +
+        '<td>' + escapeHtml(produkSummary(o.items)) + '</td>' +
+        '<td class="col-fee">' + rupiah(o.commission_amount) + '</td>' +
+        '<td><select class="fee-status-select" data-order="' + o.id + '">' + feeStatusOptions(o.commission_status) + '</select></td>' +
+      '</tr>';
+    }).join("");
+    feeOrdersEmpty.hidden = orders.length !== 0;
+
+    feeOrdersTbody.querySelectorAll(".fee-status-select").forEach(function (sel) {
+      sel.addEventListener("change", async function () {
+        var orderId = sel.dataset.order;
+        var newStatus = sel.value;
+        sel.disabled = true;
+        try {
+          var result = await db.updateOrderCommissionStatus(orderId, newStatus);
+          var idx = state.affiliates.findIndex(function (x) { return String(x.id) === String(result.affiliate_id); });
+          if (idx !== -1) {
+            state.affiliates[idx].total_commission = result.total_commission;
+            render();
+            renderOverviewStats();
+          }
+          AdminShared.toast("Status komisi diperbarui.");
+        } catch (e) {
+          AdminShared.toast(e.message || "Gagal mengubah status komisi.", "error");
+        } finally {
+          sel.disabled = false;
+        }
+      });
+    });
+  }
+
+  async function openFeeModal(affiliateId, name) {
+    feeModalTitle.textContent = "Fee — " + (name || "Affiliate");
+    feeOrdersTbody.innerHTML = "";
+    feeOrdersEmpty.hidden = true;
+    feeModal.classList.add("open");
+    try {
+      var orders = await db.listAffiliateOrders(affiliateId);
+      renderFeeOrders(orders);
+    } catch (e) {
+      AdminShared.toast(e.message || "Gagal memuat fee affiliate", "error");
+    }
+  }
+
+  function closeFeeModal() { feeModal.classList.remove("open"); }
+
+  document.getElementById("feeCloseBtn").addEventListener("click", closeFeeModal);
+  document.getElementById("feeCloseBtn2").addEventListener("click", closeFeeModal);
+  feeModal.addEventListener("click", function (e) { if (e.target === feeModal) closeFeeModal(); });
 
   loadAll();
 })();

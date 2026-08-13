@@ -140,6 +140,8 @@
   }
 
   function renderDashboard(affiliate, viaSession) {
+    document.body.classList.remove("aff-auth-page");
+
     var formSection = $("#affFormSection");
     if (formSection) formSection.classList.add("is-hidden");
 

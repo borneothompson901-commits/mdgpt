@@ -626,11 +626,13 @@ html.cart-preload-expired #checkoutStepResult {
 
 .cart-page .cart-ongkir-note {
   margin: 8px 0 0;
-  font-size: 0.82rem;
+  font-size: 0.7rem;
+  line-height: 1.3;
   color: #1a9c5c;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cart-page .cart-divider {

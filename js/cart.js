@@ -1714,7 +1714,8 @@
           qty: it.qty,
           price: it.price,
           type: it.type,
-          variant: it.variant || undefined
+          variant: it.variant || undefined,
+          variantKey: it.variantKey || undefined
         };
       });
 

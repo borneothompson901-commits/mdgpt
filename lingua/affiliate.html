@@ -93,6 +93,13 @@
         <section class="aff-auth" id="affFormSection">
           <div class="aff-auth-card">
 
+            <button type="button" class="aff-auth-back" id="affAuthBackBtn" aria-label="Kembali">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 12H5" />
+                <path d="m12 19-7-7 7-7" />
+              </svg>
+            </button>
+
             <div class="aff-auth-visual" aria-hidden="true">
               <span class="aff-auth-visual__shape aff-auth-visual__shape--1"></span>
               <span class="aff-auth-visual__shape aff-auth-visual__shape--2"></span>
@@ -242,8 +249,8 @@
             </div>
           </div>
 
-          <button type="button" class="aff-join-cta" id="affJoinCtaBtn" data-scroll-target="affFormSection">
-            Gabung Sekarang!
+          <button type="button" class="aff-join-cta" id="affJoinCtaBtn">
+            Daftar/Log-in Sekarang
           </button>
         </section>
 
@@ -449,21 +456,31 @@
         });
 
         var joinCtaBtn = document.getElementById("affJoinCtaBtn");
-        if (joinCtaBtn) {
-          joinCtaBtn.addEventListener("click", function () {
-            var targetId = joinCtaBtn.getAttribute("data-scroll-target");
-            var target = targetId ? document.getElementById(targetId) : null;
-            if (!target) return;
-            var navH = parseInt(
-              getComputedStyle(document.documentElement).getPropertyValue("--nav-height") || "68",
-              10
-            );
-            window.scrollTo({
-              top: target.getBoundingClientRect().top + window.scrollY - navH - 12,
-              behavior: "smooth"
-            });
-          });
+        var authBackBtn = document.getElementById("affAuthBackBtn");
+        var authScrollY = 0;
+
+        function openAuthView() {
+          authScrollY = window.scrollY || window.pageYOffset || 0;
+          document.body.classList.add("aff-auth-page");
+          window.scrollTo(0, 0);
         }
+
+        function closeAuthView() {
+          document.body.classList.remove("aff-auth-page");
+          window.scrollTo(0, authScrollY);
+        }
+
+        if (joinCtaBtn) {
+          joinCtaBtn.addEventListener("click", openAuthView);
+        }
+        if (authBackBtn) {
+          authBackBtn.addEventListener("click", closeAuthView);
+        }
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && document.body.classList.contains("aff-auth-page")) {
+            closeAuthView();
+          }
+        });
       })();
     </script>
   </body>

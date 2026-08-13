@@ -392,7 +392,10 @@
 
   function fmtTanggal(iso) {
     var d = new Date(iso);
-    return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+    var dd = String(d.getDate()).padStart(2, "0");
+    var mm = String(d.getMonth() + 1).padStart(2, "0");
+    var yy = String(d.getFullYear()).slice(-2);
+    return dd + "/" + mm + "/" + yy;
   }
 
   function produkSummary(items) {
@@ -401,48 +404,114 @@
     }).join(", ");
   }
 
-  function feeStatusOptions(current) {
+  var feeStatusColor = { AVAILABLE: "green", CANCEL: "red", REFUND: "orange", CLAIM: "purple", PENDING: "gray" };
+
+  function feeStatusDropdown(orderId, current) {
     var opts = ["AVAILABLE", "CANCEL", "REFUND", "CLAIM"];
-    var html = "";
-    if (current === "PENDING") html += '<option value="PENDING" selected disabled>Pending</option>';
-    opts.forEach(function (s) {
-      html += '<option value="' + s + '"' + (s === current ? " selected" : "") + '>' + feeStatusMap[s] + '</option>';
-    });
-    return html;
+    var color = feeStatusColor[current] || "gray";
+    var items = opts.map(function (s) {
+      return '<li class="fee-status-dd__item" role="option" data-value="' + s + '"' + (s === current ? ' aria-selected="true"' : '') + '>' +
+        '<span class="fee-status-dd__dot fee-status-dd__dot--' + feeStatusColor[s] + '"></span>' +
+        feeStatusMap[s] +
+      '</li>';
+    }).join("");
+    return (
+      '<div class="fee-status-dd' + (current === "PENDING" ? " is-pending" : "") + '" data-order="' + orderId + '" data-value="' + current + '">' +
+        '<button type="button" class="fee-status-dd__trigger" aria-haspopup="listbox" aria-expanded="false">' +
+          '<span class="fee-status-dd__dot fee-status-dd__dot--' + color + '"></span>' +
+          '<span class="fee-status-dd__label">' + (feeStatusMap[current] || current) + '</span>' +
+          '<svg class="fee-status-dd__chevron" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '</button>' +
+        '<ul class="fee-status-dd__menu" role="listbox">' + items + '</ul>' +
+      '</div>'
+    );
   }
+
+  function closeAllFeeDropdowns(except) {
+    feeOrdersTbody.querySelectorAll(".fee-status-dd.open").forEach(function (dd) {
+      if (dd !== except) {
+        dd.classList.remove("open");
+        var trg = dd.querySelector(".fee-status-dd__trigger");
+        if (trg) trg.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
+  function bindFeeStatusDropdowns() {
+    feeOrdersTbody.querySelectorAll(".fee-status-dd").forEach(function (dd) {
+      var trigger = dd.querySelector(".fee-status-dd__trigger");
+      var menu = dd.querySelector(".fee-status-dd__menu");
+
+      trigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (dd.classList.contains("is-loading")) return;
+        var willOpen = !dd.classList.contains("open");
+        closeAllFeeDropdowns(dd);
+        dd.classList.toggle("open", willOpen);
+        trigger.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      });
+
+      menu.querySelectorAll(".fee-status-dd__item").forEach(function (item) {
+        item.addEventListener("click", async function (e) {
+          e.stopPropagation();
+          var newStatus = item.dataset.value;
+          if (newStatus === dd.dataset.value) {
+            dd.classList.remove("open");
+            trigger.setAttribute("aria-expanded", "false");
+            return;
+          }
+          var orderId = dd.dataset.order;
+          dd.classList.remove("open");
+          dd.classList.add("is-loading");
+          trigger.setAttribute("aria-expanded", "false");
+          try {
+            var result = await db.updateOrderCommissionStatus(orderId, newStatus);
+            var idx = state.affiliates.findIndex(function (x) { return String(x.id) === String(result.affiliate_id); });
+            if (idx !== -1) {
+              state.affiliates[idx].total_commission = result.total_commission;
+              render();
+              renderOverviewStats();
+            }
+            dd.dataset.value = newStatus;
+            dd.classList.remove("is-pending");
+            dd.querySelector(".fee-status-dd__label").textContent = feeStatusMap[newStatus];
+            var dot = trigger.querySelector(".fee-status-dd__dot");
+            dot.className = "fee-status-dd__dot fee-status-dd__dot--" + feeStatusColor[newStatus];
+            menu.querySelectorAll(".fee-status-dd__item").forEach(function (li) {
+              li.removeAttribute("aria-selected");
+            });
+            item.setAttribute("aria-selected", "true");
+            AdminShared.toast("Status komisi diperbarui.");
+          } catch (e) {
+            AdminShared.toast(e.message || "Gagal mengubah status komisi.", "error");
+          } finally {
+            dd.classList.remove("is-loading");
+          }
+        });
+      });
+    });
+  }
+
+  document.addEventListener("click", function () {
+    closeAllFeeDropdowns();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeAllFeeDropdowns();
+  });
 
   function renderFeeOrders(orders) {
     feeOrdersTbody.innerHTML = orders.map(function (o) {
+      var produk = produkSummary(o.items);
       return '<tr data-order-row="' + o.id + '">' +
         '<td>' + fmtTanggal(o.created_at) + '</td>' +
-        '<td>' + escapeHtml(produkSummary(o.items)) + '</td>' +
+        '<td class="col-produk-fee" title="' + escapeHtml(produk) + '">' + escapeHtml(produk) + '</td>' +
         '<td class="col-fee">' + rupiah(o.commission_amount) + '</td>' +
-        '<td><select class="fee-status-select" data-order="' + o.id + '">' + feeStatusOptions(o.commission_status) + '</select></td>' +
+        '<td>' + feeStatusDropdown(o.id, o.commission_status) + '</td>' +
       '</tr>';
     }).join("");
     feeOrdersEmpty.hidden = orders.length !== 0;
 
-    feeOrdersTbody.querySelectorAll(".fee-status-select").forEach(function (sel) {
-      sel.addEventListener("change", async function () {
-        var orderId = sel.dataset.order;
-        var newStatus = sel.value;
-        sel.disabled = true;
-        try {
-          var result = await db.updateOrderCommissionStatus(orderId, newStatus);
-          var idx = state.affiliates.findIndex(function (x) { return String(x.id) === String(result.affiliate_id); });
-          if (idx !== -1) {
-            state.affiliates[idx].total_commission = result.total_commission;
-            render();
-            renderOverviewStats();
-          }
-          AdminShared.toast("Status komisi diperbarui.");
-        } catch (e) {
-          AdminShared.toast(e.message || "Gagal mengubah status komisi.", "error");
-        } finally {
-          sel.disabled = false;
-        }
-      });
-    });
+    bindFeeStatusDropdowns();
   }
 
   async function openFeeModal(affiliateId, name) {

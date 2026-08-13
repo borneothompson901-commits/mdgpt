@@ -275,6 +275,14 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
 .upload-slot-banner { aspect-ratio:1600/500; grid-column:span 1; }
 .data-table--website th:last-child, .data-table--website td:last-child { width:1%; white-space:nowrap; text-align:right; }
 .data-table--website td.row-actions .actions { justify-content:flex-end; }
+.website-section { margin-bottom:20px; }
+.website-section:last-child { margin-bottom:0; }
+.website-section__head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+.website-section__title { font-size:0.98rem; font-weight:700; color:var(--text-1); letter-spacing:-0.01em; }
+.website-section__desc { font-size:0.8rem; color:var(--text-3); margin-top:2px; }
+.website-section__head-left { min-width:0; }
+.data-table--website td.cell-headline { max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-2); }
+.data-table--website .num-cell { width:1%; white-space:nowrap; color:var(--text-3); font-weight:600; }
 .upload-hint { font-size:0.76rem; color:var(--text-3); margin-top:8px; line-height:1.5; }
 
 .upload-grid-gallery { grid-template-columns:repeat(auto-fill,minmax(78px,1fr)); }

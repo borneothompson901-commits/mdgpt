@@ -355,6 +355,7 @@
   function closeVariantModal() {
     if (!variantModalState) return;
     var overlay = variantModalState.overlay;
+    var opts = variantModalState.opts;
     document.removeEventListener("keydown", handleVariantModalKeydown);
     overlay.classList.remove("is-open");
     document.body.style.overflow = "";
@@ -362,6 +363,7 @@
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }, 200);
     variantModalState = null;
+    if (opts && typeof opts.onClose === "function") opts.onClose();
   }
 
   function injectVariantModalStyles() {

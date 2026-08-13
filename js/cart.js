@@ -1240,6 +1240,7 @@
     setVisible(checkoutBtnSectionEl, true);
     setNavTitle("Keranjang Belanja");
     if (cartPageEl) cartPageEl.classList.remove("is-checkout-view");
+    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view");
     stopCountdown();
     stopStatusPoll();
     renderCart();
@@ -1256,6 +1257,7 @@
     hideCheckoutError();
     closeAllAccordionPanels();
     if (cartPageEl) cartPageEl.classList.add("is-checkout-view");
+    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view");
     stopCountdown();
     stopStatusPoll();
     renderCart();
@@ -1344,6 +1346,8 @@
   function renderExpiredCard() {
     stopCountdown();
     stopStatusPoll();
+    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view");
+    setVisible(cartSummaryEl, true);
     var orderId = getResultOrderId();
     var waHref = adminWhatsappLink(
       "Halo admin, saya mau tanya soal pembayaran order " + orderId + " yang sudah kadaluarsa. Saya sudah terlanjur transfer/bayar."
@@ -1370,19 +1374,41 @@
   function renderPaidCard() {
     stopCountdown();
     stopStatusPoll();
+    if (cartLayoutEl) cartLayoutEl.classList.add("is-paid-view");
+    setVisible(cartSummaryEl, false);
+
     var orderId = getResultOrderId();
     var waHref = adminWhatsappLink(
       "Halo admin, pembayaran order " + orderId + " sudah berhasil. Mohon info selanjutnya ya."
     );
 
     checkoutResultContent.innerHTML =
-      '<div class="payment-result__box payment-result__box--success">' +
-        '<p class="payment-result__label">Pembayaran Berhasil</p>' +
-        '<p class="payment-result__note">Terima kasih, pesanan kamu sudah kami terima! Nomor resi (untuk produk fisik) atau file/dokumen (untuk produk digital) akan diinfokan admin lewat WhatsApp maksimal 1x24 jam.</p>' +
-        '<p class="payment-result__order-id">Order ID: ' + orderId + '</p>' +
-      '</div>' +
-      '<a class="payment-result__ewallet-btn payment-result__wa-btn" href="' + waHref + '" target="_blank" rel="noopener">Hubungi Admin (WhatsApp)</a>' +
-      '<button type="button" class="checkout-reorder-btn payment-result__home-btn" id="paidHomeBtn">Halaman Utama</button>';
+      '<div class="payment-success">' +
+        '<div class="payment-success__icon">' +
+          '<span class="payment-success__icon-pulse"></span>' +
+          '<svg class="payment-success__check" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">' +
+            '<circle class="payment-success__check-circle" cx="40" cy="40" r="36"/>' +
+            '<path class="payment-success__check-mark" d="M23 41l11 11 24-26"/>' +
+          '</svg>' +
+        '</div>' +
+        '<h2 class="payment-success__title">Pembayaran Berhasil!</h2>' +
+        '<p class="payment-success__subtitle">Pesanan kamu sudah kami terima dan sedang diproses tim kami.</p>' +
+        '<div class="payment-success__card">' +
+          '<div class="payment-success__row">' +
+            '<span class="payment-success__row-label">Order ID</span>' +
+            '<span class="payment-success__row-value">' + orderId + '</span>' +
+          '</div>' +
+          '<div class="payment-success__row">' +
+            '<span class="payment-success__row-label">Status</span>' +
+            '<span class="payment-success__badge">Lunas</span>' +
+          '</div>' +
+        '</div>' +
+        '<p class="payment-success__note">Nomor resi (produk fisik) atau file/dokumen (produk digital) akan diinfokan admin lewat WhatsApp maksimal 1x24 jam.</p>' +
+        '<div class="payment-success__actions">' +
+          '<a class="payment-success__btn payment-success__btn--primary" href="' + waHref + '" target="_blank" rel="noopener">Hubungi Admin (WhatsApp)</a>' +
+          '<button type="button" class="payment-success__btn payment-success__btn--ghost" id="paidHomeBtn">Halaman Utama</button>' +
+        '</div>' +
+      '</div>';
 
     var homeBtn = document.getElementById("paidHomeBtn");
     if (homeBtn) {
@@ -1394,6 +1420,8 @@
   }
 
   function renderPendingCard() {
+    if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view");
+    setVisible(cartSummaryEl, true);
     var method = checkoutState.method;
     var data = checkoutState.resultData || {};
     var html = '<div class="payment-countdown" id="checkoutCountdownWrap">' +

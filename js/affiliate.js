@@ -189,6 +189,7 @@
 
   var DAY_LABELS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
   var WEEK_WEIGHTS = [0.1, 0.12, 0.11, 0.15, 0.16, 0.2, 0.16];
+  var lastChartAffiliate = null;
 
   function seededWeights(seed) {
     var out = WEEK_WEIGHTS.slice();
@@ -202,6 +203,8 @@
     var container = $("#affChart");
     var totalEl = $("#affChartTotal");
     if (!container) return;
+
+    lastChartAffiliate = affiliate;
 
     var total = Number(affiliate.total_clicks || 0);
     if (totalEl) totalEl.textContent = total.toLocaleString("id-ID") + " klik";
@@ -218,10 +221,10 @@
     }
 
     var max = Math.max.apply(null, values.map(function (v) { return v.value; })) || 1;
-    var width = 300;
-    var height = 120;
-    var padX = 10;
-    var padY = 14;
+    var width = container.clientWidth || 300;
+    var height = 130;
+    var padX = 12;
+    var padY = 16;
     var stepX = (width - padX * 2) / (values.length - 1);
 
     var points = values.map(function (v, i) {
@@ -249,16 +252,17 @@
     var dots = points
       .map(function (p) {
         return (
-          '<circle class="aff-chart-dot" vector-effect="non-scaling-stroke" cx="' + p.x.toFixed(1) +
-          '" cy="' + p.y.toFixed(1) + '" r="3"><title>' + p.day + ": " + p.value + " klik</title></circle>"
+          '<circle class="aff-chart-dot" cx="' + p.x.toFixed(1) +
+          '" cy="' + p.y.toFixed(1) + '" r="1.8"><title>' + p.day + ": " + p.value + " klik</title></circle>"
         );
       })
       .join("");
 
     var svg =
-      '<svg class="aff-chart-svg" viewBox="0 0 ' + width + " " + height + '" preserveAspectRatio="none">' +
+      '<svg class="aff-chart-svg" width="' + width + '" height="' + height +
+      '" viewBox="0 0 ' + width + " " + height + '">' +
       '<path class="aff-chart-area" d="' + areaPath + '"></path>' +
-      '<path class="aff-chart-line" vector-effect="non-scaling-stroke" d="' + linePath + '"></path>' +
+      '<path class="aff-chart-line" d="' + linePath + '"></path>' +
       dots +
       "</svg>";
 
@@ -641,6 +645,15 @@
   } else {
     init();
   }
+
+  var chartResizeTimer;
+  window.addEventListener("resize", function () {
+    if (!lastChartAffiliate) return;
+    clearTimeout(chartResizeTimer);
+    chartResizeTimer = setTimeout(function () {
+      renderClicksChart(lastChartAffiliate);
+    }, 150);
+  });
 
   window.MdgptAffiliate = {
     COOKIE_NAME: COOKIE_NAME,

@@ -136,12 +136,14 @@
   var db = {
 
     async listProducts() {
-      var res = await fetch(SUPABASE_URL + "/rest/v1/products?select=*&order=id.desc", { headers: SUPABASE_HEADERS });
+      var headers = await writeHeaders();
+      var res = await fetch(SUPABASE_URL + "/rest/v1/products?select=*&order=id.desc", { headers: headers });
       if (!res.ok) throw new Error("Gagal memuat produk (" + res.status + ")");
       return res.json();
     },
     async getProduct(id) {
-      var res = await fetch(SUPABASE_URL + "/rest/v1/products?id=eq." + encodeURIComponent(id) + "&select=*", { headers: SUPABASE_HEADERS });
+      var headers = await writeHeaders();
+      var res = await fetch(SUPABASE_URL + "/rest/v1/products?id=eq." + encodeURIComponent(id) + "&select=*", { headers: headers });
       if (!res.ok) throw new Error("Gagal memuat produk (" + res.status + ")");
       var rows = await res.json();
       return rows[0] || null;

@@ -1430,7 +1430,7 @@
     if (homeBtn) {
       homeBtn.addEventListener("click", function () {
         writeCheckoutState(null);
-        window.location.href = "../lingua.html";
+        window.location.href = "../lingua";
       });
     }
   }
@@ -1483,7 +1483,7 @@
     if (homeBtn) {
       homeBtn.addEventListener("click", function () {
         writeCheckoutState(null);
-        window.location.href = "../lingua.html";
+        window.location.href = "../lingua";
       });
     }
   }

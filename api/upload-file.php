@@ -94,6 +94,15 @@ try {
     throw new Exception("Failed to save file");
   }
 
+  // Downscale + recompress oversized images so the storefront doesn't ship
+  // full camera-resolution photos to every visitor. Videos are left as-is.
+  $isImage = in_array($ext, ["jpg", "png", "webp", "avif"], true);
+  if ($isImage && function_exists("getimagesize")) {
+    optimizeImage($filepath, $ext);
+  }
+
+  $fsize = filesize($filepath) ?: $fsize;
+
   $stmt = $conn->prepare("
     INSERT INTO file_uploads (filename, original_name, file_type, file_size, uploaded_by)
     VALUES (?, ?, ?, ?, ?)
@@ -112,5 +121,71 @@ try {
 } catch (Exception $e) {
   http_response_code(400);
   echo json_encode(["error" => $e->getMessage()]);
+}
+
+/**
+ * Resizes an image in place if it's wider/taller than MAX_DIMENSION, and
+ * re-encodes it at a sane quality. No-ops quietly (keeps the original file)
+ * if the GD extension or the specific format isn't available on this host.
+ */
+function optimizeImage($filepath, $ext) {
+  $MAX_DIMENSION = 1600; // px, longest side — plenty for a product photo
+  $JPEG_QUALITY = 82;
+  $WEBP_QUALITY = 82;
+  $PNG_COMPRESSION = 6; // 0 (none) - 9 (max), PNG is lossless either way
+
+  $info = @getimagesize($filepath);
+  if (!$info) return;
+  list($width, $height) = $info;
+  if ($width <= 0 || $height <= 0) return;
+
+  $needsResize = $width > $MAX_DIMENSION || $height > $MAX_DIMENSION;
+
+  switch ($ext) {
+    case "jpg":
+      if (!function_exists("imagecreatefromjpeg")) return;
+      $src = @imagecreatefromjpeg($filepath);
+      break;
+    case "png":
+      if (!function_exists("imagecreatefrompng")) return;
+      $src = @imagecreatefrompng($filepath);
+      break;
+    case "webp":
+      if (!function_exists("imagecreatefromwebp")) return;
+      $src = @imagecreatefromwebp($filepath);
+      break;
+    default:
+      // avif and anything else: skip, GD's AVIF support is inconsistent
+      // across hosts and re-encoding could make quality worse.
+      return;
+  }
+  if (!$src) return;
+
+  if ($needsResize) {
+    $ratio = min($MAX_DIMENSION / $width, $MAX_DIMENSION / $height);
+    $newWidth = max(1, (int) round($width * $ratio));
+    $newHeight = max(1, (int) round($height * $ratio));
+    $resized = imagecreatetruecolor($newWidth, $newHeight);
+    if ($ext === "png" || $ext === "webp") {
+      imagealphablending($resized, false);
+      imagesavealpha($resized, true);
+    }
+    imagecopyresampled($resized, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+    imagedestroy($src);
+    $src = $resized;
+  }
+
+  switch ($ext) {
+    case "jpg":
+      @imagejpeg($src, $filepath, $JPEG_QUALITY);
+      break;
+    case "png":
+      @imagepng($src, $filepath, $PNG_COMPRESSION);
+      break;
+    case "webp":
+      @imagewebp($src, $filepath, $WEBP_QUALITY);
+      break;
+  }
+  imagedestroy($src);
 }
 ?>

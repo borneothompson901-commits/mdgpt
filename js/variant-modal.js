@@ -147,7 +147,7 @@
 
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
-    document.body.style.overflow = "hidden";
+    lockBodyScroll();
 
     var imgEl = modal.querySelector(".variant-modal__img");
     var groupsWrap = modal.querySelector('[data-role="groups"]');
@@ -389,7 +389,7 @@
     var opts = variantModalState.opts;
     document.removeEventListener("keydown", handleVariantModalKeydown);
     overlay.classList.remove("is-open");
-    document.body.style.overflow = "";
+    unlockBodyScroll();
     setTimeout(function () {
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }, 200);
@@ -397,14 +397,39 @@
     if (opts && typeof opts.onClose === "function") opts.onClose();
   }
 
+  // overflow:hidden alone doesn't reliably stop touch-scroll on mobile
+  // (Safari/Chrome can still rubber-band/scroll the body behind a fixed
+  // overlay), which was letting the page shift under the user's finger
+  // mid-tap and cause mis-taps on the variant chips. Pinning body to a
+  // fixed position at the current scroll offset stops that completely.
+  var lockedScrollY = 0;
+  function lockBodyScroll() {
+    lockedScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = "fixed";
+    document.body.style.top = "-" + lockedScrollY + "px";
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
+  }
+  function unlockBodyScroll() {
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    document.body.style.overflow = "";
+    window.scrollTo(0, lockedScrollY);
+  }
+
   function injectVariantModalStyles() {
     if (document.getElementById("variantModalStyles")) return;
     var style = document.createElement("style");
     style.id = "variantModalStyles";
     style.textContent =
-      ".variant-modal-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s ease,background .2s ease;}" +
+      ".variant-modal-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s ease,background .2s ease;overscroll-behavior:contain;}" +
       ".variant-modal-overlay.is-open{opacity:1;pointer-events:auto;background:rgba(0,0,0,.45);}" +
-      ".variant-modal{position:relative;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:20px;transform:translateY(16px) scale(.98);opacity:0;transition:transform .22s ease,opacity .22s ease;}" +
+      ".variant-modal{position:relative;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:20px;transform:translateY(16px) scale(.98);opacity:0;transition:transform .22s ease,opacity .22s ease;}" +
       ".variant-modal-overlay.is-open .variant-modal{transform:translateY(0) scale(1);opacity:1;}" +
       ".variant-modal__close{position:absolute;top:12px;right:12px;width:30px;height:30px;border:none;border-radius:50%;background:#f2f2f2;color:#555;display:flex;align-items:center;justify-content:center;cursor:pointer;}" +
       ".variant-modal__close:hover{background:#e6e6e6;color:#1a1a1a;}" +

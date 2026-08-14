@@ -16,6 +16,10 @@
       { id: "card3", name: "Kartu 3", headline: "Update Berkala", subheadline: "Selalu ikut tren terbaru" },
       { id: "card4", name: "Kartu 4", headline: "Support Cepat", subheadline: "Respon dalam hitungan jam" }
     ],
+    campaignCards: [
+      { id: "camp1", name: "Campaign Card 1", headline: "Promo Spesial Bulan Ini", subheadline: "Diskon menarik untuk produk digital pilihan, terbatas!", ctaText: "Lihat Promo", ctaUrl: "/lingua/index.html", image: "" },
+      { id: "camp2", name: "Campaign Card 2", headline: "Gabung Jadi Affiliate", subheadline: "Dapatkan komisi di setiap transaksi yang kamu bawa.", ctaText: "Daftar Sekarang", ctaUrl: "/lingua/affiliate.html", image: "" }
+    ],
     bannerAffiliate: {
       headline: "Program Affiliate",
       subheadline: "Bagikan link kamu, dapat komisi tiap ada yang checkout."
@@ -49,6 +53,7 @@
   var SECTION_KEYS = {
     bannerUtama: "banner_utama",
     bannerCards: "banner_cards",
+    campaignCards: "campaign_card",
     bannerAffiliate: "banner_affiliate",
     cardAffiliate: "card_affiliate",
     faqAffiliate: "faq_affiliate",
@@ -82,6 +87,7 @@
 
   var bannerUtamaTbody = document.getElementById("bannerUtamaTbody");
   var bannerCardTbody = document.getElementById("bannerCardTbody");
+  var campaignCardTbody = document.getElementById("campaignCardTbody");
   var bannerAffiliateTbody = document.getElementById("bannerAffiliateTbody");
   var cardAffiliateTbody = document.getElementById("cardAffiliateTbody");
   var faqAffiliateTbody = document.getElementById("faqAffiliateTbody");
@@ -97,6 +103,9 @@
   var headline2Field = document.getElementById("websiteEditHeadline2Field");
   var headlineField = document.getElementById("websiteEditHeadlineField");
   var subheadlineField = document.getElementById("websiteEditSubheadlineField");
+  var ctaTextField = document.getElementById("websiteEditCtaTextField");
+  var ctaUrlField = document.getElementById("websiteEditCtaUrlField");
+  var imageField = document.getElementById("websiteEditImageField");
   var subheadlineLargeField = document.getElementById("websiteEditSubheadlineLargeField");
   var isiField = document.getElementById("websiteEditIsiField");
 
@@ -107,6 +116,11 @@
   var headline2Input = document.getElementById("websiteEditHeadline2");
   var headlineInput = document.getElementById("websiteEditHeadline");
   var subheadlineInput = document.getElementById("websiteEditSubheadline");
+  var ctaTextInput = document.getElementById("websiteEditCtaText");
+  var ctaUrlInput = document.getElementById("websiteEditCtaUrl");
+  var imageInput = document.getElementById("websiteEditImage");
+  var imageFileInput = document.getElementById("websiteEditImageFile");
+  var imagePreview = document.getElementById("websiteEditImagePreview");
   var subheadlineLargeInput = document.getElementById("websiteEditSubheadlineLarge");
   var isiInput = document.getElementById("websiteEditIsi");
   var editSaveBtn = document.getElementById("websiteEditSaveBtn");
@@ -117,6 +131,7 @@
   var typeConfig = {
     bannerUtama: { title: "Edit Banner Utama", fields: ["pill", "headline1", "headline2", "subheadline"] },
     bannerCard: { title: "Edit Banner Card", fields: ["headline", "subheadline"] },
+    campaignCard: { title: "Edit Campaign Card", fields: ["headline", "subheadline", "ctaText", "ctaUrl", "image"] },
     bannerAffiliate: { title: "Edit Banner Affiliate", fields: ["headline", "subheadline"] },
     cardAffiliate: { title: "Edit Card Affiliate", fields: ["bold", "headline", "subheadline"] },
     faq: { title: "Edit FAQ Affiliate", fields: ["judul", "isi"] },
@@ -162,6 +177,20 @@
           '<button type="button" class="btn-icon edit" data-open="bannerCard" data-id="' + c.id + '" title="Edit">' + iconEdit() + '</button>' +
         '</div></td>';
       bannerCardTbody.appendChild(tr);
+    });
+  }
+
+  function renderCampaignCards() {
+    campaignCardTbody.innerHTML = "";
+    state.campaignCards.forEach(function (c) {
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td>' + escapeHtml(c.name) + '</td>' +
+        '<td class="cell-headline">' + escapeHtml(c.headline) + '</td>' +
+        '<td class="row-actions"><div class="actions">' +
+          '<button type="button" class="btn-icon edit" data-open="campaignCard" data-id="' + c.id + '" title="Edit">' + iconEdit() + '</button>' +
+        '</div></td>';
+      campaignCardTbody.appendChild(tr);
     });
   }
 
@@ -221,6 +250,7 @@
   function renderAll() {
     renderBannerUtama();
     renderBannerCards();
+    renderCampaignCards();
     renderBannerAffiliate();
     renderCardAffiliate();
     renderFaqAffiliate();
@@ -245,6 +275,9 @@
     setFieldVisible(headline2Field, config.fields.indexOf("headline2") !== -1);
     setFieldVisible(headlineField, config.fields.indexOf("headline") !== -1);
     setFieldVisible(subheadlineField, config.fields.indexOf("subheadline") !== -1);
+    setFieldVisible(ctaTextField, config.fields.indexOf("ctaText") !== -1);
+    setFieldVisible(ctaUrlField, config.fields.indexOf("ctaUrl") !== -1);
+    setFieldVisible(imageField, config.fields.indexOf("image") !== -1);
     setFieldVisible(subheadlineLargeField, config.fields.indexOf("subheadlineLarge") !== -1);
     setFieldVisible(isiField, config.fields.indexOf("isi") !== -1);
 
@@ -255,6 +288,12 @@
     headline2Input.value = "";
     headlineInput.value = "";
     subheadlineInput.value = "";
+    ctaTextInput.value = "";
+    ctaUrlInput.value = "";
+    imageInput.value = "";
+    imageFileInput.value = "";
+    imagePreview.src = "";
+    imagePreview.hidden = true;
     subheadlineLargeInput.value = "";
     isiInput.value = "";
 
@@ -268,6 +307,18 @@
       if (!card) return;
       headlineInput.value = card.headline || "";
       subheadlineInput.value = card.subheadline || "";
+    } else if (type === "campaignCard") {
+      var campaignCard = findCard(state.campaignCards, editingId);
+      if (!campaignCard) return;
+      headlineInput.value = campaignCard.headline || "";
+      subheadlineInput.value = campaignCard.subheadline || "";
+      ctaTextInput.value = campaignCard.ctaText || "";
+      ctaUrlInput.value = campaignCard.ctaUrl || "";
+      imageInput.value = campaignCard.image || "";
+      if (campaignCard.image) {
+        imagePreview.src = campaignCard.image;
+        imagePreview.hidden = false;
+      }
     } else if (type === "bannerAffiliate") {
       headlineInput.value = state.bannerAffiliate.headline || "";
       subheadlineInput.value = state.bannerAffiliate.subheadline || "";
@@ -313,6 +364,16 @@
       card.subheadline = subheadlineInput.value.trim();
       renderBannerCards();
       persist("bannerCards");
+    } else if (editingType === "campaignCard") {
+      var campaignCard = findCard(state.campaignCards, editingId);
+      if (!campaignCard) return;
+      campaignCard.headline = headlineInput.value.trim();
+      campaignCard.subheadline = subheadlineInput.value.trim();
+      campaignCard.ctaText = ctaTextInput.value.trim();
+      campaignCard.ctaUrl = ctaUrlInput.value.trim();
+      campaignCard.image = imageInput.value.trim();
+      renderCampaignCards();
+      persist("campaignCards");
     } else if (editingType === "bannerAffiliate") {
       state.bannerAffiliate.headline = headlineInput.value.trim();
       state.bannerAffiliate.subheadline = subheadlineInput.value.trim();
@@ -378,6 +439,30 @@
     closeDeleteModal();
   }
 
+  function handleImageFileChange() {
+    var file = imageFileInput.files && imageFileInput.files[0];
+    if (!file) return;
+
+    var localPreviewUrl = URL.createObjectURL(file);
+    imagePreview.src = localPreviewUrl;
+    imagePreview.hidden = false;
+
+    editSaveBtn.disabled = true;
+    var originalLabel = editSaveBtn.textContent;
+    editSaveBtn.textContent = "Mengupload...";
+
+    AdminShared.uploadImage(file).then(function (path) {
+      imageInput.value = path;
+      AdminShared.toast("Gambar berhasil diupload");
+    }).catch(function (e) {
+      AdminShared.toast(e.message || "Gagal upload gambar", "error");
+    }).finally(function () {
+      editSaveBtn.disabled = false;
+      editSaveBtn.textContent = originalLabel;
+      URL.revokeObjectURL(localPreviewUrl);
+    });
+  }
+
   document.addEventListener("click", function (e) {
     var openBtn = e.target.closest("[data-open]");
     if (openBtn) {
@@ -391,6 +476,7 @@
   });
 
   document.getElementById("btnTambahSyarat").addEventListener("click", addSyarat);
+  imageFileInput.addEventListener("change", handleImageFileChange);
 
   document.getElementById("websiteEditCloseBtn").addEventListener("click", closeEditModal);
   document.getElementById("websiteEditCancelBtn").addEventListener("click", closeEditModal);

@@ -11,35 +11,42 @@
 
   var TRUST_ICON_RULES = [
     { match: ["original", "asli", "resmi", "official", "keaslian"], icon: "shield" },
-    { match: ["download", "unduh", "instant", "langsung kirim", "otomatis"], icon: "download" },
-    { match: ["update", "pembaruan", "berkala", "terbaru", "tren"], icon: "refresh" },
+    { match: ["download", "unduh", "instant", "langsung kirim"], icon: "download" },
+    { match: ["otomatis", "auto", "otomasi"], icon: "settings" },
+    { match: ["update", "pembaruan", "berkala", "terbaru"], icon: "refresh_cw" },
+    { match: ["tren", "trending", "viral", "populer"], icon: "flame" },
     { match: ["support", "bantuan", "cs", "respon", "layanan", "chat"], icon: "clock" },
-    { match: ["garansi", "refund", "uang kembali", "aman", "secure", "terpercaya", "privasi"], icon: "check" },
-    { match: ["gratis", "bonus", "hadiah", "free"], icon: "gift" },
+    { match: ["telepon", "hubungi", "call center"], icon: "phone" },
+    { match: ["email", "surel"], icon: "mail" },
+    { match: ["garansi", "refund", "uang kembali"], icon: "shield_check" },
+    { match: ["aman", "secure", "terpercaya", "trusted"], icon: "lock" },
+    { match: ["privasi", "privacy", "kerahasiaan"], icon: "key" },
+    { match: ["gratis", "free", "cuma-cuma"], icon: "gift" },
+    { match: ["bonus", "hadiah", "reward"], icon: "award" },
     { match: ["rating", "review", "testimoni", "bintang"], icon: "star" },
-    { match: ["pembayaran", "payment", "transfer", "qris", "kartu"], icon: "card" }
+    { match: ["pembayaran", "payment", "transfer", "qris"], icon: "credit_card" },
+    { match: ["kartu", "cicilan", "kredit"], icon: "wallet" },
+    { match: ["member", "komunitas", "eksklusif untuk member"], icon: "users" },
+    { match: ["premium", "eksklusif", "elite"], icon: "gem" },
+    { match: ["vip", "prioritas"], icon: "crown" },
+    { match: ["cepat", "instan", "kilat"], icon: "rocket" },
+    { match: ["lisensi", "berlisensi", "hak cipta"], icon: "briefcase" },
+    { match: ["sertifikat", "certified", "terverifikasi"], icon: "award" },
+    { match: ["kualitas", "quality", "premium grade"], icon: "trophy" },
+    { match: ["panduan", "tutorial", "cara pakai"], icon: "compass" },
+    { match: ["cloud", "penyimpanan", "backup"], icon: "cloud" },
+    { match: ["global", "internasional", "worldwide"], icon: "globe" }
   ];
-
-  var TRUST_ICON_PATHS = {
-    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>',
-    download: '<path d="M12 3v14M5 12l7 7 7-7"/><path d="M5 21h14"/>',
-    refresh: '<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>',
-    clock: '<path d="M21 11.5a8.4 8.4 0 0 1-9.5 8.3A8.5 8.5 0 1 1 21 11.5Z"/><path d="M12 7v5l3 2"/>',
-    check: '<path d="M20 6 9 17l-5-5"/>',
-    gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v9H5v-9"/><path d="M12 8c-1.5-3-5-4-6-2s1 3 6 2ZM12 8c1.5-3 5-4 6-2s-1 3-6 2Z"/>',
-    star: '<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.9L12 17.8l-6.2 3.3 1.2-6.9-5-4.9 6.9-1Z"/>',
-    card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>'
-  };
 
   function pickTrustIcon(title, desc) {
     var haystack = (String(title || "") + " " + String(desc || "")).toLowerCase();
     for (var i = 0; i < TRUST_ICON_RULES.length; i++) {
       var rule = TRUST_ICON_RULES[i];
       for (var j = 0; j < rule.match.length; j++) {
-        if (haystack.indexOf(rule.match[j]) !== -1) return TRUST_ICON_PATHS[rule.icon];
+        if (haystack.indexOf(rule.match[j]) !== -1) return ICON_LIBRARY[rule.icon];
       }
     }
-    return null;
+    return null; // tidak ada match -> biarkan icon default (hasil hardcode di HTML) tetap dipakai
   }
 
   function setTrustIcon(id, title, desc) {

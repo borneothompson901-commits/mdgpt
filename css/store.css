@@ -309,6 +309,105 @@
    }
 }
 
+/* ===== Campaign Card ===== */
+.campaign-section {
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 44px var(--page-pad) 0;
+}
+
+.campaign-grid {
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   gap: 20px;
+}
+
+.campaign-card {
+   position: relative;
+   display: block;
+   border-radius: var(--radius-md);
+   overflow: hidden;
+   aspect-ratio: 1600 / 500;
+   background: var(--gray-100, #f0f0f0);
+   text-decoration: none;
+   box-shadow: var(--shadow-nav);
+   transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.campaign-card:hover {
+   box-shadow: var(--shadow-nav-scrolled);
+   transform: translateY(-2px);
+}
+
+.campaign-card__img {
+   position: absolute;
+   inset: 0;
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+}
+
+.campaign-card__overlay {
+   position: absolute;
+   inset: 0;
+   background: linear-gradient(90deg, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.28) 55%, rgba(0, 0, 0, 0.05) 100%);
+}
+
+.campaign-card__content {
+   position: relative;
+   z-index: 1;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   gap: 6px;
+   padding: 22px 26px;
+   max-width: 72%;
+}
+
+.campaign-card__headline {
+   font-family: var(--font-display);
+   font-weight: 800;
+   font-size: clamp(16px, 2vw, 22px);
+   line-height: 1.25;
+   color: #fff;
+}
+
+.campaign-card__sub {
+   font-size: 12.5px;
+   line-height: 1.5;
+   color: rgba(255, 255, 255, 0.86);
+   margin-bottom: 6px;
+}
+
+.campaign-card__cta {
+   display: inline-flex;
+   align-items: center;
+   gap: 6px;
+   width: fit-content;
+   font-size: 12.5px;
+   font-weight: 700;
+   color: var(--gray-900);
+   background: #fff;
+   padding: 9px 16px;
+   border-radius: var(--radius-md);
+   transition: transform var(--transition);
+}
+
+.campaign-card:hover .campaign-card__cta {
+   transform: translateX(2px);
+}
+
+@media (max-width: 720px) {
+   .campaign-grid {
+      grid-template-columns: 1fr;
+   }
+   .campaign-card__content {
+      max-width: 84%;
+      padding: 18px 20px;
+   }
+}
+
 .nav-search {
    flex-shrink: 0;
 }

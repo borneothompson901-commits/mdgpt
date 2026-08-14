@@ -466,6 +466,29 @@
         <div class="website-section">
           <div class="website-section__head">
             <div class="website-section__head-left">
+              <div class="website-section__title">Campaign Card</div>
+              <div class="website-section__desc">2 banner promosi di bawah Banner Card, ukuran gambar 1600 &times; 500 px.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="table-wrap">
+              <table class="data-table data-table--website">
+                <thead>
+                  <tr>
+                    <th>Nama</th>
+                    <th>Headline</th>
+                    <th class="col-aksi">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="campaignCardTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="website-section">
+          <div class="website-section__head">
+            <div class="website-section__head-left">
               <div class="website-section__title">Banner Affiliate</div>
               <div class="website-section__desc">Headline sampul halaman program affiliate.</div>
             </div>
@@ -815,6 +838,22 @@
       <div class="field" id="websiteEditSubheadlineField">
         <label>Sub Headline</label>
         <input type="text" id="websiteEditSubheadline" placeholder="Kalimat pendukung headline" autocomplete="off" />
+      </div>
+      <div class="field" id="websiteEditCtaTextField">
+        <label>Teks CTA</label>
+        <input type="text" id="websiteEditCtaText" placeholder="Contoh: Lihat Promo" autocomplete="off" />
+      </div>
+      <div class="field" id="websiteEditCtaUrlField">
+        <label>URL CTA</label>
+        <input type="text" id="websiteEditCtaUrl" placeholder="Contoh: /lingua/index.html" autocomplete="off" />
+      </div>
+      <div class="field" id="websiteEditImageField">
+        <label>Gambar (disarankan 1600 &times; 500 px)</label>
+        <div class="image-upload-preview">
+          <img id="websiteEditImagePreview" alt="" hidden />
+        </div>
+        <input type="file" id="websiteEditImageFile" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" />
+        <input type="hidden" id="websiteEditImage" />
       </div>
       <div class="field" id="websiteEditSubheadlineLargeField">
         <label>Sub Headline</label>

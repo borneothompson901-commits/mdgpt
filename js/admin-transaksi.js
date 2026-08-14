@@ -222,13 +222,28 @@
     return '<div style="margin-top:14px;font-weight:600;font-size:0.85rem;">Detail Pesanan</div>' + rows;
   }
 
+  function variantSummary(it) {
+    if (!it.variant || typeof it.variant !== "object") return "";
+    var parts = [];
+    for (var key in it.variant) {
+      if (!Object.prototype.hasOwnProperty.call(it.variant, key)) continue;
+      var value = it.variant[key];
+      if (value) parts.push(value);
+    }
+    return parts.join(", ");
+  }
+
   function itemsHtml(t) {
     var items = itemsList(t);
     if (!items.length) return "";
     return (
       '<div style="margin-top:14px;font-weight:600;font-size:0.85rem;">Item</div>' +
       items.map(function (it) {
-        return '<div class="review-row"><span class="review-row__label">' + escapeHtml(it.title || it.id || "-") + " × " + escapeHtml(it.qty != null ? it.qty : 1) +
+        var variantTxt = variantSummary(it);
+        var label = escapeHtml(it.title || it.id || "-") +
+          (variantTxt ? ' <span style="color:#888;font-weight:400;">(' + escapeHtml(variantTxt) + ")</span>" : "") +
+          " × " + escapeHtml(it.qty != null ? it.qty : 1);
+        return '<div class="review-row"><span class="review-row__label">' + label +
           '</span><span class="review-row__value">' + rupiah((it.price || 0) * (it.qty || 1)) + "</span></div>";
       }).join("")
     );

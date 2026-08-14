@@ -14,11 +14,6 @@
   var PIVOT_ENDPOINT = SUPABASE_URL + "/functions/v1/pivot-create-payment";
   var ORDER_STATUS_ENDPOINT = SUPABASE_URL + "/functions/v1/order-status";
 
-  // Channel list must match Pivot's officially supported list exactly —
-  // see https://pivot-payment.gitbook.io/pivot-docs/payments/payment-channels/virtual-account/available-virtual-account
-  // and .../e-wallet/available-e-wallet. Sending an unsupported channel code
-  // gets rejected by Pivot with an "oneof" validation error / "payment
-  // method is not found" before any order is created.
   var VA_CHANNELS = [
     { code: "BCA", label: "BCA", disabled: true },
     { code: "PERMATA", label: "Permata" },
@@ -28,7 +23,8 @@
     { code: "CIMB", label: "CIMB Niaga" },
     { code: "DANAMON", label: "Danamon" },
     { code: "BSI", label: "BSI" },
-    { code: "BNC", label: "Bank Neo Commerce" }
+    { code: "BNC", label: "Bank Neo Commerce" },
+    { code: "SMBC", label: "SMBC Indonesia" }
   ];
   var EWALLET_CHANNELS = [
     { code: "SHOPEEPAY", label: "ShopeePay" },
@@ -44,6 +40,7 @@
     DANAMON: { file: "danamon", initials: "DM", bg: "#e2231a" },
     BSI: { initials: "BSI", bg: "#00786b" },
     BNC: { initials: "BNC", bg: "#0f9d58" },
+    SMBC: { initials: "SMBC", bg: "#00a0e9" },
     QRIS: { file: "qris", initials: "QR", bg: "#4b2d83" },
     SHOPEEPAY: { file: "shopeepay", initials: "SP", bg: "#ee4d2d" },
     DANA: { file: "dana", initials: "DN", bg: "#118eea" }
@@ -1818,12 +1815,6 @@
     checkoutDoneBtn.addEventListener("click", cancelCheckoutAndReturnToCart);
   }
 
-  // True if the live cart contains any id+variantKey combo that wasn't part
-  // of the order snapshot captured when this checkout session started. Used
-  // to detect "user forgot to tap Selesai/Order Ulang and just kept shopping"
-  // so we don't leave them stuck looking at a stale paid/expired screen (or,
-  // worse for PAID, wipe the new item the next time that screen re-renders
-  // and re-clears the cart).
   function cartHasItemsOutsideSnapshot(cart, snapshotItems) {
     var snapKeys = {};
     (snapshotItems || []).forEach(function (it) {
@@ -1846,8 +1837,7 @@
         var liveCart = window.CartStore.getCart();
         var snapshotItems = (checkoutState.orderSnapshot && checkoutState.orderSnapshot.items) || [];
         if (cartHasItemsOutsideSnapshot(liveCart, snapshotItems)) {
-          // A new item was added after this order finished — start a fresh
-          // cart session instead of re-showing the old result screen.
+
           writeCheckoutState(null);
           checkoutState = null;
           showCartView();
@@ -1918,10 +1908,6 @@
   });
 
   document.addEventListener("cart:updated", function () {
-    // Same safety net as applyPersistedCheckoutState(), for the case where an
-    // item lands in the cart while this tab is still showing a stale
-    // paid/expired screen (e.g. restored from bfcache without a fresh
-    // "pageshow"-triggered reapply, or another script on this same page).
     if (checkoutModeActive && checkoutState && isTerminalOrderStatus(checkoutState.orderStatus)) {
       var liveCart = window.CartStore.getCart();
       var snapshotItems = (checkoutState.orderSnapshot && checkoutState.orderSnapshot.items) || [];

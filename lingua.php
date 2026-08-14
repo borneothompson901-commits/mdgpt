@@ -42,7 +42,7 @@ $campaignDefaults = [
         'headline' => 'Gabung Jadi Affiliate',
         'subheadline' => 'Dapatkan komisi di setiap transaksi yang kamu bawa.',
         'ctaText' => 'Daftar Sekarang',
-        'ctaUrl' => '/lingua/affiliate.html',
+        'ctaUrl' => '/lingua/affiliate',
         'image' => 'assets/img/cta.png',
     ],
 ];

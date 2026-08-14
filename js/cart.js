@@ -14,6 +14,11 @@
   var PIVOT_ENDPOINT = SUPABASE_URL + "/functions/v1/pivot-create-payment";
   var ORDER_STATUS_ENDPOINT = SUPABASE_URL + "/functions/v1/order-status";
 
+  // Channel list must match Pivot's officially supported list exactly —
+  // see https://pivot-payment.gitbook.io/pivot-docs/payments/payment-channels/virtual-account/available-virtual-account
+  // and .../e-wallet/available-e-wallet. Sending an unsupported channel code
+  // gets rejected by Pivot with an "oneof" validation error / "payment
+  // method is not found" before any order is created.
   var VA_CHANNELS = [
     { code: "BCA", label: "BCA", disabled: true },
     { code: "PERMATA", label: "Permata" },
@@ -22,15 +27,12 @@
     { code: "MANDIRI", label: "Mandiri" },
     { code: "CIMB", label: "CIMB Niaga" },
     { code: "DANAMON", label: "Danamon" },
-    { code: "MAYBANK", label: "Maybank" },
-    { code: "SAHABAT_SAMPOERNA", label: "Bank Sahabat Sampoerna" }
+    { code: "BSI", label: "BSI" },
+    { code: "BNC", label: "Bank Neo Commerce" }
   ];
   var EWALLET_CHANNELS = [
     { code: "SHOPEEPAY", label: "ShopeePay" },
-    { code: "DANA", label: "DANA" },
-    { code: "OVO", label: "OVO" },
-    { code: "LINKAJA", label: "LinkAja" },
-    { code: "ASTRAPAY", label: "AstraPay" }
+    { code: "DANA", label: "DANA" }
   ];
   var CHANNEL_ICON = {
     BCA: { file: "bca", initials: "BCA", bg: "#003876" },
@@ -40,14 +42,11 @@
     MANDIRI: { file: "mandiri", initials: "MD", bg: "#003a70" },
     CIMB: { file: "cimb", initials: "CB", bg: "#7a1f2b" },
     DANAMON: { file: "danamon", initials: "DM", bg: "#e2231a" },
-    MAYBANK: { file: "maybank", initials: "MB", bg: "#ffc72c" },
-    SAHABAT_SAMPOERNA: { file: "sahabat_sampoerna", initials: "BSS", bg: "#0f9d58" },
+    BSI: { initials: "BSI", bg: "#00786b" },
+    BNC: { initials: "BNC", bg: "#0f9d58" },
     QRIS: { file: "qris", initials: "QR", bg: "#4b2d83" },
     SHOPEEPAY: { file: "shopeepay", initials: "SP", bg: "#ee4d2d" },
-    DANA: { file: "dana", initials: "DN", bg: "#118eea" },
-    OVO: { file: "ovo", initials: "OVO", bg: "#4c2a86" },
-    LINKAJA: { file: "linkaja", initials: "LA", bg: "#e6231e" },
-    ASTRAPAY: { file: "astrapay", initials: "AP", bg: "#005ca9" }
+    DANA: { file: "dana", initials: "DN", bg: "#118eea" }
   };
 
   var SERVICE_FEE = 0;

@@ -173,12 +173,10 @@ $campaignDefaults = [
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="assets/icons/logo.png" type="image/png">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
-    <link rel="preload" href="css/global.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/global.css"></noscript>
-    <link rel="preload" href="css/store.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/store.css"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/store.css" />
+    <link rel="preload" as="image" href="assets/img/hero.avif" fetchpriority="high">
     <link rel="preload" as="image" href="assets/icons/logo.png">
   </head>
   <body>
@@ -331,7 +329,7 @@ $campaignDefaults = [
              href="<?= lg_card_url($campaignCards, 0, 'ctaUrl', $campaignDefaults[0]['ctaUrl']) ?>">
             <img class="promo-banner__img" id="campaignCard1Img"
                  src="<?= lg_card_url($campaignCards, 0, 'image', $campaignDefaults[0]['image']) ?>"
-                 alt="" loading="lazy" />
+                 alt="" loading="lazy" width="1280" height="360" />
             <div class="promo-banner__overlay"></div>
             <div class="promo-banner__content">
               <h3 class="promo-banner__title" id="campaignCard1Headline"><?= lg_card_val($campaignCards, 0, 'headline', $campaignDefaults[0]['headline']) ?></h3>
@@ -346,7 +344,7 @@ $campaignDefaults = [
              href="<?= lg_card_url($campaignCards, 1, 'ctaUrl', $campaignDefaults[1]['ctaUrl']) ?>">
             <img class="promo-banner__img" id="campaignCard2Img"
                  src="<?= lg_card_url($campaignCards, 1, 'image', $campaignDefaults[1]['image']) ?>"
-                 alt="" loading="lazy" />
+                 alt="" loading="lazy" width="1280" height="360" />
             <div class="promo-banner__overlay"></div>
             <div class="promo-banner__content">
               <h3 class="promo-banner__title" id="campaignCard2Headline"><?= lg_card_val($campaignCards, 1, 'headline', $campaignDefaults[1]['headline']) ?></h3>

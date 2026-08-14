@@ -202,35 +202,6 @@ $campaignDefaults = [
         </div>
       </div>
 
-      <section class="campaign-section" id="campaign">
-        <div class="campaign-grid">
-          <a class="campaign-card" id="campaignCard1"
-             href="<?= lg_card_url($campaignCards, 0, 'ctaUrl', $campaignDefaults[0]['ctaUrl']) ?>">
-            <img class="campaign-card__img" id="campaignCard1Img"
-                 src="<?= lg_card_url($campaignCards, 0, 'image', $campaignDefaults[0]['image']) ?>"
-                 alt="" loading="lazy" width="1600" height="500" />
-            <span class="campaign-card__overlay"></span>
-            <span class="campaign-card__content">
-              <span class="campaign-card__headline" id="campaignCard1Headline"><?= lg_card_val($campaignCards, 0, 'headline', $campaignDefaults[0]['headline']) ?></span>
-              <span class="campaign-card__sub" id="campaignCard1Sub"><?= lg_card_val($campaignCards, 0, 'subheadline', $campaignDefaults[0]['subheadline']) ?></span>
-              <span class="campaign-card__cta" id="campaignCard1CtaText"><?= lg_card_val($campaignCards, 0, 'ctaText', $campaignDefaults[0]['ctaText']) ?></span>
-            </span>
-          </a>
-          <a class="campaign-card" id="campaignCard2"
-             href="<?= lg_card_url($campaignCards, 1, 'ctaUrl', $campaignDefaults[1]['ctaUrl']) ?>">
-            <img class="campaign-card__img" id="campaignCard2Img"
-                 src="<?= lg_card_url($campaignCards, 1, 'image', $campaignDefaults[1]['image']) ?>"
-                 alt="" loading="lazy" width="1600" height="500" />
-            <span class="campaign-card__overlay"></span>
-            <span class="campaign-card__content">
-              <span class="campaign-card__headline" id="campaignCard2Headline"><?= lg_card_val($campaignCards, 1, 'headline', $campaignDefaults[1]['headline']) ?></span>
-              <span class="campaign-card__sub" id="campaignCard2Sub"><?= lg_card_val($campaignCards, 1, 'subheadline', $campaignDefaults[1]['subheadline']) ?></span>
-              <span class="campaign-card__cta" id="campaignCard2CtaText"><?= lg_card_val($campaignCards, 1, 'ctaText', $campaignDefaults[1]['ctaText']) ?></span>
-            </span>
-          </a>
-        </div>
-      </section>
-
       <section class="category-section" id="kategori">
         <div class="category-section__inner">
           <h2 class="category-section__title">Kategori</h2>
@@ -251,30 +222,36 @@ $campaignDefaults = [
       </section>
       <section class="promo-banners">
         <div class="promo-banners__inner">
-          <a href="#" class="promo-banner">
-  <img src="https://picsum.photos/seed/mdgpt-promo-1/1600/500" alt="Promo Template Konten" class="promo-banner__img" loading="lazy" />
-  <div class="promo-banner__overlay"></div>
-  <div class="promo-banner__content">
-    <h3 class="promo-banner__title">Diskon 30% Semua Template Konten</h3>
-    <p class="promo-banner__subtitle">Berlaku untuk semua kategori, buruan sebelum kehabisan</p>
-    <span class="promo-banner__cta">
-      Belanja Sekarang
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </span>
-  </div>
-</a>
-<a href="#" class="promo-banner">
-  <img src="https://picsum.photos/seed/mdgpt-promo-2/1600/500" alt="Promo Bundle Ebook" class="promo-banner__img" loading="lazy" />
-  <div class="promo-banner__overlay"></div>
-  <div class="promo-banner__content">
-    <h3 class="promo-banner__title">Bundle Ebook Strategi Growth</h3>
-    <p class="promo-banner__subtitle">Paket lengkap 5 ebook dengan harga spesial bulan ini</p>
-    <span class="promo-banner__cta">
-      Lihat Bundle
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </span>
-  </div>
-</a>
+          <a class="promo-banner" id="campaignCard1"
+             href="<?= lg_card_url($campaignCards, 0, 'ctaUrl', $campaignDefaults[0]['ctaUrl']) ?>">
+            <img class="promo-banner__img" id="campaignCard1Img"
+                 src="<?= lg_card_url($campaignCards, 0, 'image', $campaignDefaults[0]['image']) ?>"
+                 alt="" loading="lazy" />
+            <div class="promo-banner__overlay"></div>
+            <div class="promo-banner__content">
+              <h3 class="promo-banner__title" id="campaignCard1Headline"><?= lg_card_val($campaignCards, 0, 'headline', $campaignDefaults[0]['headline']) ?></h3>
+              <p class="promo-banner__subtitle" id="campaignCard1Sub"><?= lg_card_val($campaignCards, 0, 'subheadline', $campaignDefaults[0]['subheadline']) ?></p>
+              <span class="promo-banner__cta">
+                <span id="campaignCard1CtaText"><?= lg_card_val($campaignCards, 0, 'ctaText', $campaignDefaults[0]['ctaText']) ?></span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </div>
+          </a>
+          <a class="promo-banner" id="campaignCard2"
+             href="<?= lg_card_url($campaignCards, 1, 'ctaUrl', $campaignDefaults[1]['ctaUrl']) ?>">
+            <img class="promo-banner__img" id="campaignCard2Img"
+                 src="<?= lg_card_url($campaignCards, 1, 'image', $campaignDefaults[1]['image']) ?>"
+                 alt="" loading="lazy" />
+            <div class="promo-banner__overlay"></div>
+            <div class="promo-banner__content">
+              <h3 class="promo-banner__title" id="campaignCard2Headline"><?= lg_card_val($campaignCards, 1, 'headline', $campaignDefaults[1]['headline']) ?></h3>
+              <p class="promo-banner__subtitle" id="campaignCard2Sub"><?= lg_card_val($campaignCards, 1, 'subheadline', $campaignDefaults[1]['subheadline']) ?></p>
+              <span class="promo-banner__cta">
+                <span id="campaignCard2CtaText"><?= lg_card_val($campaignCards, 1, 'ctaText', $campaignDefaults[1]['ctaText']) ?></span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </div>
+          </a>
         </div>
       </section>
       <section class="bestseller-section" id="bestseller">

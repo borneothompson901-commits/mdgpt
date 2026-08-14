@@ -526,7 +526,7 @@
     var subtotal = window.CartStore.getSubtotal();
     var ongkir = state.ongkirChecked ? state.ongkir : 0;
     var layanan = SERVICE_FEE;
-    var pajak = Math.round(subtotal * TAX_RATE);
+    var pajak = Math.round((subtotal + layanan) * TAX_RATE);
     var total = subtotal + ongkir + layanan + pajak;
 
     sumSubtotalEl.textContent = formatRupiah(subtotal);
@@ -1094,7 +1094,7 @@
     var subtotal = window.CartStore.getSubtotal();
     var ongkir = state.ongkirChecked ? state.ongkir : 0;
     var layanan = SERVICE_FEE;
-    var pajak = Math.round(subtotal * TAX_RATE);
+    var pajak = Math.round((subtotal + layanan) * TAX_RATE);
     return subtotal + ongkir + layanan + pajak;
   }
 
@@ -1102,7 +1102,7 @@
     var subtotal = window.CartStore.getSubtotal();
     var ongkir = state.ongkirChecked ? state.ongkir : 0;
     var layanan = SERVICE_FEE;
-    var pajak = Math.round(subtotal * TAX_RATE);
+    var pajak = Math.round((subtotal + layanan) * TAX_RATE);
     return {
       subtotal: subtotal,
       ongkir: ongkir,

@@ -21,7 +21,6 @@ function lg_card_val($cards, int $index, string $key, string $default): string
     return $default;
 }
 
-// Khusus URL, dipakai langsung sebagai atribut href/src.
 function lg_card_url($cards, int $index, string $key, string $default): string
 {
     $val = (is_array($cards) && isset($cards[$index][$key]) && $cards[$index][$key] !== '')
@@ -52,7 +51,90 @@ $campaignDefaults = [
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>M-DGPT Agency</title>
+    <title>Lingua Store - Template, Ebook & Tools Digital | M-DGPT Agency</title>
+    <meta name="description" content="Belanja template konten, ebook strategi, dan tools otomasi digital siap pakai dari M-DGPT Agency. Produk original, instant download, update berkala, support cepat." />
+    <link rel="canonical" href="https://mdgpt.id/lingua" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Lingua Store - M-DGPT Agency" />
+    <meta property="og:title" content="Lingua Store - Template, Ebook & Tools Digital | M-DGPT Agency" />
+    <meta property="og:description" content="Belanja template konten, ebook strategi, dan tools otomasi digital siap pakai dari M-DGPT Agency. Produk original, instant download, update berkala, support cepat." />
+    <meta property="og:url" content="https://mdgpt.id/lingua" />
+    <meta property="og:image" content="https://mdgpt.id/assets/img/cta.png" />
+    <meta property="og:locale" content="id_ID" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Lingua Store - Template, Ebook & Tools Digital | M-DGPT Agency" />
+    <meta name="twitter:description" content="Belanja template konten, ebook strategi, dan tools otomasi digital siap pakai dari M-DGPT Agency. Produk original, instant download, update berkala, support cepat." />
+    <meta name="twitter:image" content="https://mdgpt.id/assets/img/cta.png" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "OnlineStore",
+      "name": "Lingua Store",
+      "url": "https://mdgpt.id/lingua",
+      "logo": "https://mdgpt.id/assets/icons/logo.png",
+      "description": "Template konten, ebook strategi, dan tools otomasi siap pakai untuk brand yang serius growth.",
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "CV Indomarketing Digital Teknologi",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Jl. Simo Gn. Bar. Tol I No.7, Simomulyo",
+          "addressLocality": "Surabaya",
+          "addressRegion": "Jawa Timur",
+          "addressCountry": "ID"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+62-877-7722-2572",
+          "contactType": "customer service"
+        },
+        "sameAs": [
+          "https://www.instagram.com/mdgpt_agency/",
+          "https://www.linkedin.com/company/m-dgpt-agency"
+        ]
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Apakah produk di Lingua Store original?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ya, semua produk dibuat langsung oleh tim M-DGPT Agency dan bukan hasil duplikasi dari pihak lain."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Berapa lama produk digital dikirim setelah checkout?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Produk digital tersedia untuk dikirim langsung setelah proses checkout selesai."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Apakah ada update setelah pembelian?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Produk mengikuti update berkala sesuai perkembangan tren terbaru."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Bagaimana cara menghubungi support jika ada kendala?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tim support merespon dalam hitungan jam melalui WhatsApp di 0877 7722 2572."
+          }
+        }
+      ]
+    }
+    </script>
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?

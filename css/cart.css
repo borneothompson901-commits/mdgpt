@@ -1516,19 +1516,48 @@ html.cart-preload-expired #checkoutStepResult {
 }
 
 .payment-result__ewallet-btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   border: none;
-  background: #25d366;
+  background: linear-gradient(135deg, #35e17f 0%, #25d366 55%, #1cab52 100%);
   color: #fff;
-  border-radius: 10px;
-  padding: 12px 20px;
+  border-radius: 12px;
+  padding: 12px 24px;
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 .payment-result__ewallet-btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+.payment-result__ewallet-btn:active {
+  transform: translateY(0);
   filter: brightness(0.95);
+}
+.payment-result__ewallet-btn-logo {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #fff;
+  padding: 4px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.payment-result__ewallet-btn--dana {
+  background: linear-gradient(135deg, #3fb0ff 0%, #118eea 55%, #0b6fc0 100%);
+  box-shadow: 0 6px 16px rgba(17, 142, 234, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.payment-result__ewallet-btn--shopeepay {
+  background: linear-gradient(135deg, #ff8a5e 0%, #ee4d2d 55%, #d63c1f 100%);
+  box-shadow: 0 6px 16px rgba(238, 77, 45, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .payment-result__note {

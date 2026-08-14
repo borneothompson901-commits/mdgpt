@@ -341,9 +341,7 @@
       if (pricing && typeof pricing.stock === "number") return pricing.stock;
     }
 
-    // Non-variant product: fall back to the flat stock column. Digital
-    // products (or physical ones with untracked stock) leave stock null,
-    // meaning unlimited.
+
     if (typeof product.stock === "number") return product.stock;
     return Infinity;
   }
@@ -1514,11 +1512,17 @@
         '</div>';
     } else if (method === "EWALLET" && data.ewallet) {
       var ew = data.ewallet;
+      var ewChannel = checkoutState.channel || "";
+      var ewMeta = CHANNEL_ICON[ewChannel] || {};
+      var ewClass = ewChannel ? " payment-result__ewallet-btn--" + ewChannel.toLowerCase() : "";
       html +=
         '<div class="payment-result__box">' +
           '<p class="payment-result__label">Lanjutkan pembayaran di aplikasi e-wallet</p>' +
           (ew.redirectUrl
-            ? '<a class="payment-result__ewallet-btn" href="' + ew.redirectUrl + '" target="_blank" rel="noopener">Buka Aplikasi E-Wallet</a>'
+            ? '<a class="payment-result__ewallet-btn' + ewClass + '" href="' + ew.redirectUrl + '" target="_blank" rel="noopener">' +
+                (ewMeta.file ? '<img class="payment-result__ewallet-btn-logo" src="../assets/icons/' + ewMeta.file + '.png" alt="' + ewChannel + '" />' : '') +
+                '<span>Buka E-Wallet</span>' +
+              '</a>'
             : '<p class="payment-result__note">Link pembayaran tidak tersedia.</p>') +
         '</div>';
     } else {

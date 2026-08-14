@@ -49,6 +49,37 @@
     return null;
   }
 
+  function normalizeVariantGroups(rawGroups) {
+    if (!Array.isArray(rawGroups)) return [];
+    return rawGroups.map(function (g) {
+      var groupId = g.id || g.name || g.label;
+      var groupLabel = g.label || g.name || "Pilih Opsi";
+      var rawOptions = g.options || [];
+      var options = rawOptions.map(function (o) {
+        if (typeof o === "string" || typeof o === "number") {
+          var v = String(o);
+          return { id: v, value: v, label: v };
+        }
+        var val = o.value != null ? o.value : (o.label != null ? o.label : o.id);
+        return {
+          id: o.id != null ? o.id : val,
+          value: val,
+          label: o.label != null ? o.label : val,
+          price: o.price,
+          oldPrice: o.oldPrice,
+          stock: o.stock,
+          image: o.image
+        };
+      });
+      return {
+        id: groupId,
+        label: groupLabel,
+        required: g.required,
+        options: options
+      };
+    });
+  }
+
   function formatRupiahModal(n) {
     n = Math.round(parseFloat(n)) || 0;
     return "Rp" + n.toLocaleString("id-ID");
@@ -68,7 +99,7 @@
     injectVariantModalStyles();
     closeVariantModal();
 
-    var groups = product.variantGroups || [];
+    var groups = normalizeVariantGroups(product.variantGroups || []);
 
     var overlay = document.createElement("div");
     overlay.className = "variant-modal-overlay";

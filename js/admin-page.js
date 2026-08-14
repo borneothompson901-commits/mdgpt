@@ -880,8 +880,16 @@
       // still read the label out of those objects here, we just stop treating
       // the rest of the object as pricing data.
       wstate.vgroups = (row.variant_groups || []).map(function (g) {
+        var gid = g.id || ("vg" + (++vgroupSeq));
+        // Keep vgroupSeq in sync with the highest "vgN" suffix already in use —
+        // whether it came from the DB or was just generated above — so that
+        // addVGroup() below can never mint an id that collides with a group
+        // this product already has (this was the source of duplicate group
+        // ids like two "vg1" groups on the same product).
+        var n = parseInt(String(gid).replace(/^vg/, ""), 10);
+        if (!isNaN(n) && n > vgroupSeq) vgroupSeq = n;
         return {
-          id: g.id || ("vg" + (++vgroupSeq)),
+          id: gid,
           name: g.name || "",
           options: (g.options || []).map(function (o) {
             var val = (typeof o === "string" || typeof o === "number") ? String(o) : (o.value != null ? o.value : "");

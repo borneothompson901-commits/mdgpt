@@ -186,10 +186,32 @@
     });
   }
 
+  function setAttr(id, attr, value) {
+    if (value == null || value === "") return;
+    var el = document.getElementById(id);
+    if (!el || el.getAttribute(attr) === value) return;
+    el.setAttribute(attr, value);
+  }
+
+  function applyCampaignCards(list) {
+    if (!Array.isArray(list)) return;
+    list.forEach(function (card, i) {
+      var n = i + 1;
+      setText("campaignCard" + n + "Headline", card.headline);
+      setText("campaignCard" + n + "Sub", card.subheadline);
+      setText("campaignCard" + n + "CtaText", card.ctaText);
+      setAttr("campaignCard" + n, "href", card.ctaUrl);
+      setAttr("campaignCard" + n + "Img", "src", card.image);
+    });
+  }
+
   function run() {
     if (document.getElementById("heroEyebrow")) {
       loadSection("banner_utama", applyBannerUtama);
       loadSection("banner_cards", applyBannerCards);
+    }
+    if (document.getElementById("campaignCard1")) {
+      loadSection("campaign_card", applyCampaignCards);
     }
     if (document.getElementById("affCoverTitle")) {
       loadSection("banner_affiliate", applyBannerAffiliate);

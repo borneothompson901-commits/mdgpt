@@ -139,18 +139,18 @@
                       </div>
                     </div>
 
-                    <div class="payment-accordion__item payment-accordion__item--disabled" data-method-item="QRIS" data-method-disabled="true">
-                      <button type="button" class="payment-accordion__header" data-method-toggle="QRIS" aria-expanded="false" aria-disabled="true" disabled>
-                        <span class="payment-accordion__label">
-                          <span class="payment-accordion__name">QRIS</span>
-                          <span class="payment-accordion__sub">Scan pakai aplikasi bank / e-wallet apa saja</span>
-                        </span>
-                        <span class="payment-accordion__badge">Belum tersedia</span>
-                      </button>
-                      <div class="payment-accordion__panel" data-method-panel="QRIS" hidden>
-                        <div class="payment-accordion__list" id="channelListQRIS"></div>
-                      </div>
-                    </div>
+                    <div class="payment-accordion__item" data-method-item="QRIS" data-method-disabled="false">
+  <button type="button" class="payment-accordion__header" data-method-toggle="QRIS" aria-expanded="false">
+    <span class="payment-accordion__label">
+      <span class="payment-accordion__name">QRIS</span>
+      <span class="payment-accordion__sub">Scan pakai aplikasi bank / e-wallet apa saja</span>
+    </span>
+    <svg class="payment-accordion__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+  </button>
+  <div class="payment-accordion__panel" data-method-panel="QRIS" hidden>
+    <div class="payment-accordion__list" id="channelListQRIS"></div>
+  </div>
+</div>
 
                     <div class="payment-accordion__item" data-method-item="EWALLET">
                       <button type="button" class="payment-accordion__header" data-method-toggle="EWALLET" aria-expanded="false">

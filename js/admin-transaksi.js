@@ -278,6 +278,8 @@
   if (txDetailCloseBtn) txDetailCloseBtn.addEventListener("click", function () { txDetailModal.classList.remove("open"); });
   if (txDetailModal) txDetailModal.addEventListener("click", function (e) { if (e.target === txDetailModal) txDetailModal.classList.remove("open"); });
 
+  var openFilterXSelects = [];
+
   function buildFilterXSelect(rootId, options, onChange) {
     var root = document.getElementById(rootId);
     var trigger = document.getElementById(rootId + "_trigger");
@@ -309,7 +311,30 @@
       onChange(val);
     }
 
-    function openMenu() { renderMenu(); menu.hidden = false; root.classList.add("open"); }
+    function positionMenu() {
+      var rect = trigger.getBoundingClientRect();
+      var menuWidth = Math.max(menu.offsetWidth, rect.width);
+      var left = rect.left;
+      var maxLeft = window.innerWidth - menuWidth - 8;
+      if (left > maxLeft) left = maxLeft;
+      if (left < 8) left = 8;
+      var top = rect.bottom + 6;
+      var menuHeight = menu.offsetHeight;
+      if (top + menuHeight > window.innerHeight - 8 && rect.top - menuHeight - 6 > 0) {
+        top = rect.top - menuHeight - 6;
+      }
+      menu.style.width = rect.width + "px";
+      menu.style.top = top + "px";
+      menu.style.left = left + "px";
+    }
+
+    function openMenu() {
+      openFilterXSelects.forEach(function (o) { if (o !== api) o.closeMenu(); });
+      renderMenu();
+      menu.hidden = false;
+      root.classList.add("open");
+      positionMenu();
+    }
     function closeMenu() { menu.hidden = true; root.classList.remove("open"); }
 
     trigger.addEventListener("click", function (e) {
@@ -318,9 +343,13 @@
     });
     document.addEventListener("click", function (e) { if (!root.contains(e.target)) closeMenu(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
+    window.addEventListener("scroll", function () { if (!menu.hidden) positionMenu(); }, true);
+    window.addEventListener("resize", function () { if (!menu.hidden) positionMenu(); });
 
     renderMenu();
-    return { setValue: setValue };
+    var api = { setValue: setValue, closeMenu: closeMenu };
+    openFilterXSelects.push(api);
+    return api;
   }
 
   if (searchInput) searchInput.addEventListener("input", function () { state.search = this.value; render(); });

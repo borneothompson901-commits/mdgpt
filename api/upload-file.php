@@ -129,10 +129,11 @@ try {
  * if the GD extension or the specific format isn't available on this host.
  */
 function optimizeImage($filepath, $ext) {
-  $MAX_DIMENSION = 1600; // px, longest side — plenty for a product photo
+  $MAX_DIMENSION = 1200;
   $JPEG_QUALITY = 82;
   $WEBP_QUALITY = 82;
-  $PNG_COMPRESSION = 6; // 0 (none) - 9 (max), PNG is lossless either way
+  $AVIF_QUALITY = 65;
+  $PNG_COMPRESSION = 6;
 
   $info = @getimagesize($filepath);
   if (!$info) return;
@@ -154,9 +155,11 @@ function optimizeImage($filepath, $ext) {
       if (!function_exists("imagecreatefromwebp")) return;
       $src = @imagecreatefromwebp($filepath);
       break;
+    case "avif":
+      if (!function_exists("imagecreatefromavif") || !function_exists("imageavif")) return;
+      $src = @imagecreatefromavif($filepath);
+      break;
     default:
-      // avif and anything else: skip, GD's AVIF support is inconsistent
-      // across hosts and re-encoding could make quality worse.
       return;
   }
   if (!$src) return;
@@ -166,7 +169,7 @@ function optimizeImage($filepath, $ext) {
     $newWidth = max(1, (int) round($width * $ratio));
     $newHeight = max(1, (int) round($height * $ratio));
     $resized = imagecreatetruecolor($newWidth, $newHeight);
-    if ($ext === "png" || $ext === "webp") {
+    if ($ext === "png" || $ext === "webp" || $ext === "avif") {
       imagealphablending($resized, false);
       imagesavealpha($resized, true);
     }
@@ -184,6 +187,9 @@ function optimizeImage($filepath, $ext) {
       break;
     case "webp":
       @imagewebp($src, $filepath, $WEBP_QUALITY);
+      break;
+    case "avif":
+      @imageavif($src, $filepath, $AVIF_QUALITY);
       break;
   }
   imagedestroy($src);

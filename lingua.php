@@ -21,6 +21,7 @@ function lg_card_val($cards, int $index, string $key, string $default): string
     return $default;
 }
 
+// Khusus URL, dipakai langsung sebagai atribut href/src.
 function lg_card_url($cards, int $index, string $key, string $default): string
 {
     $val = (is_array($cards) && isset($cards[$index][$key]) && $cards[$index][$key] !== '')
@@ -113,7 +114,7 @@ $campaignDefaults = [
           "name": "Berapa lama produk digital dikirim setelah checkout?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Produk digital tersedia untuk dikirim langsung setelah proses checkout selesai."
+            "text": "Produk digital tersedia untuk diunduh langsung setelah proses checkout selesai."
           }
         },
         {
@@ -153,9 +154,12 @@ $campaignDefaults = [
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" href="assets/icons/logo.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/global.css" />
-    <link rel="stylesheet" href="css/store.css" />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    <link rel="preload" href="css/global.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/global.css"></noscript>
+    <link rel="preload" href="css/store.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/store.css"></noscript>
     <link rel="preload" as="image" href="assets/icons/logo.png">
   </head>
   <body>

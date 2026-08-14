@@ -1819,6 +1819,23 @@
     checkoutDoneBtn.addEventListener("click", cancelCheckoutAndReturnToCart);
   }
 
+  // True if the live cart contains any id+variantKey combo that wasn't part
+  // of the order snapshot captured when this checkout session started. Used
+  // to detect "user forgot to tap Selesai/Order Ulang and just kept shopping"
+  // so we don't leave them stuck looking at a stale paid/expired screen (or,
+  // worse for PAID, wipe the new item the next time that screen re-renders
+  // and re-clears the cart).
+  function cartHasItemsOutsideSnapshot(cart, snapshotItems) {
+    var snapKeys = {};
+    (snapshotItems || []).forEach(function (it) {
+      snapKeys[String(it.id) + "|" + String(it.variantKey || "")] = true;
+    });
+    return (cart || []).some(function (it) {
+      var key = String(it.id) + "|" + String(it.variantKey || "");
+      return !snapKeys[key];
+    });
+  }
+
   function applyPersistedCheckoutState() {
     checkoutState = readCheckoutState();
     if (!checkoutState) {
@@ -1826,6 +1843,18 @@
       return;
     }
     if (checkoutState.step === "result" && checkoutState.resultData) {
+      if (isTerminalOrderStatus(checkoutState.orderStatus)) {
+        var liveCart = window.CartStore.getCart();
+        var snapshotItems = (checkoutState.orderSnapshot && checkoutState.orderSnapshot.items) || [];
+        if (cartHasItemsOutsideSnapshot(liveCart, snapshotItems)) {
+          // A new item was added after this order finished — start a fresh
+          // cart session instead of re-showing the old result screen.
+          writeCheckoutState(null);
+          checkoutState = null;
+          showCartView();
+          return;
+        }
+      }
       showCheckoutResultView();
     } else if (checkoutState.step === "method" && checkoutState.orderSnapshot) {
       showCheckoutMethodView();
@@ -1889,7 +1918,23 @@
     }
   });
 
-  document.addEventListener("cart:updated", renderCart);
+  document.addEventListener("cart:updated", function () {
+    // Same safety net as applyPersistedCheckoutState(), for the case where an
+    // item lands in the cart while this tab is still showing a stale
+    // paid/expired screen (e.g. restored from bfcache without a fresh
+    // "pageshow"-triggered reapply, or another script on this same page).
+    if (checkoutModeActive && checkoutState && isTerminalOrderStatus(checkoutState.orderStatus)) {
+      var liveCart = window.CartStore.getCart();
+      var snapshotItems = (checkoutState.orderSnapshot && checkoutState.orderSnapshot.items) || [];
+      if (cartHasItemsOutsideSnapshot(liveCart, snapshotItems)) {
+        writeCheckoutState(null);
+        checkoutState = null;
+        showCartView();
+        return;
+      }
+    }
+    renderCart();
+  });
   renderCart();
   loadCheckoutConfig();
 

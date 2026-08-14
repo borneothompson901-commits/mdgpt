@@ -189,6 +189,7 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
 .badge-orange { background:#FFF7ED; color:#EA580C; border:1px solid #FED7AA; }
 .badge-purple { background:#FAF5FF; color:#7C3AED; border:1px solid #E9D5FF; }
 .badge-red { background:#FEF2F2; color:var(--danger); border:1px solid #FECACA; }
+.badge-yellow { background:#FEFCE8; color:#CA8A04; border:1px solid #FEF08A; }
 
 .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:500; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(3px); }
 .modal-backdrop.open { display:flex; }

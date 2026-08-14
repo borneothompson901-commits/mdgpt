@@ -3,3 +3,9 @@ DirectoryIndex index.php
 <FilesMatch "^lingua\.html$">
     SetHandler application/x-httpd-php
 </FilesMatch>
+
+<IfModule mod_headers.c>
+  <FilesMatch "^(herolingua\.avif|logo\.png|logo2\.png)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>

@@ -222,7 +222,7 @@
           '</div></td>' +
           '<td>' + (p.type === "fisik" || hasVariant ? renderStockBadge(stock) : '<span class="badge badge-gray">&mdash;</span>') + '</td>' +
           '<td class="col-harga">' + priceLabel + (hasVariant ? '<div class="prod-sku">mulai dari</div>' : '') + '</td>' +
-          '<td class="col-sold">' + (parseInt(p.sold, 10) || 0) + '</td>' +
+          '<td class="col-sold">' + (parseInt(p.sold, 10) || 0) + (p.is_draft ? ' <span class="badge badge-yellow" title="Belum dipublikasikan ke toko">Draft</span>' : '') + '</td>' +
           '<td class="col-jenis">' + tplJenisXSelect(p) + '</td>' +
           '<td class="row-actions"><div class="actions">' +
             '<button class="btn-icon edit" data-edit="' + p.id + '" title="Edit">' +
@@ -1831,13 +1831,14 @@
     async function save(publish) {
       if (!validateStep(1) || !validateStep(2)) { goStep(!validateStep(1) ? 1 : 2); return; }
       var payload = buildPayload();
+      payload.is_draft = !publish;
       try {
         if (wstate.id) {
           await wdb.updateProduct(wstate.id, payload);
         } else {
           await wdb.createProduct(payload);
         }
-        sessionStorage.setItem("admin_toast", publish ? "Produk berhasil dipublikasikan" : "Draft produk disimpan");
+        sessionStorage.setItem("admin_toast", publish ? "Produk berhasil dipublikasikan" : "Draft produk disimpan, belum tampil di toko");
         location.href = "linguahub.html#produk";
       } catch (e) {
         console.error(e);

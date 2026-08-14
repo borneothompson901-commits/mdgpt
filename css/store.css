@@ -91,7 +91,7 @@
    overflow: hidden;
    background:
       linear-gradient(135deg, rgba(88, 20, 120, 0.82), rgba(20, 12, 40, 0.78)),
-      url("https://picsum.photos/seed/mdgpt-hero/1800/1000") center / cover no-repeat;
+      url("../assets/img/hero.avif") center / cover no-repeat;
    padding: calc(var(--nav-height) + 64px) 0 0;
    color: #fff;
 }

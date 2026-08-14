@@ -1,40 +1,77 @@
 function initCategorySlider() {
   var CAT_ICON_RULES = [
-    { match: ["ebook", "buku", "e-book"], icon: "book" },
-    { match: ["template", "desain", "design"], icon: "layout" },
-    { match: ["tools", "otomasi", "automation", "software", "aplikasi", "script"], icon: "settings" },
-    { match: ["workshop", "kelas", "course", "kursus", "training"], icon: "cap" },
-    { match: ["sosial", "social", "media"], icon: "megaphone" },
-    { match: ["branding", "brand", "logo"], icon: "palette" },
-    { match: ["marketing", "iklan", "ads", "promosi"], icon: "trending" },
-    { match: ["konten", "content", "video", "planner"], icon: "film" },
+    { match: ["ebook", "buku", "e-book", "novel", "cerita"], icon: "book" },
+    { match: ["template", "desain grafis", "canva", "figma", "ui kit"], icon: "layout" },
+    { match: ["tools", "otomasi", "automation", "software", "aplikasi", "script", "bot"], icon: "settings" },
+    { match: ["workshop", "kelas", "course", "kursus", "training", "belajar", "sekolah"], icon: "graduation_cap" },
+    { match: ["sosial", "social", "media sosial"], icon: "megaphone" },
+    { match: ["branding", "brand", "logo", "identitas visual"], icon: "palette" },
+    { match: ["marketing", "iklan", "ads", "promosi", "growth"], icon: "trending_up" },
+    { match: ["konten", "content", "planner", "kalender konten"], icon: "calendar" },
     { match: ["fisik", "merchandise", "produk fisik"], icon: "box" },
-    { match: ["jasa", "service", "layanan", "konsultasi"], icon: "briefcase" }
+    { match: ["jasa", "service", "layanan", "konsultasi", "freelance"], icon: "briefcase" },
+    { match: ["musik", "music", "audio", "lagu", "beat"], icon: "music" },
+    { match: ["foto", "photo", "fotografi", "kamera"], icon: "camera" },
+    { match: ["coding", "kode", "developer", "programming", "web dev"], icon: "code" },
+    { match: ["data", "database", "spreadsheet", "excel"], icon: "database" },
+    { match: ["cloud", "hosting", "server", "domain"], icon: "cloud" },
+    { match: ["mobile", "aplikasi hp", "android", "ios app"], icon: "smartphone" },
+    { match: ["desktop", "pc", "komputer", "windows", "mac"], icon: "monitor" },
+    { match: ["game", "gaming", "esport"], icon: "gamepad_2" },
+    { match: ["ilustrasi", "vector", "sketsa", "gambar tangan"], icon: "pen_tool" },
+    { match: ["grafis", "gambar", "poster", "mockup"], icon: "image" },
+    { match: ["podcast", "voice over", "rekaman suara"], icon: "mic" },
+    { match: ["jadwal", "agenda", "planner harian"], icon: "calendar" },
+    { match: ["analitik", "analytics", "laporan", "report", "statistik"], icon: "bar_chart_3" },
+    { match: ["komunitas", "membership", "member", "grup"], icon: "users" },
+    { match: ["kesehatan", "wellness", "diet", "self improvement"], icon: "heart" },
+    { match: ["presentasi", "slide", "ppt", "powerpoint"], icon: "presentation" },
+    { match: ["dokumen", "surat", "kontrak", "legal"], icon: "file_text" },
+    { match: ["cetak", "print", "printable"], icon: "printer" },
+    { match: ["jualan", "reseller", "toko online", "dropship", "ecommerce"], icon: "shopping_cart" },
+    { match: ["keuangan", "finance", "pembayaran", "invoice"], icon: "credit_card" },
+    { match: ["akuntansi", "pembukuan", "kalkulasi"], icon: "calculator" },
+    { match: ["website", "internasional", "global"], icon: "globe" },
+    { match: ["affiliate", "link building", "backlink"], icon: "link" },
+    { match: ["email marketing", "newsletter", "broadcast"], icon: "mail" },
+    { match: ["customer service", "cs", "telepon"], icon: "phone" },
+    { match: ["video editing", "editing video", "reels", "video"], icon: "video" },
+    { match: ["produksi film", "sinematik", "clapper"], icon: "film" },
+    { match: ["audio editing", "headphone", "mixing"], icon: "headphones" },
+    { match: ["plugin", "addon", "ekstensi"], icon: "puzzle" },
+    { match: ["keamanan", "security", "proteksi"], icon: "shield_check" },
+    { match: ["privasi", "privacy", "enkripsi"], icon: "lock" },
+    { match: ["lisensi", "akses", "unlock key"], icon: "key" },
+    { match: ["startup", "growth hacking", "scale up"], icon: "rocket" },
+    { match: ["target", "goal", "kpi"], icon: "target" },
+    { match: ["sertifikat", "certificate", "penghargaan"], icon: "award" },
+    { match: ["premium", "eksklusif", "elite"], icon: "gem" },
+    { match: ["vip", "prioritas"], icon: "crown" },
+    { match: ["viral", "trending", "populer"], icon: "flame" },
+    { match: ["ide", "kreatif", "brainstorm", "inovasi"], icon: "lightbulb" },
+    { match: ["panduan", "guide", "tutorial"], icon: "compass" },
+    { match: ["peta", "lokasi", "map"], icon: "map" },
+    { match: ["properti", "rumah", "hunian"], icon: "home" },
+    { match: ["kantor", "korporat", "perusahaan"], icon: "building" },
+    { match: ["otomotif", "mobil", "kendaraan"], icon: "car" },
+    { match: ["kuliner", "resep", "masak", "makanan"], icon: "utensils" },
+    { match: ["fashion", "baju", "outfit"], icon: "shirt" },
+    { match: ["fitness", "olahraga", "gym", "workout"], icon: "dumbbell" },
+    { match: ["herbal", "alami", "organik"], icon: "leaf" },
+    { match: ["travel", "wisata", "liburan"], icon: "plane" },
+    { match: ["dompet digital", "wallet", "e-wallet"], icon: "wallet" },
+    { match: ["kompetisi", "lomba", "juara"], icon: "trophy" }
   ];
-
-  var CAT_ICON_PATHS = {
-    book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
-    layout: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
-    settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
-    cap: '<path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/>',
-    megaphone: '<path d="M3 11v3a1 1 0 0 0 1 1h1l3.5 5v-5H13l6 4V6l-6 4H8.5V6L5 11H4a1 1 0 0 0-1 0Z"/><path d="M8.5 10v6"/>',
-    palette: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.6 2-1.4a2 2 0 0 0-.5-2.2c-.3-.3-.4-.7-.3-1.1.2-.6.7-1 1.3-1H16c3.3 0 6-2.7 6-6 0-4.4-4.5-8-10-8Z"/>',
-    trending: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
-    film: '<rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M17 3v18M2 8h5M2 16h5M17 8h5M17 16h5"/>',
-    box: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/>',
-    briefcase: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
-    tag: '<path d="M12.59 2.59a2 2 0 0 0-1.42-.59H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.41l9 9a2 2 0 0 0 2.82 0l7.17-7.17a2 2 0 0 0 0-2.82Z"/><circle cx="7.5" cy="7.5" r="1.5"/>'
-  };
 
   function pickCategoryIcon(key, label) {
     var haystack = (String(key || "") + " " + String(label || "")).toLowerCase();
     for (var i = 0; i < CAT_ICON_RULES.length; i++) {
       var rule = CAT_ICON_RULES[i];
       for (var j = 0; j < rule.match.length; j++) {
-        if (haystack.indexOf(rule.match[j]) !== -1) return CAT_ICON_PATHS[rule.icon];
+        if (haystack.indexOf(rule.match[j]) !== -1) return ICON_LIBRARY[rule.icon];
       }
     }
-    return CAT_ICON_PATHS.tag;
+    return ICON_LIBRARY.tag;
   }
 
   function categoryIconHtml(key, label) {

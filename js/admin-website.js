@@ -18,7 +18,7 @@
     ],
     campaignCards: [
       { id: "camp1", name: "Campaign Card 1", headline: "Promo Spesial Bulan Ini", subheadline: "Diskon menarik untuk produk digital pilihan, terbatas!", ctaText: "Lihat Promo", ctaUrl: "/lingua/index.html", image: "" },
-      { id: "camp2", name: "Campaign Card 2", headline: "Gabung Jadi Affiliate", subheadline: "Dapatkan komisi di setiap transaksi yang kamu bawa.", ctaText: "Daftar Sekarang", ctaUrl: "/lingua/affiliate.html", image: "" }
+      { id: "camp2", name: "Campaign Card 2", headline: "Gabung Jadi Affiliate", subheadline: "Dapatkan komisi di setiap transaksi yang kamu bawa.", ctaText: "Daftar Sekarang", ctaUrl: "/lingua/affiliate", image: "" }
     ],
     bannerAffiliate: {
       headline: "Program Affiliate",

@@ -97,12 +97,49 @@
       return parseInt(p.stock, 10) || 0;
     }
 
+    // Per-variant stock breakdown for a product, or null if it has no variants.
+    // Summing variant stocks (old totalStock()) hides scarcity: a variant at 1
+    // unit doesn't trip a "low stock" alert if a sibling variant still has 20.
+    function variantStockList(p) {
+      if (!p.variantPricing || !Object.keys(p.variantPricing).length) return null;
+      return Object.keys(p.variantPricing).map(function (key) {
+        var v = p.variantPricing[key] || {};
+        return { label: v.label || key, stock: parseInt(v.stock, 10) || 0 };
+      });
+    }
+
+    function isStockable(p) {
+      return p.type === "fisik" || (p.variantGroups && p.variantGroups.length > 0);
+    }
+
+    // Flattens products into per-row stock entries: one row per variant for
+    // variant products (so each variant is checked independently), one row
+    // per product otherwise. Returns { low: [...], out: [...] }.
+    function stockRows() {
+      var low = [];
+      var out = [];
+      state.products.filter(isStockable).forEach(function (p) {
+        var variants = variantStockList(p);
+        if (variants) {
+          variants.forEach(function (v) {
+            if (v.stock <= 0) out.push({ p: p, variant: v });
+            else if (v.stock <= 5) low.push({ p: p, variant: v });
+          });
+        } else {
+          var s = parseInt(p.stock, 10) || 0;
+          if (s <= 0) out.push({ p: p, variant: null });
+          else if (s <= 5) low.push({ p: p, variant: null });
+        }
+      });
+      return { low: low, out: out };
+    }
+
     function renderStats() {
       var products = state.products;
       document.getElementById("statTotal").textContent = products.length;
       document.getElementById("statDigital").textContent = products.filter(function (p) { return p.type === "digital"; }).length;
       document.getElementById("statFisik").textContent = products.filter(function (p) { return p.type === "fisik"; }).length;
-      document.getElementById("statLowStock").textContent = products.filter(function (p) { return p.type === "fisik" && totalStock(p) > 0 && totalStock(p) <= 5; }).length;
+      document.getElementById("statLowStock").textContent = stockRows().low.length;
       document.getElementById("navProdukCount").textContent = products.length;
     }
 
@@ -111,27 +148,28 @@
       var outList = document.getElementById("outStockList");
       if (!lowList || !outList) return;
 
-      var stockables = state.products.filter(function (p) {
-        return p.type === "fisik" || (p.variantGroups && p.variantGroups.length > 0);
-      });
-      var low = stockables.filter(function (p) { var s = totalStock(p); return s > 0 && s <= 5; });
-      var out = stockables.filter(function (p) { return totalStock(p) <= 0; });
+      var rows = stockRows();
 
-      document.getElementById("lowStockCount").textContent = low.length;
-      document.getElementById("outStockCount").textContent = out.length;
+      document.getElementById("lowStockCount").textContent = rows.low.length;
+      document.getElementById("outStockCount").textContent = rows.out.length;
 
-      function itemRow(p) {
-        var stock = totalStock(p);
+      function itemRow(row) {
+        var name = row.p.title || "(Tanpa nama)";
+        var fullTitle = row.variant ? name + " — " + row.variant.label : name;
+        var sub = row.variant ? '<span class="overview-item__sub">' + escapeHtml(row.variant.label) + '</span>' : '';
         return '<div class="overview-item">' +
-          '<span class="overview-item__name" title="' + escapeHtml(p.title || "(Tanpa nama)") + '">' + escapeHtml(p.title || "(Tanpa nama)") + '</span>' +
-          renderStockBadge(stock) +
+          '<span class="overview-item__info">' +
+            '<span class="overview-item__name" title="' + escapeHtml(fullTitle) + '">' + escapeHtml(name) + '</span>' +
+            sub +
+          '</span>' +
+          renderStockBadge(row.variant ? row.variant.stock : (parseInt(row.p.stock, 10) || 0)) +
         '</div>';
       }
 
-      lowList.innerHTML = low.map(itemRow).join("");
-      document.getElementById("lowStockEmpty").hidden = low.length !== 0;
-      outList.innerHTML = out.map(itemRow).join("");
-      document.getElementById("outStockEmpty").hidden = out.length !== 0;
+      lowList.innerHTML = rows.low.map(itemRow).join("");
+      document.getElementById("lowStockEmpty").hidden = rows.low.length !== 0;
+      outList.innerHTML = rows.out.map(itemRow).join("");
+      document.getElementById("outStockEmpty").hidden = rows.out.length !== 0;
     }
 
     function renderTopSold() {

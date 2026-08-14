@@ -1193,7 +1193,9 @@
           wstate.mainImage = url;
           renderMainPhoto();
         } catch (e) {
-          AdminShared.toast("Upload gagal, pakai preview lokal sementara.", "error");
+          wstate.mainImage = "";
+          renderMainPhoto();
+          AdminShared.toast("Upload foto utama gagal, coba lagi.", "error");
         }
       });
 
@@ -1212,8 +1214,9 @@
               entry.uploading = false;
               renderGalleryPhotos();
             }).catch(function () {
-              entry.uploading = false;
-              AdminShared.toast("Upload gagal, pakai preview lokal sementara.", "error");
+              var idx = wstate.galleryImages.indexOf(entry);
+              if (idx !== -1) wstate.galleryImages.splice(idx, 1);
+              AdminShared.toast("Upload foto galeri gagal, coba lagi.", "error");
               renderGalleryPhotos();
             });
           })(files[i]);
@@ -1469,8 +1472,7 @@
         AdminShared.toast("Mengunggah foto varian...");
         combo.image = await AdminShared.uploadImage(file);
       } catch (e) {
-        combo.image = URL.createObjectURL(file);
-        AdminShared.toast("Upload gagal, pakai preview lokal sementara.", "error");
+        AdminShared.toast("Upload foto varian gagal, coba lagi.", "error");
       }
       renderComboMatrix();
       renderPreview();
@@ -1828,8 +1830,25 @@
       return payload;
     }
 
+    function hasPendingImage() {
+      if (String(wstate.mainImage || "").indexOf("blob:") === 0) return true;
+      var galleryPending = wstate.galleryImages.some(function (entry) {
+        var url = typeof entry === "string" ? entry : entry.url;
+        return (entry && entry.uploading) || String(url || "").indexOf("blob:") === 0;
+      });
+      if (galleryPending) return true;
+      var comboPending = (wstate.combos || []).some(function (c) {
+        return String(c.image || "").indexOf("blob:") === 0;
+      });
+      return comboPending;
+    }
+
     async function save(publish) {
       if (!validateStep(1) || !validateStep(2)) { goStep(!validateStep(1) ? 1 : 2); return; }
+      if (hasPendingImage()) {
+        AdminShared.toast("Masih ada foto yang belum selesai diupload, tunggu sebentar lalu coba lagi.", "error");
+        return;
+      }
       var payload = buildPayload();
       payload.is_draft = !publish;
       try {

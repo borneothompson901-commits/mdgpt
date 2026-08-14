@@ -304,6 +304,10 @@ body.sidebar-collapsed .content-inner { max-width:100%; }
 .vgroup-xselect .xselect__trigger { font-size:0.85rem; padding:9px 12px; }
 .vgroup-remove { background:none; border:1px solid var(--border); color:var(--text-3); width:30px; height:30px; border-radius:7px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .vgroup-remove:hover { color:var(--danger); border-color:#FECACA; background:#FEF2F2; }
+.vgroup-opts { display:flex; flex-direction:column; gap:8px; }
+.vgroup-opt-row { display:flex; align-items:center; gap:8px; }
+.vgroup-opt-row input { flex:1; font-family:inherit; font-size:0.85rem; padding:8px 10px; border-radius:7px; border:1px solid var(--border); background:var(--surface); outline:none; }
+.vgroup-opt-row input:focus { border-color:var(--blue-200); }
 .voption-list { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:8px; }
 .voption-chip { display:flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--border); border-radius:99px; padding:5px 6px 5px 12px; font-size:0.8rem; font-weight:500; }
 .voption-chip button { background:none; border:none; color:var(--text-3); cursor:pointer; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; }

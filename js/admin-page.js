@@ -557,7 +557,7 @@
     }
 
     function allVOptions() {
-      return (wstate.vgroups || []).reduce(function (acc, g) { return acc.concat(g.options || []); }, []);
+      return wstate.combos || [];
     }
 
     var wstate = {
@@ -569,6 +569,7 @@
       usedCategoryKeys: {},
       specs: [],
       vgroups: [],
+      combos: [],
       mainImage: "",
       galleryImages: []
     };
@@ -721,22 +722,25 @@
         '<button type="button" class="btn-dashed" id="btnAddVGroup">' +
           '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' +
           'Tambah Grup Varian' +
-        '</button>';
-    }
-    function tplComboSection(gi) {
-      return '' +
-        '<div class="vgroup-combo" style="margin:10px 0 12px;">' +
-          '<div class="vcombo-table-wrap" id="vcomboWrap-' + gi + '" style="margin-top:6px;">' +
+        '</button>' +
+        '<div class="field" style="margin-top:18px;">' +
+          '<label>Kombinasi &amp; Harga</label>' +
+          '<div class="hint" style="margin-bottom:6px;">Tiap baris di bawah otomatis dibuat dari kombinasi semua grup varian di atas. Isi stok &amp; harga untuk tiap kombinasi.</div>' +
+          '<div class="vcombo-table-wrap" id="vcomboWrap" style="margin-top:6px;">' +
             '<table class="vcombo-table">' +
-              '<thead><tr><th>Foto</th><th>Kombinasi</th><th>Stok</th><th>Harga</th><th>Harga Coret</th><th></th></tr></thead>' +
-              '<tbody id="vcomboTbody-' + gi + '"></tbody>' +
+              '<thead><tr><th>Foto</th><th>Kombinasi</th><th>Stok</th><th>Harga</th><th>Harga Coret</th></tr></thead>' +
+              '<tbody id="vcomboTbody"></tbody>' +
             '</table>' +
           '</div>' +
-          '<button type="button" class="btn-dashed" data-vg-addvariant="' + gi + '" style="width:100%;justify-content:center;margin-top:8px;">' +
-            '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' +
-            'Tambah Varian' +
-          '</button>' +
         '</div>';
+    }
+    function tplVGroupOptions(gi) {
+      return '' +
+        '<div class="vgroup-opts" id="vgroupOpts-' + gi + '"></div>' +
+        '<button type="button" class="btn-dashed" data-vg-addvariant="' + gi + '" style="width:100%;justify-content:center;margin-top:8px;">' +
+          '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' +
+          'Tambah Opsi' +
+        '</button>';
     }
     function tplPhotosSingle() {
       return '' +
@@ -869,15 +873,40 @@
       wstate.id = row.id;
       wstate.type = row.type || "digital";
       var vp = row.variant_pricing || {};
+      // Groups only carry option labels now — price/stock/oldPrice/image live on
+      // the combo matrix (wstate.combos), keyed by the full "A|B" combination.
+      // Older products saved options as full objects with their own price/stock
+      // (one flat price per single option, no real per-combination price) — we
+      // still read the label out of those objects here, we just stop treating
+      // the rest of the object as pricing data.
       wstate.vgroups = (row.variant_groups || []).map(function (g) {
         return {
           id: g.id || ("vg" + (++vgroupSeq)),
           name: g.name || "",
-          options: (g.options || []).map(function (optVal) {
-            var pr = vp[optVal] || {};
-            return { id: "vopt" + (++voptSeq), value: optVal, stock: pr.stock || "", price: pr.price || "", oldPrice: pr.oldPrice || "", image: pr.image || "" };
+          options: (g.options || []).map(function (o) {
+            var val = (typeof o === "string" || typeof o === "number") ? String(o) : (o.value != null ? o.value : "");
+            return { id: "vopt" + (++voptSeq), value: val };
           })
         };
+      });
+      // Auto-migrate: rebuild the full combo matrix from the groups above, then
+      // overlay any pricing we can find under matching keys in variant_pricing.
+      // - New-format products: variant_pricing is already keyed by the full
+      //   combo ("Merah|S"), so this restores everything as-is.
+      // - Legacy single-group products: the old flat key IS the combo key
+      //   (there's only one group), so this also restores everything as-is.
+      // - Legacy multi-group products (independent price per option, no real
+      //   combo price ever existed): the joined key won't match anything, so
+      //   those rows come back blank and need a price filled in manually.
+      regenerateCombos();
+      wstate.combos.forEach(function (c) {
+        var pr = vp[c.key];
+        if (pr) {
+          c.stock = pr.stock || "";
+          c.price = pr.price || "";
+          c.oldPrice = pr.oldPrice || "";
+          c.image = pr.image || "";
+        }
       });
       wstate.mode = wstate.vgroups.length > 0 ? "multi" : "single";
       buildWizardShell();
@@ -1078,17 +1107,17 @@
           AdminShared.toast("Isi nama tiap grup varian (mis. Warna, Ukuran).", "error");
           return false;
         }
-        var allOpts = allVOptions();
-        if (!allOpts.length) {
+        var unnamedOpt = wstate.vgroups.some(function (g) { return g.options.some(function (o) { return !o.value; }); });
+        if (unnamedOpt) {
+          AdminShared.toast("Isi nama tiap opsi varian (mis. Merah, Biru).", "error");
+          return false;
+        }
+        var allCombos = wstate.combos || [];
+        if (!allCombos.length) {
           AdminShared.toast("Tambahkan minimal satu grup varian beserta opsinya.", "error");
           return false;
         }
-        var unnamedOpt = allOpts.some(function (o) { return !o.value; });
-        if (unnamedOpt) {
-          AdminShared.toast("Isi nama tiap kombinasi varian (mis. Merah, Biru).", "error");
-          return false;
-        }
-        var missing = allOpts.some(function (o) { return !o.price; });
+        var missing = allCombos.some(function (c) { return !c.price; });
         if (missing) {
           AdminShared.toast("Isi harga untuk semua kombinasi varian.", "error");
           return false;
@@ -1182,7 +1211,44 @@
     var VGROUP_NAME_PRESETS = ["Warna", "Ukuran", "Model", "Rasa", "Varian"];
 
     function newVOption() {
-      return { id: "vopt" + (++voptSeq), value: "", stock: "", price: "", oldPrice: "", image: "" };
+      return { id: "vopt" + (++voptSeq), value: "" };
+    }
+
+    // ---- Combo matrix (cartesian product of every variant group's options) ----
+    // Each combo is keyed by its option values joined with "|", in group order —
+    // this MUST match getSelectedVariantKey() in variant-modal.js on the storefront,
+    // since that's how price/stock are looked up per selected combination.
+    function newCombo(key, label) {
+      return { key: key, label: label, stock: "", price: "", oldPrice: "", image: "" };
+    }
+    function groupsForCombo() {
+      return (wstate.vgroups || []).filter(function (g) { return g.name && g.options && g.options.length && g.options.some(function (o) { return o.value; }); });
+    }
+    function regenerateCombos() {
+      var groups = groupsForCombo();
+      var oldByKey = {};
+      (wstate.combos || []).forEach(function (c) { oldByKey[c.key] = c; });
+
+      var rows = [{ keyParts: [], labelParts: [] }];
+      groups.forEach(function (g) {
+        var opts = g.options.filter(function (o) { return o.value; });
+        if (!opts.length) return;
+        var next = [];
+        rows.forEach(function (r) {
+          opts.forEach(function (o) {
+            next.push({ keyParts: r.keyParts.concat([o.value]), labelParts: r.labelParts.concat([o.value]) });
+          });
+        });
+        rows = next;
+      });
+
+      wstate.combos = rows.map(function (r) {
+        var key = r.keyParts.join("|");
+        var label = r.labelParts.join(" / ");
+        var existing = oldByKey[key];
+        if (existing) { existing.label = label; return existing; }
+        return newCombo(key, label);
+      });
     }
 
     function renderVGroups() {
@@ -1213,9 +1279,9 @@
               '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M4 12l8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
             '</button>' +
           '</div>' +
-          tplComboSection(gi);
+          tplVGroupOptions(gi);
         wrap.appendChild(el);
-        renderVariantRows(gi);
+        renderVGroupOptionRows(gi);
       });
 
       wrap.querySelectorAll("[data-vg-trigger]").forEach(function (btn) {
@@ -1261,57 +1327,87 @@
         el.addEventListener("click", function () {
           var gi = Number(el.dataset.vgAddvariant);
           wstate.vgroups[gi].options.push(newVOption());
-          renderVariantRows(gi);
+          renderVGroupOptionRows(gi);
+          regenerateCombos();
+          renderComboMatrix();
           renderPreview();
         });
       });
+      regenerateCombos();
+      renderComboMatrix();
       renderPreview();
     }
 
-    function renderVariantRows(gi) {
-      var tbody = document.getElementById("vcomboTbody-" + gi);
-      if (!tbody) return;
+    function renderVGroupOptionRows(gi) {
+      var wrap = document.getElementById("vgroupOpts-" + gi);
+      if (!wrap) return;
       var g = wstate.vgroups[gi];
-      tbody.innerHTML = "";
-      g.options.forEach(function (opt, oi) {
-        var tr = document.createElement("tr");
-        tr.innerHTML =
-          '<td><label class="vcombo-photo" data-opt-photo="' + opt.id + '">' +
-            (opt.image ? '<img src="' + opt.image + '" alt="">' : photoIconSvg()) +
-            '<input type="file" accept="image/*" data-opt-file="' + opt.id + '" /></label></td>' +
-          '<td class="vcombo-name"><input type="text" placeholder="mis. Merah" value="' + escAttr(opt.value) + '" data-opt-value="' + opt.id + '" /></td>' +
-          '<td><input type="number" min="0" step="1" placeholder="0" value="' + (opt.stock || "") + '" data-opt-stock="' + opt.id + '" /></td>' +
-          '<td><div class="input-prefix"><span>Rp</span><input type="number" min="0" step="1000" placeholder="0" value="' + (opt.price || "") + '" data-opt-price="' + opt.id + '" style="padding-left:30px;"/></div></td>' +
-          '<td><div class="input-prefix"><span>Rp</span><input type="number" min="0" step="1000" placeholder="0" value="' + (opt.oldPrice || "") + '" data-opt-oldprice="' + opt.id + '" style="padding-left:30px;"/></div></td>' +
-          '<td><button type="button" class="vgroup-remove" data-opt-del="' + opt.id + '" aria-label="Hapus varian">' +
+      wrap.innerHTML = "";
+      g.options.forEach(function (opt) {
+        var row = document.createElement("div");
+        row.className = "vgroup-opt-row";
+        row.innerHTML =
+          '<input type="text" placeholder="mis. Merah" value="' + escAttr(opt.value) + '" data-opt-value="' + opt.id + '" />' +
+          '<button type="button" class="vgroup-remove" data-opt-del="' + opt.id + '" aria-label="Hapus opsi">' +
             '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M4 12l8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
-          '</button></td>';
-        tbody.appendChild(tr);
+          '</button>';
+        wrap.appendChild(row);
       });
 
       function findOpt(id) { return g.options.find(function (o) { return o.id === id; }); }
 
-      tbody.querySelectorAll("[data-opt-value]").forEach(function (elInput) {
-        elInput.addEventListener("input", function () { findOpt(elInput.dataset.optValue).value = elInput.value; renderPreview(); });
-      });
-      tbody.querySelectorAll("[data-opt-stock]").forEach(function (elInput) {
-        elInput.addEventListener("input", function () { findOpt(elInput.dataset.optStock).stock = elInput.value; });
-      });
-      tbody.querySelectorAll("[data-opt-price]").forEach(function (elInput) {
-        elInput.addEventListener("input", function () { findOpt(elInput.dataset.optPrice).price = elInput.value; renderPreview(); });
-      });
-      tbody.querySelectorAll("[data-opt-oldprice]").forEach(function (elInput) {
-        elInput.addEventListener("input", function () { findOpt(elInput.dataset.optOldprice).oldPrice = elInput.value; renderPreview(); });
-      });
-      tbody.querySelectorAll("[data-opt-file]").forEach(function (elInput) {
-        elInput.addEventListener("change", function () { handleVariantPhoto(gi, elInput.dataset.optFile, elInput.files[0]); });
-      });
-      tbody.querySelectorAll("[data-opt-del]").forEach(function (elBtn) {
-        elBtn.addEventListener("click", function () {
-          g.options = g.options.filter(function (o) { return o.id !== elBtn.dataset.optDel; });
-          renderVariantRows(gi);
+      wrap.querySelectorAll("[data-opt-value]").forEach(function (elInput) {
+        elInput.addEventListener("input", function () {
+          findOpt(elInput.dataset.optValue).value = elInput.value;
+          regenerateCombos();
+          renderComboMatrix();
           renderPreview();
         });
+      });
+      wrap.querySelectorAll("[data-opt-del]").forEach(function (elBtn) {
+        elBtn.addEventListener("click", function () {
+          g.options = g.options.filter(function (o) { return o.id !== elBtn.dataset.optDel; });
+          renderVGroupOptionRows(gi);
+          regenerateCombos();
+          renderComboMatrix();
+          renderPreview();
+        });
+      });
+    }
+
+    function renderComboMatrix() {
+      var tbody = document.getElementById("vcomboTbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      wstate.combos.forEach(function (c) {
+        var tr = document.createElement("tr");
+        tr.innerHTML =
+          '<td><label class="vcombo-photo" data-combo-photo="' + escAttr(c.key) + '">' +
+            (c.image ? '<img src="' + c.image + '" alt="">' : photoIconSvg()) +
+            '<input type="file" accept="image/*" data-combo-file="' + escAttr(c.key) + '" /></label></td>' +
+          '<td class="vcombo-name">' + escAttr(c.label || "(belum diisi)") + '</td>' +
+          '<td><input type="number" min="0" step="1" placeholder="0" value="' + (c.stock || "") + '" data-combo-stock="' + escAttr(c.key) + '" /></td>' +
+          '<td><div class="input-prefix"><span>Rp</span><input type="number" min="0" step="1000" placeholder="0" value="' + (c.price || "") + '" data-combo-price="' + escAttr(c.key) + '" style="padding-left:30px;"/></div></td>' +
+          '<td><div class="input-prefix"><span>Rp</span><input type="number" min="0" step="1000" placeholder="0" value="' + (c.oldPrice || "") + '" data-combo-oldprice="' + escAttr(c.key) + '" style="padding-left:30px;"/></div></td>';
+        tbody.appendChild(tr);
+      });
+      if (!wstate.combos.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="opacity:.6;padding:10px;">Belum ada kombinasi — isi opsi di grup varian di atas dulu.</td></tr>';
+      }
+
+      function findCombo(key) { return wstate.combos.find(function (c) { return c.key === key; }); }
+
+      tbody.querySelectorAll("[data-combo-stock]").forEach(function (elInput) {
+        elInput.addEventListener("input", function () { findCombo(elInput.dataset.comboStock).stock = elInput.value; });
+      });
+      tbody.querySelectorAll("[data-combo-price]").forEach(function (elInput) {
+        elInput.addEventListener("input", function () { findCombo(elInput.dataset.comboPrice).price = elInput.value; renderPreview(); });
+      });
+      tbody.querySelectorAll("[data-combo-oldprice]").forEach(function (elInput) {
+        elInput.addEventListener("input", function () { findCombo(elInput.dataset.comboOldprice).oldPrice = elInput.value; renderPreview(); });
+      });
+      tbody.querySelectorAll("[data-combo-file]").forEach(function (elInput) {
+        elInput.addEventListener("change", function () { handleComboPhoto(elInput.dataset.comboFile, elInput.files[0]); });
       });
     }
 
@@ -1319,18 +1415,18 @@
       return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h1.2l.8-1.2h5l.8 1.2h1.2A1.5 1.5 0 0 1 14 5.5v6A1.5 1.5 0 0 1 12.5 13h-9A1.5 1.5 0 0 1 2 11.5v-6z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><circle cx="8" cy="8.2" r="1.9" stroke="currentColor" stroke-width="1.1"/></svg>';
     }
 
-    async function handleVariantPhoto(gi, optId, file) {
+    async function handleComboPhoto(key, file) {
       if (!file) return;
-      var opt = wstate.vgroups[gi].options.find(function (o) { return o.id === optId; });
-      if (!opt) return;
+      var combo = wstate.combos.find(function (c) { return c.key === key; });
+      if (!combo) return;
       try {
         AdminShared.toast("Mengunggah foto varian...");
-        opt.image = await AdminShared.uploadImage(file);
+        combo.image = await AdminShared.uploadImage(file);
       } catch (e) {
-        opt.image = URL.createObjectURL(file);
+        combo.image = URL.createObjectURL(file);
         AdminShared.toast("Upload gagal, pakai preview lokal sementara.", "error");
       }
-      renderVariantRows(gi);
+      renderComboMatrix();
       renderPreview();
     }
 
@@ -1601,7 +1697,7 @@
           var row = document.createElement("div");
           row.className = "review-row";
           var priceStr = wrupiah(c.price) + (c.oldPrice ? ' <s style="opacity:.55;">' + wrupiah(c.oldPrice) + '</s>' : '');
-          row.innerHTML = '<span class="review-row__label">' + escAttr(c.value || "(belum diisi)") + '</span><span class="review-row__value">' + priceStr + ' · stok ' + (c.stock || 0) + '</span>';
+          row.innerHTML = '<span class="review-row__label">' + escAttr(c.label || "(belum diisi)") + '</span><span class="review-row__value">' + priceStr + ' · stok ' + (c.stock || 0) + '</span>';
           pricingBody.appendChild(row);
         });
         if (!reviewOpts.length) pricingBody.innerHTML = '<div class="review-row"><span class="review-row__label">Belum ada kombinasi varian</span></div>';
@@ -1646,13 +1742,16 @@
             id: g.id,
             name: g.name,
             label: g.name,
-            options: g.options.map(function (o) {
-              return { id: o.value, value: o.value, label: o.value, price: Number(o.price) || 0, oldPrice: Number(o.oldPrice) || 0, stock: Number(o.stock) || 0, image: o.image || "" };
+            options: g.options.filter(function (o) { return o.value; }).map(function (o) {
+              return { id: o.value, value: o.value, label: o.value };
             })
           });
-          g.options.forEach(function (o) {
-            variantPricingOut[o.value] = { price: Number(o.price) || 0, oldPrice: Number(o.oldPrice) || 0, stock: Number(o.stock) || 0, image: o.image || "", label: o.value };
-          });
+        });
+        // variant_pricing is keyed per FULL combination ("Merah|S"), matching
+        // getSelectedVariantKey() on the storefront — not per single option.
+        (wstate.combos || []).forEach(function (c) {
+          if (!c.key) return;
+          variantPricingOut[c.key] = { price: Number(c.price) || 0, oldPrice: Number(c.oldPrice) || 0, stock: Number(c.stock) || 0, image: c.image || "", label: c.label || c.key };
         });
       }
 

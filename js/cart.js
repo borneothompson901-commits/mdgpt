@@ -1482,6 +1482,39 @@
     }
   }
 
+  function renderQrisCanvas(content, fallbackImageUrl) {
+    var wrap = document.getElementById("checkoutQrWrap");
+    var canvas = document.getElementById("checkoutQrCanvas");
+    if (!wrap || !canvas) return;
+
+    function useFallback() {
+      if (fallbackImageUrl) {
+        wrap.innerHTML = '<img class="payment-result__qr-img" src="' + fallbackImageUrl + '" alt="QRIS" />';
+      } else {
+        wrap.innerHTML = '<p class="payment-result__note">QR tidak bisa ditampilkan.</p>';
+      }
+    }
+
+    if (typeof QRCode === "undefined" || !QRCode.toCanvas) {
+      useFallback();
+      return;
+    }
+
+    QRCode.toCanvas(
+      canvas,
+      content,
+      {
+        width: 220,
+        margin: 1,
+        errorCorrectionLevel: "M",
+        color: { dark: "#2b1140", light: "#ffffff" }
+      },
+      function (err) {
+        if (err) useFallback();
+      }
+    );
+  }
+
   function renderPendingCard() {
     if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view", "is-expired-view");
     setVisible(cartSummaryEl, true);
@@ -1506,9 +1539,13 @@
     } else if (method === "QRIS" && data.qr) {
       var qr = data.qr;
       html +=
-        '<div class="payment-result__box">' +
+        '<div class="payment-result__box payment-result__box--qris">' +
           '<p class="payment-result__label">Scan QRIS untuk bayar</p>' +
-          (qr.imageUrl ? '<img class="payment-result__qr-img" src="' + qr.imageUrl + '" alt="QRIS" />' : "") +
+          '<div class="payment-result__qr-wrap" id="checkoutQrWrap">' +
+            (qr.content
+              ? '<canvas class="payment-result__qr-canvas" id="checkoutQrCanvas" width="220" height="220"></canvas>'
+              : (qr.imageUrl ? '<img class="payment-result__qr-img" src="' + qr.imageUrl + '" alt="QRIS" />' : "")) +
+          '</div>' +
         '</div>';
     } else if (method === "EWALLET" && data.ewallet) {
       var ew = data.ewallet;
@@ -1538,6 +1575,10 @@
     }
 
     checkoutResultContent.innerHTML = html;
+
+    if (method === "QRIS" && data.qr && data.qr.content) {
+      renderQrisCanvas(data.qr.content, data.qr.imageUrl);
+    }
 
     var copyBtn = document.getElementById("checkoutCopyVaBtn");
     var vaNumberEl = document.getElementById("checkoutVaNumber");

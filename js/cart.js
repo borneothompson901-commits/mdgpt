@@ -38,9 +38,9 @@
     MANDIRI: { file: "mandiri", initials: "MD", bg: "#003a70" },
     CIMB: { file: "cimb", initials: "CB", bg: "#7a1f2b" },
     DANAMON: { file: "danamon", initials: "DM", bg: "#e2231a" },
-    BSI: { initials: "BSI", bg: "#00786b" },
-    BNC: { initials: "BNC", bg: "#0f9d58" },
-    SMBC: { initials: "SMBC", bg: "#00a0e9" },
+    BSI: { file: "bsi", initials: "BSI", bg: "#00786b" },
+    BNC: { file: "bnc", initials: "BNC", bg: "#0f9d58" },
+    SMBC: { file: "smbc", initials: "SMBC", bg: "#00a0e9" },
     QRIS: { file: "qris", initials: "QR", bg: "#4b2d83" },
     SHOPEEPAY: { file: "shopeepay", initials: "SP", bg: "#ee4d2d" },
     DANA: { file: "dana", initials: "DN", bg: "#118eea" }

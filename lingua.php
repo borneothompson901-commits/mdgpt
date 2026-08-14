@@ -21,7 +21,6 @@ function lg_card_val($cards, int $index, string $key, string $default): string
     return $default;
 }
 
-// Khusus URL, dipakai langsung sebagai atribut href/src.
 function lg_card_url($cards, int $index, string $key, string $default): string
 {
     $val = (is_array($cards) && isset($cards[$index][$key]) && $cards[$index][$key] !== '')
@@ -176,7 +175,7 @@ $campaignDefaults = [
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/store.css" />
-    <link rel="preload" as="image" href="assets/img/hero.avif" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/img/herolingua.avif" fetchpriority="high">
     <link rel="preload" as="image" href="assets/icons/logo.png">
   </head>
   <body>

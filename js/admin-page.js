@@ -1642,7 +1642,14 @@
       var variantPricingOut = {};
       if (wstate.mode === "multi") {
         wstate.vgroups.filter(function (g) { return g.name && g.options.length; }).forEach(function (g) {
-          variantGroupsOut.push({ id: g.id, name: g.name, options: g.options.map(function (o) { return o.value; }) });
+          variantGroupsOut.push({
+            id: g.id,
+            name: g.name,
+            label: g.name,
+            options: g.options.map(function (o) {
+              return { id: o.value, value: o.value, label: o.value, price: Number(o.price) || 0, oldPrice: Number(o.oldPrice) || 0, stock: Number(o.stock) || 0, image: o.image || "" };
+            })
+          });
           g.options.forEach(function (o) {
             variantPricingOut[o.value] = { price: Number(o.price) || 0, oldPrice: Number(o.oldPrice) || 0, stock: Number(o.stock) || 0, image: o.image || "", label: o.value };
           });

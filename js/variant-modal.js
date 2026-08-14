@@ -191,6 +191,15 @@
     }
 
     function getVariantImage(selected) {
+      // Variant images are stored per FULL combination ("L|BLACK") in
+      // product.variantPricing[key].image — the same place price/stock come
+      // from — not per single option. Only once every required group is
+      // selected does a combo key resolve, so we look that up first.
+      var key = getSelectedVariantKey(selected, groups);
+      if (key && product.variantPricing && product.variantPricing[key] && product.variantPricing[key].image) {
+        return product.variantPricing[key].image;
+      }
+      // Fallback for legacy data that did save a per-option image directly.
       var img = null;
       groups.forEach(function (group) {
         var optId = selected[group.id];

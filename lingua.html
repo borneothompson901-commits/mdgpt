@@ -1,8 +1,9 @@
 <?php
 require __DIR__ . '/config/supabase.php';
 
-$bannerUtama = fetchLinguaSection('banner_utama');
-$bannerCards = fetchLinguaSection('banner_cards');
+$bannerUtama   = fetchLinguaSection('banner_utama');
+$bannerCards   = fetchLinguaSection('banner_cards');
+$campaignCards = fetchLinguaSection('campaign_card');
 
 function lg_val($data, string $key, string $default): string
 {
@@ -19,6 +20,32 @@ function lg_card_val($cards, int $index, string $key, string $default): string
     }
     return $default;
 }
+
+// Khusus URL, dipakai langsung sebagai atribut href/src.
+function lg_card_url($cards, int $index, string $key, string $default): string
+{
+    $val = (is_array($cards) && isset($cards[$index][$key]) && $cards[$index][$key] !== '')
+        ? $cards[$index][$key]
+        : $default;
+    return lg_e($val);
+}
+
+$campaignDefaults = [
+    [
+        'headline' => 'Promo Spesial Bulan Ini',
+        'subheadline' => 'Diskon menarik untuk produk digital pilihan, terbatas!',
+        'ctaText' => 'Lihat Promo',
+        'ctaUrl' => '/lingua/index.html',
+        'image' => 'assets/img/cta.png',
+    ],
+    [
+        'headline' => 'Gabung Jadi Affiliate',
+        'subheadline' => 'Dapatkan komisi di setiap transaksi yang kamu bawa.',
+        'ctaText' => 'Daftar Sekarang',
+        'ctaUrl' => '/lingua/affiliate.html',
+        'image' => 'assets/img/cta.png',
+    ],
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -174,6 +201,35 @@ function lg_card_val($cards, int $index, string $key, string $default): string
           </div>
         </div>
       </div>
+
+      <section class="campaign-section" id="campaign">
+        <div class="campaign-grid">
+          <a class="campaign-card" id="campaignCard1"
+             href="<?= lg_card_url($campaignCards, 0, 'ctaUrl', $campaignDefaults[0]['ctaUrl']) ?>">
+            <img class="campaign-card__img" id="campaignCard1Img"
+                 src="<?= lg_card_url($campaignCards, 0, 'image', $campaignDefaults[0]['image']) ?>"
+                 alt="" loading="lazy" width="1600" height="500" />
+            <span class="campaign-card__overlay"></span>
+            <span class="campaign-card__content">
+              <span class="campaign-card__headline" id="campaignCard1Headline"><?= lg_card_val($campaignCards, 0, 'headline', $campaignDefaults[0]['headline']) ?></span>
+              <span class="campaign-card__sub" id="campaignCard1Sub"><?= lg_card_val($campaignCards, 0, 'subheadline', $campaignDefaults[0]['subheadline']) ?></span>
+              <span class="campaign-card__cta" id="campaignCard1CtaText"><?= lg_card_val($campaignCards, 0, 'ctaText', $campaignDefaults[0]['ctaText']) ?></span>
+            </span>
+          </a>
+          <a class="campaign-card" id="campaignCard2"
+             href="<?= lg_card_url($campaignCards, 1, 'ctaUrl', $campaignDefaults[1]['ctaUrl']) ?>">
+            <img class="campaign-card__img" id="campaignCard2Img"
+                 src="<?= lg_card_url($campaignCards, 1, 'image', $campaignDefaults[1]['image']) ?>"
+                 alt="" loading="lazy" width="1600" height="500" />
+            <span class="campaign-card__overlay"></span>
+            <span class="campaign-card__content">
+              <span class="campaign-card__headline" id="campaignCard2Headline"><?= lg_card_val($campaignCards, 1, 'headline', $campaignDefaults[1]['headline']) ?></span>
+              <span class="campaign-card__sub" id="campaignCard2Sub"><?= lg_card_val($campaignCards, 1, 'subheadline', $campaignDefaults[1]['subheadline']) ?></span>
+              <span class="campaign-card__cta" id="campaignCard2CtaText"><?= lg_card_val($campaignCards, 1, 'ctaText', $campaignDefaults[1]['ctaText']) ?></span>
+            </span>
+          </a>
+        </div>
+      </section>
 
       <section class="category-section" id="kategori">
         <div class="category-section__inner">

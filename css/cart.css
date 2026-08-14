@@ -1515,6 +1515,32 @@ html.cart-preload-expired #checkoutStepResult {
   border-radius: 8px;
 }
 
+.payment-result__box--qris {
+  border-style: solid;
+  border-color: rgba(169, 26, 182, 0.18);
+  background: linear-gradient(180deg, rgba(169, 26, 182, 0.04), rgba(169, 26, 182, 0));
+}
+
+.payment-result__qr-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  max-width: 100%;
+  margin: 0 auto 10px;
+  padding: 12px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(169, 26, 182, 0.14);
+}
+
+.payment-result__qr-canvas {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 8px;
+}
+
 .payment-result__ewallet-btn {
   display: inline-flex;
   align-items: center;

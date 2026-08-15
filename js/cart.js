@@ -1193,6 +1193,8 @@
   function renderChannelRows(method) {
     var listEl = channelListEls[method];
     if (!listEl || listEl.childElementCount > 0) return;
+    var itemEl = paymentAccordion ? paymentAccordion.querySelector('[data-method-item="' + method + '"]') : null;
+    if (itemEl && itemEl.dataset.methodDisabled === "true") return;
 
     var rows = [];
     if (method === "VA") {
@@ -1515,6 +1517,246 @@
     );
   }
 
+  function drawRoundedRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function formatInvoiceDate(d) {
+    var days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    var months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+    var hh = String(d.getHours()).padStart(2, "0");
+    var mm = String(d.getMinutes()).padStart(2, "0");
+    return days[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear() + " " + hh + ":" + mm;
+  }
+
+  function loadImageAsync(src) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = function () { reject(new Error("image-load-failed")); };
+      img.src = src;
+    });
+  }
+
+  function getQrisImageDataUrl(content, imageUrl) {
+    return new Promise(function (resolve, reject) {
+      if (content && typeof QRCode !== "undefined" && QRCode.toDataURL) {
+        QRCode.toDataURL(
+          content,
+          { width: 480, margin: 1, errorCorrectionLevel: "M", color: { dark: "#2b1140", light: "#ffffff" } },
+          function (err, url) {
+            if (err || !url) reject(err || new Error("qr-generate-failed"));
+            else resolve(url);
+          }
+        );
+        return;
+      }
+      if (imageUrl) {
+        var img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = function () {
+          try {
+            var c = document.createElement("canvas");
+            c.width = img.naturalWidth || 480;
+            c.height = img.naturalHeight || 480;
+            c.getContext("2d").drawImage(img, 0, 0);
+            resolve(c.toDataURL("image/png"));
+          } catch (e) {
+            reject(e);
+          }
+        };
+        img.onerror = function () { reject(new Error("qr-image-load-failed")); };
+        img.src = imageUrl;
+        return;
+      }
+      reject(new Error("no-qr-source"));
+    });
+  }
+
+  function buildQrisInvoiceCanvas(opts, qrDataUrl) {
+    return loadImageAsync(qrDataUrl).then(function (qrImg) {
+      var W = 720;
+      var H = 1080;
+      var canvas = document.createElement("canvas");
+      canvas.width = W;
+      canvas.height = H;
+      var ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "#f5f2fb";
+      ctx.fillRect(0, 0, W, H);
+
+      var pad = 40;
+      var cardX = pad, cardY = 28, cardW = W - pad * 2, cardH = H - 56;
+      drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 24);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+
+      ctx.save();
+      drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 24);
+      ctx.clip();
+
+      var headerH = 132;
+      var grad = ctx.createLinearGradient(cardX, cardY, cardX + cardW, cardY + headerH);
+      grad.addColorStop(0, "#7c1fa0");
+      grad.addColorStop(1, "#a91ab6");
+      ctx.fillStyle = grad;
+      ctx.fillRect(cardX, cardY, cardW, headerH);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "700 30px Arial, sans-serif";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText("M-DGPT Agency", cardX + 32, cardY + 56);
+      ctx.globalAlpha = 0.9;
+      ctx.font = "400 16px Arial, sans-serif";
+      ctx.fillText("Lingua Store \u2014 Invoice Pembayaran QRIS", cardX + 32, cardY + 84);
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      var y = cardY + headerH + 40;
+      ctx.fillStyle = "#1a1a1a";
+      ctx.font = "700 18px Arial, sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("Order ID", cardX + 32, y);
+      ctx.textAlign = "right";
+      ctx.fillText(String(opts.orderId || "-"), cardX + cardW - 32, y);
+
+      y += 34;
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#6b6b70";
+      ctx.font = "400 15px Arial, sans-serif";
+      ctx.fillText("Nama Pelanggan", cardX + 32, y);
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#1a1a1a";
+      ctx.fillText(opts.customerName || "-", cardX + cardW - 32, y);
+
+      y += 30;
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#6b6b70";
+      ctx.fillText("Tanggal", cardX + 32, y);
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#1a1a1a";
+      ctx.fillText(formatInvoiceDate(new Date()), cardX + cardW - 32, y);
+
+      if (opts.expiryAt) {
+        y += 30;
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#6b6b70";
+        ctx.fillText("Bayar Sebelum", cardX + 32, y);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillText(formatInvoiceDate(new Date(opts.expiryAt)), cardX + cardW - 32, y);
+      }
+
+      ctx.textAlign = "left";
+      y += 26;
+      ctx.strokeStyle = "#e6e0ef";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cardX + 32, y);
+      ctx.lineTo(cardX + cardW - 32, y);
+      ctx.stroke();
+
+      y += 44;
+      ctx.fillStyle = "#6b6b70";
+      ctx.font = "400 15px Arial, sans-serif";
+      ctx.fillText("Total Pembayaran", cardX + 32, y);
+      y += 38;
+      ctx.fillStyle = "#a91ab6";
+      ctx.font = "800 34px Arial, sans-serif";
+      ctx.fillText(formatRupiah(opts.total), cardX + 32, y);
+
+      y += 40;
+      var qrSize = 300;
+      var qrX = cardX + (cardW - qrSize) / 2;
+      drawRoundedRect(ctx, qrX - 16, y, qrSize + 32, qrSize + 32, 18);
+      ctx.fillStyle = "#faf8fc";
+      ctx.fill();
+      ctx.strokeStyle = "#e6e0ef";
+      ctx.stroke();
+      ctx.drawImage(qrImg, qrX, y + 16, qrSize, qrSize);
+
+      y += qrSize + 32 + 30;
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#1a1a1a";
+      ctx.font = "700 16px Arial, sans-serif";
+      ctx.fillText("Scan kode QR di atas untuk membayar", cardX + cardW / 2, y);
+      y += 24;
+      ctx.font = "400 13px Arial, sans-serif";
+      ctx.fillStyle = "#6b6b70";
+      ctx.fillText("Gunakan aplikasi mobile banking atau e-wallet yang mendukung QRIS", cardX + cardW / 2, y);
+
+      y += 40;
+      ctx.strokeStyle = "#e6e0ef";
+      ctx.beginPath();
+      ctx.moveTo(cardX + 32, y);
+      ctx.lineTo(cardX + cardW - 32, y);
+      ctx.stroke();
+
+      y += 30;
+      ctx.fillStyle = "#a1a1a6";
+      ctx.font = "400 12px Arial, sans-serif";
+      ctx.fillText("Simpan gambar ini sebagai bukti invoice pembayaran kamu.", cardX + cardW / 2, y);
+      ctx.textAlign = "left";
+
+      return canvas;
+    });
+  }
+
+  function triggerCanvasDownload(canvas, filename) {
+    if (canvas.toBlob) {
+      canvas.toBlob(function (blob) {
+        if (!blob) return;
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      }, "image/png");
+    } else {
+      var a2 = document.createElement("a");
+      a2.href = canvas.toDataURL("image/png");
+      a2.download = filename;
+      document.body.appendChild(a2);
+      a2.click();
+      document.body.removeChild(a2);
+    }
+  }
+
+  function downloadQrisInvoice(opts) {
+    var btn = opts.btnEl;
+    var originalText = btn ? btn.textContent : "";
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Menyiapkan gambar...";
+    }
+
+    getQrisImageDataUrl(opts.qrContent, opts.qrImageUrl)
+      .then(function (qrDataUrl) {
+        return buildQrisInvoiceCanvas(opts, qrDataUrl);
+      })
+      .then(function (canvas) {
+        triggerCanvasDownload(canvas, "Invoice-QRIS-" + (opts.orderId || "MDGPT") + ".png");
+      })
+      .catch(function () {
+        showCheckoutError("Gagal membuat gambar invoice. Coba lagi ya.");
+      })
+      .then(function () {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = originalText || "Download QRIS";
+        }
+      });
+  }
+
   function renderPendingCard() {
     if (cartLayoutEl) cartLayoutEl.classList.remove("is-paid-view", "is-expired-view");
     setVisible(cartSummaryEl, true);
@@ -1546,6 +1788,7 @@
               ? '<canvas class="payment-result__qr-canvas" id="checkoutQrCanvas" width="220" height="220"></canvas>'
               : (qr.imageUrl ? '<img class="payment-result__qr-img" src="' + qr.imageUrl + '" alt="QRIS" />' : "")) +
           '</div>' +
+          '<button type="button" class="payment-result__qris-download-btn" id="checkoutQrisDownloadBtn">Download QRIS</button>' +
         '</div>';
     } else if (method === "EWALLET" && data.ewallet) {
       var ew = data.ewallet;
@@ -1578,6 +1821,23 @@
 
     if (method === "QRIS" && data.qr && data.qr.content) {
       renderQrisCanvas(data.qr.content, data.qr.imageUrl);
+    }
+
+    var qrisDownloadBtn = document.getElementById("checkoutQrisDownloadBtn");
+    if (qrisDownloadBtn && method === "QRIS" && data.qr) {
+      qrisDownloadBtn.addEventListener("click", function () {
+        var orderId = data.clientReferenceId || data.orderId || "-";
+        var snap = (checkoutState && checkoutState.orderSnapshot) || {};
+        downloadQrisInvoice({
+          orderId: orderId,
+          customerName: snap.customerName || "",
+          total: snap.total || getOrderTotal(),
+          qrContent: data.qr.content || "",
+          qrImageUrl: data.qr.imageUrl || "",
+          expiryAt: checkoutState.expiryAt,
+          btnEl: qrisDownloadBtn
+        });
+      });
     }
 
     var copyBtn = document.getElementById("checkoutCopyVaBtn");

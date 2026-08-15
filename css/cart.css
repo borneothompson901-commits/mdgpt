@@ -1541,6 +1541,32 @@ html.cart-preload-expired #checkoutStepResult {
   border-radius: 8px;
 }
 
+.payment-result__qris-download-btn {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 13px 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #a91ab6, #7c1fa0);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(169, 26, 182, 0.28);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+.payment-result__qris-download-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(169, 26, 182, 0.34);
+}
+.payment-result__qris-download-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .payment-result__ewallet-btn {
   display: inline-flex;
   align-items: center;

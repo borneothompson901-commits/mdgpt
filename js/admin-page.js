@@ -1817,16 +1817,27 @@
         variant_pricing: variantPricingOut
       };
 
+      var payloadOldPrice = 0;
       if (wstate.mode === "multi") {
         var allOpts = allVOptions();
         var prices = allOpts.map(function (c) { return Number(c.price) || 0; }).filter(Boolean);
         payload.price = prices.length ? Math.min.apply(null, prices) : 0;
         payload.stock = allOpts.reduce(function (s, c) { return s + (Number(c.stock) || 0); }, 0);
+        var withOldOpts = allOpts.filter(function (c) { return Number(c.oldPrice) > 0; });
+        payloadOldPrice = withOldOpts.length ? Math.max.apply(null, withOldOpts.map(function (c) { return Number(c.oldPrice); })) : 0;
       } else {
         payload.price = Number(document.getElementById("f_price").value || 0);
         payload.old_price = document.getElementById("f_oldPrice").value ? Number(document.getElementById("f_oldPrice").value) : null;
         payload.stock = document.getElementById("f_stock").value ? Number(document.getElementById("f_stock").value) : null;
+        payloadOldPrice = payload.old_price || 0;
       }
+      // Diskon persen disimpan di kolom `discount` (dipakai badge "-X%" di
+      // storefront) — sebelumnya tidak pernah dihitung/dikirim di sini,
+      // padahal preview form sudah menghitungnya, jadi kolom di DB selalu
+      // default 0 dan badge diskon di lingua.php selalu tampil -0%.
+      payload.discount = (payloadOldPrice > payload.price && payload.price > 0)
+        ? Math.round((1 - payload.price / payloadOldPrice) * 100)
+        : 0;
       return payload;
     }
 

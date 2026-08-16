@@ -207,7 +207,7 @@ $campaignDefaults = [
               <circle cx="11" cy="11" r="7" />
               <path d="m21 21-4.3-4.3" />
             </svg>
-            <input type="search" name="q" class="nav-search__input" placeholder="Cari produk digital..." aria-label="Cari produk" />
+            <input type="search" name="q" class="nav-search__input" placeholder="Cari produk..." aria-label="Cari produk" />
           </form>
         </div>
         <a href="lingua/cart.html" class="nav-cart" id="navCartBtn" aria-label="Keranjang belanja">
@@ -360,7 +360,7 @@ $campaignDefaults = [
         <div class="bestseller-section__inner">
           <div class="bestseller-section__head">
             <h2 class="bestseller-section__title">Best Seller</h2>
-            <a href="#" class="bestseller-section__viewall">Lihat Semua Produk</a>
+            <a href="lingua/" class="bestseller-section__viewall">Lihat Semua Produk</a>
           </div>
           <div class="bestseller-grid" id="bestsellerGrid"></div>
         </div>
@@ -369,7 +369,7 @@ $campaignDefaults = [
   <div class="explore-section__inner">
     <div class="explore-section__head">
       <h2 class="explore-section__title">Rekomendasi Produk</h2>
-      <p class="explore-section__subtitle">Temukan produk digital yang paling cocok buat kamu</p>
+      <p class="explore-section__subtitle">Temukan produk yang paling cocok buat kamu</p>
     </div>
 
     <div class="explore-grid" id="exploreGrid"></div>

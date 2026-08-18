@@ -262,6 +262,19 @@
       if (!res.ok) throw new Error("Gagal memuat transaksi (" + res.status + ")");
       return res.json();
     },
+    // Only items + status from PAID orders — used to compute real sold counts
+    // for the overview's "Top 5 Produk Terjual", independent of the
+    // admin-editable products.sold field. No limit: needs the full history,
+    // not just the latest 200 like listTransactions().
+    async listPaidOrderItems() {
+      var headers = await writeHeaders();
+      var res = await fetch(
+        SUPABASE_URL + "/rest/v1/orders?select=items,status&status=in.(PAID,SUCCEEDED)",
+        { headers: headers }
+      );
+      if (!res.ok) throw new Error("Gagal memuat data transaksi (" + res.status + ")");
+      return res.json();
+    },
     async getTransaction(id) {
       var headers = await writeHeaders();
       var res = await fetch(

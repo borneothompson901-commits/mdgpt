@@ -172,21 +172,41 @@
       document.getElementById("outStockEmpty").hidden = rows.out.length !== 0;
     }
 
+    // Aggregates real quantities sold per product id from PAID orders' `items`
+    // jsonb array ({ id, qty, ... } per line). This is the source of truth for
+    // "Top 5 Produk Terjual" — deliberately NOT products.sold, which is a
+    // manually-editable admin input field and can drift from real transactions.
+    function computeRealSold(paidOrders) {
+      var map = {};
+      (paidOrders || []).forEach(function (o) {
+        (o.items || []).forEach(function (it) {
+          var key = String(it.id);
+          var qty = parseInt(it.qty, 10) || 0;
+          map[key] = (map[key] || 0) + qty;
+        });
+      });
+      return map;
+    }
+
     function renderTopSold() {
       var list = document.getElementById("topSoldList");
       var empty = document.getElementById("topSoldEmpty");
       if (!list || !empty) return;
 
+      var soldMap = state.realSold || {};
+
       var top = state.products
-        .filter(function (p) { return (parseInt(p.sold, 10) || 0) > 0; })
-        .sort(function (a, b) { return (parseInt(b.sold, 10) || 0) - (parseInt(a.sold, 10) || 0); })
+        .map(function (p) { return { p: p, sold: soldMap[String(p.id)] || 0 }; })
+        .filter(function (row) { return row.sold > 0; })
+        .sort(function (a, b) { return b.sold - a.sold; })
         .slice(0, 5);
 
-      list.innerHTML = top.map(function (p, idx) {
+      list.innerHTML = top.map(function (row, idx) {
+        var p = row.p;
         return '<div class="overview-item">' +
           '<span class="overview-item__rank">' + (idx + 1) + '</span>' +
           '<span class="overview-item__name" title="' + escapeHtml(p.title || "(Tanpa nama)") + '">' + escapeHtml(p.title || "(Tanpa nama)") + '</span>' +
-          '<span class="badge badge-purple">' + (parseInt(p.sold, 10) || 0) + ' terjual</span>' +
+          '<span class="badge badge-purple">' + row.sold + ' terjual</span>' +
         '</div>';
       }).join("");
       empty.hidden = top.length !== 0;
@@ -258,10 +278,11 @@
 
     async function loadAll() {
       try {
-        var res = await Promise.all([db.listProducts(), db.listCategories()]);
-        var products = res[0], categories = res[1];
+        var res = await Promise.all([db.listProducts(), db.listCategories(), db.listPaidOrderItems()]);
+        var products = res[0], categories = res[1], paidOrders = res[2];
         state.products = products.map(mapRow);
         state.categories = categories;
+        state.realSold = computeRealSold(paidOrders);
         var usedKeys = {};
         state.products.forEach(function (p) { if (p.category) usedKeys[p.category] = true; });
         var visibleCats = categories.filter(function (c) { return usedKeys[c.key]; });

@@ -248,7 +248,6 @@ $campaignDefaults = [
       <section class="hero">
         <div class="hero__inner">
           <div class="hero__content">
-            <span class="hero__eyebrow" id="heroEyebrow"><?= lg_val($bannerUtama, 'pill', 'Toko Digital M-DGPT Agency') ?></span>
             <h1 class="hero__title">
               <span id="heroTitleLine1"><?= lg_val($bannerUtama, 'headline1', 'Digital Product yang Bikin') ?></span>
               <span class="hero__title-accent" id="heroTitleLine2"><?= lg_val($bannerUtama, 'headline2', 'Bisnismu Naik Level') ?></span>

@@ -5,7 +5,6 @@
 
   var state = {
     bannerUtama: {
-      pill: "Toko Digital M-DGPT Agency",
       headline1: "Digital Product yang Bikin",
       headline2: "Bisnismu Naik Level",
       subheadline: "Template konten, ebook strategi, dan tools otomasi siap pakai, dirancang langsung oleh tim M-DGPT Agency untuk brand yang serius growth."
@@ -96,7 +95,6 @@
 
   var editModal = document.getElementById("websiteEditModal");
   var editTitle = document.getElementById("websiteEditTitle");
-  var pillField = document.getElementById("websiteEditPillField");
   var boldField = document.getElementById("websiteEditBoldField");
   var judulField = document.getElementById("websiteEditJudulField");
   var headline1Field = document.getElementById("websiteEditHeadline1Field");
@@ -109,7 +107,6 @@
   var subheadlineLargeField = document.getElementById("websiteEditSubheadlineLargeField");
   var isiField = document.getElementById("websiteEditIsiField");
 
-  var pillInput = document.getElementById("websiteEditPill");
   var boldInput = document.getElementById("websiteEditBold");
   var judulInput = document.getElementById("websiteEditJudul");
   var headline1Input = document.getElementById("websiteEditHeadline1");
@@ -129,7 +126,7 @@
   var deleteNameEl = document.getElementById("syaratDeleteName");
 
   var typeConfig = {
-    bannerUtama: { title: "Edit Banner Utama", fields: ["pill", "headline1", "headline2", "subheadline"] },
+    bannerUtama: { title: "Edit Banner Utama", fields: ["headline1", "headline2", "subheadline"] },
     bannerCard: { title: "Edit Banner Card", fields: ["headline", "subheadline"] },
     campaignCard: { title: "Edit Campaign Card", fields: ["headline", "subheadline", "ctaText", "ctaUrl", "image"] },
     bannerAffiliate: { title: "Edit Banner Affiliate", fields: ["headline", "subheadline"] },
@@ -268,7 +265,6 @@
     editingId = id || null;
     editTitle.textContent = config.title;
 
-    setFieldVisible(pillField, config.fields.indexOf("pill") !== -1);
     setFieldVisible(boldField, config.fields.indexOf("bold") !== -1);
     setFieldVisible(judulField, config.fields.indexOf("judul") !== -1);
     setFieldVisible(headline1Field, config.fields.indexOf("headline1") !== -1);
@@ -281,7 +277,6 @@
     setFieldVisible(subheadlineLargeField, config.fields.indexOf("subheadlineLarge") !== -1);
     setFieldVisible(isiField, config.fields.indexOf("isi") !== -1);
 
-    pillInput.value = "";
     boldInput.value = "";
     judulInput.value = "";
     headline1Input.value = "";
@@ -298,7 +293,6 @@
     isiInput.value = "";
 
     if (type === "bannerUtama") {
-      pillInput.value = state.bannerUtama.pill || "";
       headline1Input.value = state.bannerUtama.headline1 || "";
       headline2Input.value = state.bannerUtama.headline2 || "";
       subheadlineInput.value = state.bannerUtama.subheadline || "";
@@ -351,7 +345,6 @@
 
   function saveEdit() {
     if (editingType === "bannerUtama") {
-      state.bannerUtama.pill = pillInput.value.trim();
       state.bannerUtama.headline1 = headline1Input.value.trim();
       state.bannerUtama.headline2 = headline2Input.value.trim();
       state.bannerUtama.subheadline = subheadlineInput.value.trim();

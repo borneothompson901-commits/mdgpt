@@ -1852,19 +1852,11 @@ function uploadFile(file) {
         var formData = new FormData();
         formData.append("file", file);
 
-        var fetchOpts = { method: "POST", body: formData };
-
-        // Sisipin token login (Supabase access_token) biar upload-file.php
-        // bisa verifikasi user. Disimpan admin-core.js pas login, key: admin_session_v1.
-        try {
-            var raw = localStorage.getItem("admin_session_v1");
-            var session = raw ? JSON.parse(raw) : null;
-            if (session && session.access_token) {
-                fetchOpts.headers = { Authorization: "Bearer " + session.access_token };
-            }
-        } catch (e) { /* noop, lanjut tanpa token kalau parse gagal */ }
-
-        fetch("/api/upload-file.php", fetchOpts)
+        // cms.php login (cms/login.php) pakai PHP session, bukan Supabase Auth,
+        // jadi gak ada Supabase access_token buat dikirim. Sesi PHP-nya udah
+        // otomatis ikut kekirim lewat cookie di fetch same-origin, dan
+        // upload-file.php sekarang ngecek $_SESSION['admin'] itu juga.
+        fetch("/api/upload-file.php", { method: "POST", body: formData })
             .then(r => r.json())
             .then(data => {
                 if (data.error) reject(data.error);

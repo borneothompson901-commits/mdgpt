@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json");
-require __DIR__ . "/../config/database.php";
+require __DIR__ . "/../config/session_init.php";
 
 $SUPABASE_URL = "https://xjtkipgopiormwmbdtfa.supabase.co";
 $SUPABASE_ANON_KEY = "sb_publishable_5abZti9M8zHWuHyh59q8Ew_Otn-QopO";
@@ -35,10 +35,16 @@ function verifySupabaseToken($token, $url, $anonKey) {
   return $data && isset($data["id"]) ? $data : null;
 }
 
-$token = getBearerToken();
-$authedUser = verifySupabaseToken($token, $SUPABASE_URL, $SUPABASE_ANON_KEY);
 
-if (!$authedUser) {
+$isPhpSessionAdmin = isset($_SESSION["admin"]) && $_SESSION["admin"] === true;
+
+$authedUser = null;
+if (!$isPhpSessionAdmin) {
+  $token = getBearerToken();
+  $authedUser = verifySupabaseToken($token, $SUPABASE_URL, $SUPABASE_ANON_KEY);
+}
+
+if (!$isPhpSessionAdmin && !$authedUser) {
   http_response_code(401);
   echo json_encode(["error" => "Unauthorized"]);
   exit;

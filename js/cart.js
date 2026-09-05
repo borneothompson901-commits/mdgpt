@@ -15,7 +15,7 @@
   var ORDER_STATUS_ENDPOINT = SUPABASE_URL + "/functions/v1/order-status";
 
   var VA_CHANNELS = [
-    { code: "BCA", label: "BCA", disabled: true },
+    { code: "BCA", label: "BCA", disabled: false },
     { code: "PERMATA", label: "Permata" },
     { code: "BNI", label: "BNI" },
     { code: "BRI", label: "BRI" },

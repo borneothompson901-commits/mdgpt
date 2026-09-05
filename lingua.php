@@ -245,13 +245,13 @@ $campaignDefaults = [
       </div>
     </nav>
     <main class="page home-page">
-      <div class="lingua-brand-header">
-        <img src="assets/icons/logo2.png" alt="Lingua Store" class="lingua-brand-header__logo" width="36" height="36" loading="lazy" />
-        <span class="lingua-brand-header__text">Lingua Store</span>
-      </div>
       <section class="hero">
         <div class="hero__inner">
           <div class="hero__content">
+            <div class="lingua-brand-header">
+              <img src="assets/icons/logo2.png" alt="Lingua Store" class="lingua-brand-header__logo" width="28" height="28" loading="lazy" />
+              <span class="lingua-brand-header__text">Lingua Store</span>
+            </div>
             <h1 class="hero__title">
               <span id="heroTitleLine1"><?= lg_val($bannerUtama, 'headline1', 'Digital Product yang Bikin') ?></span>
               <span class="hero__title-accent" id="heroTitleLine2"><?= lg_val($bannerUtama, 'headline2', 'Bisnismu Naik Level') ?></span>

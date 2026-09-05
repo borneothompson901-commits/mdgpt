@@ -557,13 +557,13 @@
 .lingua-brand-header {
    display: flex;
    align-items: center;
-   gap: 8px;
+   gap: 4px;
    margin-bottom: 16px;
 }
 
 .lingua-brand-header__logo {
-   width: 32px;
-   height: 32px;
+   width: 96px;
+   height: 96px;
    object-fit: contain;
 }
 

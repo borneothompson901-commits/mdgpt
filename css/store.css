@@ -263,6 +263,9 @@
       text-align: center;
       margin: 0 auto;
    }
+   .lingua-brand-header {
+      justify-content: center;
+   }
    .hero__desc {
       max-width: none;
       margin-left: auto;
@@ -559,8 +562,8 @@
 }
 
 .lingua-brand-header__logo {
-   width: 20px;
-   height: 20px;
+   width: 32px;
+   height: 32px;
    object-fit: contain;
 }
 

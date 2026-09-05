@@ -10,6 +10,14 @@
   var CACHE_PREFIX = "lingua_cms_";
 
   var TRUST_ICON_RULES = [
+    { match: ["bahasa asing", "vocabulary", "kosakata", "terjemah", "translate", "kamus", "grammar", "percakapan"], icon: "book_open" },
+    { match: ["buku", "ebook", "e-book", "novel", "cerita"], icon: "book" },
+    { match: ["literasi", "membaca", "baca", "pendidikan", "edukasi", "belajar", "kursus"], icon: "graduation_cap" },
+    { match: ["bisnis", "usaha", "wirausaha", "startup", "umkm", "jualan", "pemasaran", "marketing"], icon: "briefcase" },
+    { match: ["desain", "design", "ilustrasi", "grafis"], icon: "palette" },
+    { match: ["video", "editing video", "sinema", "film pendek"], icon: "video" },
+    { match: ["musik", "audio", "podcast", "rekaman"], icon: "music" },
+    { match: ["strategi", "rencana", "roadmap", "target"], icon: "target" },
     { match: ["original", "asli", "resmi", "official", "keaslian"], icon: "shield" },
     { match: ["download", "unduh", "instant", "langsung kirim"], icon: "download" },
     { match: ["otomatis", "auto", "otomasi"], icon: "settings" },

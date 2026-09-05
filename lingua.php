@@ -59,12 +59,12 @@ $campaignDefaults = [
     <meta property="og:title" content="Lingua Store - Template, Ebook & Tools Digital | M-DGPT Agency" />
     <meta property="og:description" content="Belanja template konten, ebook strategi, dan tools otomasi digital siap pakai dari M-DGPT Agency. Produk original, instant download, update berkala, support cepat." />
     <meta property="og:url" content="https://mdgpt.id/lingua" />
-    <meta property="og:image" content="https://mdgpt.id/assets/img/cta.png" />
+    <meta property="og:image" content="https://mdgpt.id/assets/img/oglingua.avif" />
     <meta property="og:locale" content="id_ID" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Lingua Store - Template, Ebook & Tools Digital | M-DGPT Agency" />
     <meta name="twitter:description" content="Belanja template konten, ebook strategi, dan tools otomasi digital siap pakai dari M-DGPT Agency. Produk original, instant download, update berkala, support cepat." />
-    <meta name="twitter:image" content="https://mdgpt.id/assets/img/cta.png" />
+    <meta name="twitter:image" content="https://mdgpt.id/assets/img/oglingua.avif" />
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -245,6 +245,10 @@ $campaignDefaults = [
       </div>
     </nav>
     <main class="page home-page">
+      <div class="lingua-brand-header">
+        <img src="assets/icons/logo2.png" alt="Lingua Store" class="lingua-brand-header__logo" width="36" height="36" loading="lazy" />
+        <span class="lingua-brand-header__text">Lingua Store</span>
+      </div>
       <section class="hero">
         <div class="hero__inner">
           <div class="hero__content">

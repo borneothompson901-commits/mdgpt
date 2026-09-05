@@ -557,14 +557,20 @@
 .lingua-brand-header {
    display: flex;
    align-items: center;
-   gap: 4px;
-   margin-bottom: 16px;
+   gap: 12px;
+   margin-bottom: 8px;
 }
 
 .lingua-brand-header__logo {
    width: 96px;
    height: 96px;
    object-fit: contain;
+}
+
+.lingua-brand-header__divider {
+   width: 1px;
+   height: 28px;
+   background: rgba(255, 255, 255, 0.35);
 }
 
 .lingua-brand-header__text {

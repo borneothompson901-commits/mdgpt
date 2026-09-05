@@ -559,8 +559,8 @@
 }
 
 .lingua-brand-header__logo {
-   width: 28px;
-   height: 28px;
+   width: 20px;
+   height: 20px;
    object-fit: contain;
 }
 
@@ -569,8 +569,7 @@
    font-weight: 700;
    font-size: 15px;
    color: rgba(255, 255, 255, 0.85);
-   letter-spacing: 0.04em;
-   text-transform: uppercase;
+   letter-spacing: 0.02em;
 }
 
 .category-section__title {

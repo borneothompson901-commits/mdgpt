@@ -214,7 +214,7 @@
   }
 
   function run() {
-    if (document.getElementById("heroEyebrow")) {
+    if (document.getElementById("heroTitleLine1")) {
       loadSection("banner_utama", applyBannerUtama);
       loadSection("banner_cards", applyBannerCards);
     }

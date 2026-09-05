@@ -551,6 +551,33 @@
    padding: 0 var(--page-pad, 32px);
 }
 
+.lingua-brand-header {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 10px;
+   padding: calc(var(--nav-height) + 20px) 0 12px;
+   background: #fff;
+}
+
+.lingua-brand-header + .hero {
+   padding-top: 40px;
+}
+
+.lingua-brand-header__logo {
+   width: 36px;
+   height: 36px;
+   object-fit: contain;
+}
+
+.lingua-brand-header__text {
+   font-family: var(--font-display);
+   font-weight: 700;
+   font-size: 18px;
+   color: var(--color-headline);
+   letter-spacing: 0.02em;
+}
+
 .category-section__title {
    font-family: var(--font-display);
    font-weight: 700;

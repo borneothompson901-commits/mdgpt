@@ -1284,7 +1284,7 @@
 }
 
 .explore-section { padding: 32px var(--page-pad) 80px; }
-.explore-section__inner { max-width: var(--page-max); margin: 0 auto; }
+.explore-section__inner { max-width: 1200px; margin: 0 auto; }
 
 .explore-section__head { text-align: center; margin-bottom: 28px; }
 .explore-section__title {

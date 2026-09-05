@@ -554,28 +554,23 @@
 .lingua-brand-header {
    display: flex;
    align-items: center;
-   justify-content: center;
-   gap: 10px;
-   padding: calc(var(--nav-height) + 20px) 0 12px;
-   background: #fff;
-}
-
-.lingua-brand-header + .hero {
-   padding-top: 40px;
+   gap: 8px;
+   margin-bottom: 16px;
 }
 
 .lingua-brand-header__logo {
-   width: 36px;
-   height: 36px;
+   width: 28px;
+   height: 28px;
    object-fit: contain;
 }
 
 .lingua-brand-header__text {
    font-family: var(--font-display);
    font-weight: 700;
-   font-size: 18px;
-   color: var(--color-headline);
-   letter-spacing: 0.02em;
+   font-size: 15px;
+   color: rgba(255, 255, 255, 0.85);
+   letter-spacing: 0.04em;
+   text-transform: uppercase;
 }
 
 .category-section__title {

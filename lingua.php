@@ -249,7 +249,7 @@ $campaignDefaults = [
         <div class="hero__inner">
           <div class="hero__content">
             <div class="lingua-brand-header">
-              <img src="assets/icons/logo2.png" alt="Lingua Store" class="lingua-brand-header__logo" width="28" height="28" loading="lazy" />
+              <img src="assets/icons/logo3.png" alt="Lingua Store" class="lingua-brand-header__logo" width="20" height="20" loading="lazy" />
               <span class="lingua-brand-header__text">Lingua Store</span>
             </div>
             <h1 class="hero__title">
